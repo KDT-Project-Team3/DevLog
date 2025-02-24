@@ -21,3 +21,26 @@
 //     );
 //     displayUsers();
 // }
+
+// 캘린더 생성
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth'
+    });
+    calendar.render();
+});
+
+// 날짜 클릭 -> 일정 추가
+    document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    dateClick: function(info) {
+    window.open(`new-event.html?date=${info.dateStr}`, '_blank', 'width=600,height=400');
+}
+});
+    calendar.render();
+});
+
+
