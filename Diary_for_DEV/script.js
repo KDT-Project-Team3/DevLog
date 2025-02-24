@@ -38,6 +38,7 @@ async function initDatabase() {
     displayUsers(); // 사용자 목록 표시 (테스트용)
 }
 
+// ======== 배너 문구 ========
 document.addEventListener("DOMContentLoaded", function () {
     const bannerText = document.querySelector(".banner-text"); // 배너 텍스트 요소
     const messages = [
@@ -59,4 +60,55 @@ document.addEventListener("DOMContentLoaded", function () {
 
     setInterval(changeBannerText, 3000); // 3초마다 변경
 });
+// ======== 로그인 & 로그아웃 ========
+function validateEmail(email) {
+    let regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}
 
+function signup() {
+    let email = document.getElementById('signup-email').value;
+    let password = document.getElementById('signup-password').value;
+    let confirmPassword = document.getElementById('signup-password-confirm').value;
+
+    if (!email || !password || !confirmPassword) {
+        alert('이메일과 비밀번호를 입력하세요.');
+        return;
+    }
+
+    if (!validateEmail(email)) {
+        alert('올바른 이메일 형식을 입력하세요.');
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        alert('비밀번호가 일치하지 않습니다.');
+        return;
+    }
+
+    alert('회원가입 성공! 로그인 해주세요.');
+    showLogin();
+}
+
+function login() {
+    let email = document.getElementById('login-email').value;
+    let password = document.getElementById('login-password').value;
+
+    if (!validateEmail(email)) {
+        alert('올바른 이메일 형식을 입력하세요.');
+        return;
+    }
+
+    alert('로그인 성공!');
+    window.location.href = 'index.html';
+}
+
+function showLogin() {
+    document.getElementById('signup-container').style.display = 'none';
+    document.getElementById('login-container').style.display = 'block';
+}
+
+function showSignup() {
+    document.getElementById('login-container').style.display = 'none';
+    document.getElementById('signup-container').style.display = 'block';
+}
