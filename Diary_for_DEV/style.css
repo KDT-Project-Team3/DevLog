@@ -69,3 +69,20 @@ body {
     font-size: 1.2em;
 }
 
+/*========  배너 =========*/
+.banner-container {
+    width: 100%;
+    background-color: #222;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.banner-text {
+    white-space: nowrap;
+}
