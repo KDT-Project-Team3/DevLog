@@ -27,6 +27,7 @@ async function initDatabase() {
             user_id     INTEGER NOT NULL,                 -- 사용자 ID (FK)
             title       TEXT NOT NULL DEFAULT '',         -- 일정 제목 (기본값 '')
             com_lang    TEXT NOT NULL,                    -- 사용 언어
+            xp          INTEGER NOT NULL,
             description TEXT DEFAULT '',                  -- 일정 내용 (기본값 '')
             event_date  TEXT NOT NULL CHECK (event_date GLOB '????-??-??'), -- 일정 날짜 (YYYY-MM-DD 형식 강제)
 
