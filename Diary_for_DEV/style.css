@@ -9,9 +9,11 @@ body {
 }
 
 .container {
+    margin: 0;
     display: flex;
+    width: 100vw;
     height: 100vh;
-    border: 2px solid black;
+    /*border: 2px solid black;*/
 }
 
 .main-column {
@@ -46,20 +48,30 @@ body {
     color: black;
 }
 
+/*===========프로필 메뉴================*/
 .sidebar {
-    flex: 1;
+    /*todo : 프로필 체스트 후 200px 로 변경하기*/
+    width: 600px;
     background: black;
     padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    transition-property: width;
+    transition: ease 0.3s;
 }
 
-.circle {
-    width: 20px;
-    height: 20px;
+.sidebar:hover {
+    width: 600px;
+}
+
+.profileImg {
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
+    /*하얀배경은 이미지 넣고 지우기*/
     background: white;
+    /*background-image: url("");*/
     margin-bottom: 10px;
     cursor: pointer; /* 클릭 가능하도록 커서 변경 */
 }
@@ -69,4 +81,103 @@ body {
     font-size: 1.2em;
 }
 
-@media (max-width: 400px) {}
+/*=============프로필 요소들===============*/
+/*메달 요소 담긴 부모 요소*/
+.medalBox {
+    width: 70%;
+    display: flex ;
+    justify-content: center;
+    align-items: start;
+    margin: 20px;
+
+}
+
+.medal {
+    background: white;
+    display: flex;
+    width: 70px;
+    height: 70px;
+    margin-left: 10px;
+    border-radius: 50%;
+}
+
+
+/*각 메달별 이미지 추가*/
+.medal::first-letter {
+    /*자바*/
+    /*background-image: url("");*/
+}
+.medal:nth-child(2) {
+    /*background-image: url("");*/
+}
+.medal:last-child {
+    /*background-image: url("");*/
+}
+
+.LV {
+    background: white
+
+}
+.exp {
+    /*background: white;*/
+}
+.xp-bar-container {
+    width: 300px; /* 바의 전체 너비 */
+    height: 20px; /* 바의 높이 */
+    background-color: #ccc; /* 배경색 */
+    border-radius: 10px; /* 둥근 모서리 */
+    overflow: hidden;
+    border: 2px solid #444;
+}
+
+.xp-bar {
+    width: 70%; /* 경험치 상태 (예: 70%) */
+    height: 100%;
+    background: linear-gradient(to right, #4caf50, #8bc34a); /* 색상 그라데이션 */
+    text-align: center;
+    /*color: white;*/
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 20px; /* 바의 높이와 일치 */
+    transition: width 0.5s ease-in-out; /* 부드러운 애니메이션 */
+}
+
+.UserTitle {
+    background: white;
+}
+.achievement {
+    width: 95%;
+    height: 45%;
+    background: #f5f5f5;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    overflow: hidden;
+    top: 12%;
+    border-radius: 10px;
+}
+
+/*todo : 업적 스크롤기능??*/
+.achievement div{
+    width: 95%;
+    height: 100px;
+    position: relative;
+    display: flex;
+    border: 3px solid black;
+    align-items: center;
+    border-radius: 10px;
+    margin: 10px;
+    opacity: 0.5;
+}
+.achievement div:hover{
+    opacity: 1;
+}
+
+.achievement .achivImg {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: white;
+    /*background-image: url("");*/
+}
+
