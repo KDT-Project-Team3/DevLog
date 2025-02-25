@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const expBar = document.querySelector(".exp");
     const medalBox = document.querySelector(".medalBox");
     const userInfoLayout = document.querySelector(".userInfoLayout");
+    const profile = document.querySelector(".profile");
     const profileLayout = document.querySelector(".profileLayout");
 
     // 초기 상태: profileInner 숨기기
@@ -20,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
         medalBox.classList.remove("profileInvisible");
         userInfoLayout.classList.add("profileInvisible");
 
+        profileLayout.style.marginLeft = "0";
         profileImg.style.width = "110px";
         profileImg.style.height = "110px";
     });
@@ -31,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
         medalBox.classList.add("profileInvisible");
         userInfoLayout.classList.remove("profileInvisible");
 
+        profileLayout.style.marginLeft = "47px";
         profileImg.style.width = "160px";
         profileImg.style.height = "160px";
     });
