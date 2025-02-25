@@ -217,17 +217,12 @@ export function saveDatabase() {
 
 // DB 파일 불러오기 함수
 export async function loadDatabase(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    const response = await fetch('database.sqlite');
+    const arrayBuffer = await response.arrayBuffer();
+    const data = new Uint8Array(arrayBuffer);
+    const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}` });
+    db = new SQL.Database(data);
 
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-        const data = new Uint8Array(e.target.result);
-        const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}` });
-        db = new SQL.Database(data);
-
-        alert("데이터베이스가 불러와졌습니다.");
-        displayUsers();
-    };
+    alert("데이터베이스가 불러와졌습니다.");
     reader.readAsArrayBuffer(file);
 }
