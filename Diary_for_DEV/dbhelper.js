@@ -83,6 +83,14 @@ function updateUserLv(username, lv) {
     );
 }
 
+// 사용자 이미지 업데이트 함수
+function updateUserImg(username, img) {
+    db.run(
+        `UPDATE user SET img = ? WHERE username = ?;`,
+        [img, username]
+    );
+}
+
 // 사용자 삭제 함수
 function deleteUser(username) {
     db.run(
