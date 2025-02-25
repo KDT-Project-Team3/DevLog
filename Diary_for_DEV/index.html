@@ -13,7 +13,6 @@
           integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
           crossorigin="anonymous">
   </script>
-
   <script src="script.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -34,53 +33,6 @@
     <div class="circle"></div>
     <p>프로필</p>
   </aside>
-</div>
-<!-- 일정 확인 모달 -->
-<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="eventModalLabel">일정 확인</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <h6 id="event-title-display">제목:</h6>
-        <p id="event-category-display">카테고리:</p>
-        <button id="add-event" class="btn btn-primary">+</button> <!-- 일정 추가 버튼 -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 일정 추가 모달 -->
-<div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addEventModalLabel">일정 추가</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <label for="event-title">일정 제목:</label>
-        <input type="text" id="event-title" class="form-control"><br><br>
-
-        <label for="event-category">카테고리:</label>
-        <select id="event-category">
-          <option value="Java">Java</option>
-          <option value="C">C</option>
-          <option value="JavaScript">JavaScript</option>
-          <option value="HTML">HTML</option>
-        </select>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-        <button type="button" id="save-event" class="btn btn-primary">저장</button>
-      </div>
-    </div>
-  </div>
 </div>
 </body>
 </html>

@@ -4,7 +4,6 @@
 ///todo 4: 일정 완료시 경험치 반환 -> 나중에
 ///todo 5: 배너 수영 O
 ///todo 6: DDL 작성 수영 O
-
 let db; // 데이터베이스 객체
 
 // SQLite 환경 초기화
@@ -144,17 +143,48 @@ function showSignup() {
 }
 
 
+// 캘린더 생성
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth'
+        initialView: 'dayGridMonth', // 월간 뷰
+        events: loadEventsFromLocalStorage(), // 로컬 스토리지에서 이벤트 로드
+        dateClick: function(info) {
+            window.open(`check_event.html?date=${info.dateStr}`, '_blank', 'width=600,height=400');
+        }
     });
     calendar.render();
+
+    // window 객체에 함수 추가 (팝업에서 호출 가능하도록)
+    window.addEventToCalendar = function(date, title, category) {
+        calendar.addEvent({
+            title: `${title} (${category})`,
+            start: date,
+            allDay: true
+        });
+        console.log(`✅ 일정 추가 완료: ${date}, ${title}, ${category}`);
+    };
 });
 
-
-
-
+// 로컬 스토리지에서 이벤트 로드
+function loadEventsFromLocalStorage() {
+    const events = JSON.parse(localStorage.getItem('events')) || {};
+    const eventList = [];
+    for (const date in events) {
+        if (Array.isArray(events[date])) {
+            events[date].forEach(event => {
+                eventList.push({
+                    title: `${event.title} (${event.category})`,
+                    start: date,
+                    allDay: true
+                });
+            });
+        } else {
+            console.warn(`${date}에 해당하는 데이터가 배열이 아닙니다.`, events[date]);
+        }
+    }
+    return eventList;
+}
 
 
 // document.addEventListener('DOMContentLoaded', function() {
