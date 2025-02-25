@@ -67,6 +67,16 @@ export function getUser(username) {
     return user;
 }
 
+// 사용자 목록 조회 함수
+export function getUsers() {
+    const stmt = db.prepare(
+        `SELECT * FROM user;`
+    );
+    const users = stmt.getAsObject();
+    stmt.free();
+    return users;
+}
+
 // 사용자 경험치 업데이트 함수
 export function updateUserXp(username, xp) {
     db.run(
@@ -217,12 +227,14 @@ export function saveDatabase() {
 
 // DB 파일 불러오기 함수
 export async function loadDatabase(event) {
-    const response = await fetch('database.sqlite');
-    const arrayBuffer = await response.arrayBuffer();
-    const data = new Uint8Array(arrayBuffer);
-    const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}` });
-    db = new SQL.Database(data);
+    const file = event.target.files[0];
+    const reader = new FileReader();
 
-    alert("데이터베이스가 불러와졌습니다.");
+    reader.onload = () => {
+        const buffer = reader.result;
+        db = new SQL.Database(new Uint8Array(buffer));
+    };
+
     reader.readAsArrayBuffer(file);
+    alert("데이터베이스가 불러와졌습니다.");
 }

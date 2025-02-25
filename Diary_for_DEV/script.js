@@ -3,7 +3,7 @@
 //       3. 각 객체의 웹페이지와의 상호작용 구현 - 진행중
 //       4. DB 구현 및 연동 - 진행중
 
-import { initDatabase, addUser, getUser, saveDatabase, loadDatabase } from './dbhelper.js';
+import { initDatabase, addUser, getUser, getUsers, saveDatabase, loadDatabase } from './dbhelper.js';
 
 // 현재 유저 객체
 // 하단의 유저 데이터는 DB 구현 및 연동 전까지 사용할 임시 데이터
