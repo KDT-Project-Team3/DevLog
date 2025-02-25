@@ -15,12 +15,30 @@
   <link rel="stylesheet" href="event_style.css">
 </head>
 <body>
-  <div class="container">
+<div class="container">
   <h2 id="event-date"></h2>
   <hr>
   <div class="event">
-    일정 목록
-    <button id="create_btn" class="button">+</button>
+    <h6>TODO-List</h6>
+    <div class="add-form">
+      <input type="text" id="new-title" placeholder="일정 제목">
+      <select id="new-category">
+        <option value="Java">Java</option>
+        <option value="C">C</option>
+        <option value="JavaScript">JavaScript</option>
+        <option value="HTML">HTML</option>
+      </select>
+      <button id="add-btn">+</button>
+      <hr>
+    </div>
+    <div class="to-do-list">
+    <ul id="event-list" class="event-list"></ul>
+    </div>
+    <hr>
+    <div class="done-list">
+      <h6>Done</h6>
+      <ul id="done-list" class="event-list"></ul>
+    </div>
   </div>
 </div>
 <script>
@@ -30,28 +48,172 @@
     return params.get(name);
   }
 
-  // 페이지 로드 시 날짜 표시
-  document.addEventListener('DOMContentLoaded', function() {
-    const selectedDate = getQueryParam('date');
-    if (selectedDate) {
-      document.getElementById('event-date').textContent = `📅 ${selectedDate}`;
+  // 이벤트 목록 렌더링
+  function renderEvents(selectedDate, events) {
+    const eventList = document.getElementById('event-list');
+    const doneList = document.getElementById('done-list');
+    eventList.innerHTML = ''; // 목록 초기화
+    doneList.innerHTML = '';
+
+    if (selectedDate && events[selectedDate] && Array.isArray(events[selectedDate])) {
+      events[selectedDate].forEach((event, index) => {
+        const li = document.createElement('li');
+        li.className = 'event-item';
+
+        if (event.completed) {
+          // 완료된 항목
+          li.innerHTML = `
+                        <span>${event.title} (${event.category})</span>
+<!--                        <input type="checkbox" name="${index}" value="${index}">-->
+                        <button class="complete-btn" data-index="${index}">완료</button>
+                        <button class="edit-btn" data-index="${index}">수정</button>
+                        <button class="delete-btn" data-index="${index}">삭제</button>
+                    `;
+          doneList.appendChild(li);
+        } else {
+          // 미완료 항목
+          li.innerHTML = `
+                         <input type="checkbox" data-index="${index}">
+                         <span>${event.title} (${event.category})</span>
+                         <button class="edit-btn" data-index="${index}">수정</button>
+                         <button class="delete-btn" data-index="${index}">삭제</button>
+                        `;
+          eventList.appendChild(li);
+        }
+      });
     }
-  });
 
+    if (eventList.children.length === 0) {
+      const li = document.createElement('li');
+      li.className = 'no-events';
+      li.textContent = '일정을 추가하세요!';
+      eventList.appendChild(li);
+    }
+    if (doneList.children.length === 0) {
+      const li = document.createElement('li');
+      li.className = 'no-events';
+      li.textContent = '완료된 항목이 없습니다.';
+      doneList.appendChild(li);
+    }
+  }
+
+  // 페이지 로드 시 실행
   document.addEventListener('DOMContentLoaded', function() {
     const selectedDate = getQueryParam('date');
+    const events = JSON.parse(localStorage.getItem('events')) || {};
 
-    // 플러스 버튼 클릭 이벤트
-    document.getElementById('create_btn').addEventListener('click', function() {
-      if (selectedDate) {
-        // 선택한 날짜 정보를 일정 생성 페이지로 전달
-        window.location.href = `create_event.html?date=${selectedDate}`;
-      } else {
-        // 날짜 정보 없을 때 기본 페이지로 이동
-        window.location.href = 'create_event.html';
+    // 날짜 표시
+    document.getElementById('event-date').textContent = selectedDate ? `📅 ${selectedDate}` : '날짜를 선택하세요';
+
+    // 초기 이벤트 렌더링
+    renderEvents(selectedDate, events);
+
+    // 추가 버튼 클릭 이벤트
+    document.getElementById('add-btn').addEventListener('click', function() {
+      const title = document.getElementById('new-title').value.trim();
+      const category = document.getElementById('new-category').value;
+
+      if (title && selectedDate) {
+        if (!events[selectedDate]) events[selectedDate] = [];
+        events[selectedDate].push({ title, category });
+        localStorage.setItem('events', JSON.stringify(events));
+
+        // 부모 창의 캘린더 업데이트 (메인 페이지가 열려있다고 가정)
+        if (window.opener && window.opener.addEventToCalendar) {
+          window.opener.addEventToCalendar(selectedDate, title, category);
+        }
+
+        renderEvents(selectedDate, events);
+        document.getElementById('new-title').value = ''; // 입력 필드 초기화
+      }
+    });
+
+    // 수정 및 삭제 버튼 이벤트 (이벤트 위임 사용)
+    document.querySelector('.event').addEventListener('click', function(e) {
+      const index = e.target.dataset.index;
+      if (index === undefined) return;
+
+      if (e.target.type === 'checkbox') {
+        events[selectedDate][index].completed = e.target.checked;
+        localStorage.setItem('events', JSON.stringify(events));
+        renderEvents(selectedDate, events);
+
+        // 부모 캘린더 업데이트
+        if (window.opener && window.opener.calendar) {
+          window.opener.calendar.refetchEvents();
+        }
+      } else if (e.target.classList.contains('edit-btn')) {
+        // TODO: 수정 창으로 이동 -> 제목, 카테고리 입력
+        const newTitle = prompt('새 제목을 입력하세요:', events[selectedDate][index].title);
+        const newCategory = prompt('새 카테고리를 입력하세요:', events[selectedDate][index].category);
+        if (newTitle && newCategory) {
+          events[selectedDate][index] = { title: newTitle, category: newCategory };
+          localStorage.setItem('events', JSON.stringify(events));
+          renderEvents(selectedDate, events);
+
+          // 부모 창의 캘린더 업데이트
+          if (window.opener && window.opener.calendar) {
+            window.opener.calendar.refetchEvents();
+          }
+        }
+      } else if (e.target.classList.contains('delete-btn')) {
+        if (confirm('정말 삭제하시겠습니까?')) {
+          events[selectedDate].splice(index, 1);
+          if (events[selectedDate].length === 0) delete events[selectedDate];
+          localStorage.setItem('events', JSON.stringify(events));
+          renderEvents(selectedDate, events);
+
+          // 부모 창의 캘린더 업데이트
+          if (window.opener && window.opener.calendar) {
+            window.opener.calendar.refetchEvents();
+          }
+        }
       }
     });
   });
+
+  // 페이지 로드 시 날짜 표시
+  // document.addEventListener('DOMContentLoaded', function() {
+  //   const selectedDate = getQueryParam('date');
+  //   if (selectedDate) {
+  //     document.getElementById('event-date').textContent = `📅 ${selectedDate}`;
+  //   }
+  //
+  //   // 로컬 스토리지에서 이벤트 가져오기
+  //   const events = JSON.parse(localStorage.getItem('events')) || {};
+  //   const eventList = document.getElementById('event-list');
+  //
+  //   // 해당 날짜의 이벤트 표시
+  //   if (events[selectedDate] && Array.isArray(events[selectedDate])) {
+  //     events[selectedDate].forEach(event => {
+  //       const li = document.createElement('li');
+  //       li.className = 'event-item';
+  //       li.textContent = `${event.title} (${event.category})`;
+  //       eventList.appendChild(li);
+  //     });
+  //   }
+  //   // } else {
+  //   //   const li = document.createElement('li');
+  //   //   li.className = 'no-events';
+  //   //   li.textContent = '이 날짜에는 일정이 없습니다.';
+  //   //   eventList.appendChild(li);
+  //   // }
+  // });
+  //
+  // document.addEventListener('DOMContentLoaded', function() {
+  //   const selectedDate = getQueryParam('date');
+  //
+  //   // 플러스 버튼 클릭 이벤트
+  //   document.getElementById('create_btn').addEventListener('click', function() {
+  //     if (selectedDate) {
+  //       // 선택한 날짜 정보를 일정 생성 페이지로 전달
+  //       window.location.href = `create_event.html?date=${selectedDate}`;
+  //     } else {
+  //       // 날짜 정보 없을 때 기본 페이지로 이동
+  //       window.location.href = 'create_event.html';
+  //     }
+  //   });
+  // });
 
 </script>
 </body>

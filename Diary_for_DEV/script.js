@@ -164,6 +164,14 @@ document.addEventListener('DOMContentLoaded', function() {
             start: date,
             allDay: true
         });
+        // 로컬 스토리지에 저장
+        const events = JSON.parse(localStorage.getItem('events')) || {};
+        if (!events[date]) {
+            events[date] = [];
+        }
+        events[date].push({ title, category });
+        localStorage.setItem('events', JSON.stringify(events));
+
         console.log(`✅ 일정 추가 완료: ${date}, ${title}, ${category}`);
     };
 });
