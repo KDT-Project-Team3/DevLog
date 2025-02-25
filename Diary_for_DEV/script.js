@@ -4,6 +4,8 @@
 ///todo 4: 일정 완료시 경험치 반환 -> 나중에
 ///todo 5: 배너 수영 O
 ///todo 6: DDL 작성 수영 O
+
+// 데이터 베이스
 let db; // 데이터베이스 객체
 
 // SQLite 환경 초기화
@@ -167,27 +169,99 @@ function loadEventsFromLocalStorage() {
     return eventList;
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("✅ DOM 로드 완료 - 스크립트 시작");
 
-
-// 캘린더 생성
-document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth', // 월간 뷰
-        events: loadEventsFromLocalStorage(), // 로컬 스토리지에서 이벤트 로드
-        dateClick: function(info) {
-            window.open(`check_event.html?date=${info.dateStr}`, '_blank', 'width=600,height=400');
-        }
-    });
-    calendar.render();
 
-    // window 객체에 함수 추가 (팝업에서 호출 가능하도록)
-    window.addEventToCalendar = function(date, title, category) {
-        calendar.addEvent({
-            title: `${title} (${category})`,
-            start: date,
-            allDay: true
-        });
-        console.log(`✅ 일정 추가 완료: ${date}, ${title}, ${category}`);
-    };
+    if (!calendarEl) {
+        console.error("❌ #calendar 요소를 찾을 수 없음!");
+        return;
+    }
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        height: '700px',
+        expandRows: true,
+        slotMinTime: '08:00',
+        slotMaxTime: '20:00',
+
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        },
+
+        initialView: 'dayGridMonth',
+        initialDate: '2025-02-26',
+        navLinks: true,
+        editable: true,
+        selectable: true,
+        nowIndicator: true,
+        dayMaxEvents: true,
+        locale: 'ko',
+
+        eventAdd: function(obj) {
+            console.log("🟢 이벤트 추가됨:", obj.event);
+        },
+
+        eventChange: function(obj) {
+            console.log("🟡 이벤트 변경됨:", obj.event);
+        },
+
+        eventRemove: function(obj){
+            console.log("🔴 이벤트 삭제됨:", obj.event);
+        },
+
+        select: function(arg) {
+            var title = prompt('이벤트 제목을 입력하세요:');
+            if (title) {
+                calendar.addEvent({
+                    title: title,
+                    start: arg.start,
+                    end: arg.end,
+                    allDay: arg.allDay
+                });
+            }
+            calendar.unselect();
+        },
+
+        events: [
+            { title: 'All Day Event', start: '2025-02-01' },
+            { title: 'Long Event', start: '2025-02-02', end: '2025-02-10' },
+            { groupId: 999, title: 'Repeating Event', start: '2025-02-09T16:00:00' },
+            { title: 'Conference', start: '2025-02-11', end: '2025-02-13' },
+            { title: 'Meeting', start: '2025-02-12T10:30:00', end: '2025-02-12T12:30:00' },
+            { title: 'Lunch', start: '2025-02-12T12:00:00' },
+            { title: 'Meeting', start: '2025-02-12T14:30:00' },
+            { title: 'Dinner', start: '2025-02-12T20:00:00' },
+            { title: 'Birthday Party', start: '2025-02-13T02:00:00' },
+            { title: 'Click for Google', url: 'http://google.com/', start: '2025-02-28' }
+        ]
+    });
+
+    calendar.render();
+    console.log("✅ FullCalendar 렌더링 완료");
 });
+
+// // 캘린더 생성
+// document.addEventListener('DOMContentLoaded', function() {
+//     var calendarEl = document.getElementById('calendar');
+//     var calendar = new FullCalendar.Calendar(calendarEl, {
+//         initialView: 'dayGridMonth', // 월간 뷰
+//         events: loadEventsFromLocalStorage(), // 로컬 스토리지에서 이벤트 로드
+//         dateClick: function(info) {
+//             window.open(`check_event.html?date=${info.dateStr}`, '_blank', 'width=600,height=400');
+//         }
+//     });
+//     calendar.render();
+//
+//     // window 객체에 함수 추가 (팝업에서 호출 가능하도록)
+//     window.addEventToCalendar = function(date, title, category) {
+//         calendar.addEvent({
+//             title: `${title} (${category})`,
+//             start: date,
+//             allDay: true
+//         });
+//         console.log(`✅ 일정 추가 완료: ${date}, ${title}, ${category}`);
+//     };
+// });
