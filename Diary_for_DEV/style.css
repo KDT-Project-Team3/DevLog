@@ -110,11 +110,11 @@ body {
     white-space: nowrap;
 }
 
-/*:root {*/
-/*    --fc-small-font-size: .85em;*/
-/*    --fc-page-bg-color: #fff;*/
-/*    --fc-neutral-bg-color: rgba(208, 208, 208, 0.3);*/
-/*    --fc-neutral-text-color: #808080;*/
+:root {
+    --fc-small-font-size: .85em;
+    /*--fc-page-bg-color: #;*/
+    --fc-neutral-bg-color: orange;
+    --fc-neutral-text-color: #red;
 /*    --fc-border-color: #ddd;*/
 
 /*    --fc-button-text-color: #fff;*/
@@ -143,4 +143,4 @@ body {
 /*    --fc-highlight-color: rgba(188, 232, 241, 0.3);*/
 /*    --fc-today-bg-color: rgba(255, 220, 40, 0.15);*/
 /*    --fc-now-indicator-color: red;*/
-/*}*/
+}
