@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const profileLayout = document.querySelector(".profileLayout");
     const achievement = document.querySelector(".achievement");
     const achiveDiv = document.querySelector(".achievement div");
+    const medal = document.querySelector(".medal");
 
     // 초기 상태: profileInner 숨기기
     profileInner.classList.add("profileInvisible");
