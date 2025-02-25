@@ -16,40 +16,46 @@ async function initDatabase() {
     db = new SQL.Database(); // 새 SQLite DB 생성
 
     db.run(`
-        CREATE TABLE user (
-            user_id   INTEGER PRIMARY KEY AUTOINCREMENT,
-            username  TEXT UNIQUE NOT NULL COLLATE NOCASE,
-            email     TEXT UNIQUE NOT NULL,
-            password  CHAR(60) NOT NULL,
-            lv        INTEGER NOT NULL DEFAULT 1,
-            xp        INTEGER NOT NULL DEFAULT 0,
-            img       TEXT DEFAULT 'default_profile.png'
+        CREATE TABLE user
+        (                                                                              -- 사용자 user 테이블
+            user_id  INTEGER PRIMARY KEY AUTOINCREMENT,                                -- 자동 증가하는 사용자 ID (기본 키)
+            username TEXT UNIQUE NOT NULL COLLATE NOCASE,                              -- 사용자 이름 (대소문자 구별 없이 고유 값)
+            email    TEXT UNIQUE NOT NULL,                                             -- 사용자 이메일 (고유 값, 중복 방지)
+            password CHAR(60)    NOT NULL,                                             -- 해싱된 비밀번호 (보안상 암호화된 형태로 저장)
+            lv       INTEGER     NOT NULL DEFAULT 1,                                   -- 사용자 레벨 (기본값 1)
+            xp       INTEGER     NOT NULL DEFAULT 0,                                   -- 경험치 포인트 (기본값 0)
+            img      TEXT                 DEFAULT 'default_profile.png'                -- 프로필 이미지 (기본 이미지 설정)
         );
 
-        CREATE TABLE diary_events (
-            event_id    INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id     INTEGER NOT NULL,
-            title       TEXT NOT NULL DEFAULT '',
-            com_lang    TEXT NOT NULL,
-            xp          INTEGER NOT NULL,
-            description TEXT DEFAULT '',
-            event_date  TEXT NOT NULL CHECK (event_date GLOB '????-??-??'),
-            FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
+        CREATE TABLE diary_events
+        (                                                                              -- 일정(다이어리) 테이블 (diary_events)
+            event_id    INTEGER PRIMARY KEY AUTOINCREMENT,                             -- 자동 증가하는 일정 ID (기본 키)
+            user_id     INTEGER NOT NULL,                                              -- 해당 일정을 등록한 사용자 ID (user 테이블 참조)
+            title       TEXT    NOT NULL DEFAULT '',                                   -- 일정 제목 (기본값은 빈 문자열)
+            com_lang    TEXT    NOT NULL,                                              -- 해당 일정에서 사용하는 언어
+            xp          INTEGER NOT NULL,                                              -- 경험치 (이벤트 완료 시 획득 가능)
+            description TEXT             DEFAULT '',                                   -- 일정 설명 (기본값은 빈 문자열)
+            event_date  TEXT    NOT NULL CHECK (event_date GLOB '????-??-??'),         -- 일정 날짜 (YYYY-MM-DD 형식 강제)
+            FOREIGN KEY (user_id) REFERENCES user (user_id) ON DELETE CASCADE          -- 사용자가 삭제되면 해당 일정도 삭제됨
         );
 
-        CREATE TABLE achievement (
-            id      INTEGER PRIMARY KEY AUTOINCREMENT,
-            name    TEXT NOT NULL,
-            flavor  TEXT NOT NULL CHECK (LENGTH(flavor) <= 255),
-            img     TEXT
+
+        CREATE TABLE achievement
+(                                                                                      -- 업적(achievement) 테이블
+            id     INTEGER PRIMARY KEY AUTOINCREMENT,                                  -- 자동 증가하는 업적 ID (기본 키)
+            name   TEXT NOT NULL,                                                      -- 업적 이름
+            flavor TEXT NOT NULL CHECK (LENGTH(flavor) <= 255),                        -- 업적 설명 또는 플레이버 텍스트 (최대 255자 제한)
+            img    TEXT                                                                -- 업적 이미지 (업적을 나타내는 아이콘 등)
         );
 
-        CREATE TABLE user_achievement (
-            user_id        INTEGER NOT NULL,
-            achievement_id INTEGER NOT NULL,
-            PRIMARY KEY (user_id, achievement_id),
-            FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
-            FOREIGN KEY (achievement_id) REFERENCES achievement(id) ON DELETE CASCADE
+
+        CREATE TABLE user_achievement
+        (                                                                              -- 사용자 업적 매핑 테이블 (user_achievement)
+            user_id        INTEGER NOT NULL,                                           -- 업적을 획득한 사용자 ID
+            achievement_id INTEGER NOT NULL,                                           -- 획득한 업적 ID
+            PRIMARY KEY (user_id, achievement_id),                                     -- 사용자 ID와 업적 ID 조합이 기본 키 (동일 업적 중복 획득 방지)
+            FOREIGN KEY (user_id) REFERENCES user (user_id) ON DELETE CASCADE,         -- 사용자가 삭제되면 관련 업적 기록도 삭제됨
+            FOREIGN KEY (achievement_id) REFERENCES achievement (id) ON DELETE CASCADE -- 업적이 삭제되면 관련 사용자 기록도 삭제됨
         );
     `);
 
