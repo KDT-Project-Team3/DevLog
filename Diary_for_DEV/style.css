@@ -127,6 +127,14 @@ body {
 
 /*=============프로필 요소들===============*/
 
+.menu_button {
+    align-self: end;
+    width: 30px;
+    height: 30px;
+    padding: 8px 8px;
+    margin-right: 25px;
+}
+
 /*아이디, 칭호 레벨 (메뉴 : 접혔을때)*/
 .userInfoLayout {
     color: white;

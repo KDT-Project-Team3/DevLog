@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
     dropdownItems.forEach(item => {
         item.addEventListener("click", function () {
             const selectedText = this.textContent;
-            selectedTitle.textContent = selectedText;// 버튼 안의 텍스트만 변경
+            selectedTitle.textContent = selectedText;// 칭호 텍스트 변경
         });
     });
 });
