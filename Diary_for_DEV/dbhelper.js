@@ -202,3 +202,32 @@ export function deleteUserAchievement(user_id) {
         [user_id]
     );
 }
+
+// DB 파일 저장 함수
+export function saveDatabase() {
+    const data = db.export();
+    const blob = new Blob([data], { type: "application/octet-stream" });
+    const link = document.createElement("a");
+
+    link.href = URL.createObjectURL(blob);
+    link.download = "database.sqlite";
+    link.click();
+    alert("데이터베이스가 저장되었습니다.");
+}
+
+// DB 파일 불러오기 함수
+export async function loadDatabase(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        const data = new Uint8Array(e.target.result);
+        const SQL = await initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}` });
+        db = new SQL.Database(data);
+
+        alert("데이터베이스가 불러와졌습니다.");
+        displayUsers();
+    };
+    reader.readAsArrayBuffer(file);
+}
