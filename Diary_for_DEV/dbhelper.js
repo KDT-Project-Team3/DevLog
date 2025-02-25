@@ -47,7 +47,49 @@ async function initDatabase() {
     );
 }
 
-//
+// 사용자 추가 함수
+function addUser(username, email, password) {
+    // 비밀번호 해싱은 회원가입 로직에서 진행?
+    db.run(
+        `INSERT INTO user (username, email, password) VALUES (?, ?, ?);`,
+        [username, email, password]
+    );
+}
+
+// 사용자 조회 함수
+function getUser(username) {
+    const stmt = db.prepare(
+        `SELECT * FROM user WHERE username = ?;`
+    );
+    stmt.bind(username);
+    const user = stmt.getAsObject();
+    stmt.free();
+    return user;
+}
+
+// 사용자 경험치 업데이트 함수
+function updateUserXp(username, xp) {
+    db.run(
+        `UPDATE user SET xp = ? WHERE username = ?;`,
+        [xp, username]
+    );
+}
+
+// 사용자 레벨 업데이트 함수
+function updateUserLv(username, lv) {
+    db.run(
+        `UPDATE user SET lv = ? WHERE username = ?;`,
+        [lv, username]
+    );
+}
+
+// 사용자 삭제 함수
+function deleteUser(username) {
+    db.run(
+        `DELETE FROM user WHERE username = ?;`,
+        [username]
+    );
+}
 
 // 페이지 로딩 시 DB 초기화
 window.onload = initDatabase;
