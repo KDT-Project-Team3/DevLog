@@ -79,6 +79,8 @@ document.addEventListener("DOMContentLoaded", function () {
         "🏷️ 태그는 중요해!"
     ];
 
+    let currentIndex = 0; // currentIndex 선언 (초기값 0)
+
 
     function changeBannerText() {
         bannerText.textContent = messages[currentIndex]; // 텍스트 변경
