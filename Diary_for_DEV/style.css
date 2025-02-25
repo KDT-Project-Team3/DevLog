@@ -137,7 +137,8 @@ body {
     display: flex;
     justify-content: left;
     align-items: start;
-    margin-top: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     position: relative;
     flex-direction: row;
     overflow-x: auto;
@@ -231,23 +232,29 @@ body {
 /*todo : height 상대단위 수정 필요(화면별로 비율 달라짐)*/
 .achievement {
     width: 100%;
-    height: 43%;
+    height: 50%;
     background: #f5f5f5;
     display: flex;
     position: relative;
     flex-direction: column;
     overflow: auto;
-    top: 7%;
+    top: 2%;
     border-radius: 5px;
 }
+.achievement::-webkit-scrollbar {
+    display: none;
+}
 
+/*todo : 첫번째 컨텐츠 width 반응속도 이상함*/
 .achievement div{
-    width: 96%;
-    height: 100%;
+    /*width: 96%;*/
+    height: 30%;
     position: relative;
     display: flex;
+    flex-direction: row;
     border: 3px solid black;
     align-items: center;
+    justify-content: start;
     border-radius: 10px;
     margin: 10px;
     opacity: 0.5;
@@ -264,4 +271,14 @@ body {
     border-radius: 50%;
     background: white;
     /*background-image: url("");*/
+}
+
+.achievement h2 {
+    margin: 9px;
+    margin-bottom: 0;
+}
+.achievement .content p {
+    width: 100%;
+    margin-bottom: 5px;
+    color: black;
 }
