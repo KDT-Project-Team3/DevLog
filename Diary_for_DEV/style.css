@@ -50,7 +50,7 @@ body {
 
 /*===========프로필 메뉴================*/
 .sidebar {
-    /*todo : 프로필 체스트 후 300px 로 변경하기*/
+    /*todo : 프로필 테스트 후 300px 로 변경하기*/
     width: 300px;
     background: black;
     padding: 20px;
@@ -70,12 +70,17 @@ body {
     align-items: center;
     /*justify-content: center;*/
     width: 100%;
+    height: 20%;
     flex-wrap: wrap;
     display: flex;
     margin: 47px;
     margin-bottom: 20px;
     transition: ease 0.3s;
     left: 30%;
+}
+.sidebar>.profile {
+    align-items: start;
+    align-content: start;
 }
 
 /*사이드바 접혔을때 프로필 정보 가리는 클래스 (토글)*/
@@ -102,6 +107,7 @@ body {
     display: flex;
 }
 
+/*todo : 프로필이미지 반응형으로 구현*/
 .profileImg {
     width: 160px;
     height: 160px;
@@ -131,15 +137,16 @@ body {
 
 
 /*메달 요소 담긴 부모 요소*/
-/*todo : scale로 hover일때 크기 키우기*/
+/*todo: 브라우저 비율 테스트
+        접혀있을때 레이아웃 사라지게*/
 .medalBox {
-    height: 20%;
-    width: 560px;
+    height: 2%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
-    margin-bottom: 15px;
+    margin-top: 5px;
+    margin-bottom: 10px;
     position: relative;
     flex-direction: row;
     overflow-x: auto;
@@ -198,12 +205,7 @@ body {
     margin-left: 20px;
 }
 
-.UserTitle {
-    font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    margin-left: 20px;
-}
+
 
 /*==============경험치=============*/
 .exp {
@@ -224,13 +226,20 @@ body {
     background: linear-gradient(to right, #e4b61b, #8bc34a); /* 색상 그라데이션 */
     text-align: center;
     /*color: white;*/
-    font: bold 100%/1.5 "Lucida Grande", Helvetica, Arial, sans-serif;
+    font: bold 100%/1 "Lucida Grande", Helvetica, Arial, sans-serif;
     transition: width 0.5s ease-in-out;
 }
 
 /*=========유저 정보(아이디, 창호, 레벨)==========*/
-.UserTitle {
-    background: white;
+.userTitle {
+    font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    width: 20px;
+    height: 10px;
+    color: white;
+    background-color: black;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 20px;
 }
 
 .userInfoLayout {
@@ -241,31 +250,29 @@ body {
 /*todo : height 상대단위 수정 필요(화면별로 비율 달라짐)*/
 .achievement {
     width: 100%;
-    height: 50%;
+    height: 72vh;
     background: #f5f5f5;
     display: flex;
     position: relative;
     flex-direction: column;
-    overflow: auto;
-    top: 2%;
+    overflow-y: auto;
+    top: 0.5em;
     border-radius: 5px;
 }
 .achievement::-webkit-scrollbar {
     display: none;
 }
 
-/*todo : 첫번째 컨텐츠 width 반응속도 이상함*/
 .achievement div{
-    /*width: 96%;*/
-    height: 30%;
+    height: 1500px;
     position: relative;
-    display: flex;
+    display: inline-flex;
     flex-direction: row;
     border: 3px solid black;
     align-items: center;
     justify-content: start;
     border-radius: 10px;
-    margin: 10px;
+    margin: 5px;
     opacity: 0.5;
     transition: ease 0.2s;
 }
@@ -279,15 +286,28 @@ body {
     height: 50px;
     border-radius: 50%;
     background: white;
+    flex-shrink: 0;
     /*background-image: url("");*/
+}
+
+.achievement .content {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    align-items: center ;
 }
 
 .achievement h2 {
     margin: 9px;
-    margin-bottom: 0;
+    width: 100%;
+    font: bold 1.9em "Lucida Grande", Helvetica, Arial, sans-serif;
 }
+
+/*todo: 접히면 안보이게 구현*/
 .achievement .content p {
     width: 100%;
-    margin-bottom: 5px;
     color: black;
+    transition: ease 0.3s;
+    /*opacity: 0;*/
 }

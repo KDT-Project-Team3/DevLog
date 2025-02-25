@@ -22,8 +22,7 @@
     <script defer src="script.js"></script>
 </head>
 
-<!-- TODO : 업적 횡스크롤 기능
-            업적 height 상대단위 수정 필요(화면별로 비율 달라짐)-->
+<!-- TODO : 업적 height 상대단위 수정 필요(화면별로 비율 달라짐)-->
 
 <body>
 <div class="container">
@@ -38,7 +37,9 @@
 
   <aside class="sidebar">
     <div class="profileLayout">
-      <div class="profileImg">프로필 이미지</div>
+      <div class="profileImg">프로필 이미지
+
+      </div>
         <div class="profileInner">
 
           <div class="profile">
@@ -46,7 +47,17 @@
               <h1>LV : </h1>
             </div>
             <p class="id">아이디</p>
-            <div class="UserTitle">칭호</div>
+            <span id="selectedTitle" class="userTitle text-white fw-bold">칭호</span>
+            <div class="dropdown d-inline">
+              <button class="btn btn-dark btn-sm dropdown-toggle" type="button" id="titleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <span id="dropdownText">칭호 </span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">칭호1</a></li>
+                <li><a class="dropdown-item" href="#">칭호2</a></li>
+                <li><a class="dropdown-item" href="#">칭호3</a></li>
+              </ul>
+            </div>
           </div>
 
         </div>
@@ -60,8 +71,8 @@
       </div>
     </div>
 
-<!--   todo : 이전, 다음레벨 표시 추가 -->
     <div class="exp">
+      <h4 style="color: white">lv.1</h4>
       <div class="exp-bar-container">
         <div class="exp-bar">70%</div>
       </div>
@@ -92,7 +103,7 @@
         <div class="achivImg"></div>
         <content class="content">
           <h2>업적 1</h2>
-          <p>무슨무슨 업적</p>
+          <p>무슨무슨업적</p>
         </content>
       </div>
 
@@ -127,6 +138,7 @@
           <p></p>
         </content>
       </div>
+
     </div>
   </aside>
 
