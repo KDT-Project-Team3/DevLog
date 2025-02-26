@@ -6,43 +6,41 @@ let SQL;
 const currentUser = {
     name: 'suyeong',
     email: 'suyeong@example.com',
-    password: 'pass123',
     lv: 2,
     xp: 50,
     img: 'suyeong.png',
-    lvUp: function (){
+    lvUp: function () {
         this.xp -= (this.lv - 1) * 100 + 50;
         this.lv++;
-        console.log(`🎉 레벨 업! ${this.lv}레벨 달성!`);
     },
-    xpUp: function (xp){
+    xpUp: function (xp) {
         this.xp += xp;
-        console.log(`🎉 경험치 ${xp} 획득!`);
-        if(this.xp >= (this.lv - 1) * 100 + 50) {
+        if (this.xp >= this.lv * 100 + 50) {
             this.lvUp();
         }
     }
-}
+};
 
 // 업적 목록
-// 업적 달성 기능 구현 이후 db에서 데이터 불러오도록 수정할 것
-const userAchievements = [
+// 업적 달성 확인 함수 테스트 후 db에서 데이터를 가져오도록 변경 예정
+const achievements = [
     {
-        id: 1, name: 'HTML 마스터',
-        flavor: { category: 'HTML', count: '1' },
-        img: 'medal1.png'
+        name: 'JavaScript 마스터',
+        flavor: 'JavaScript 1개 달성',
+        img: 'js.png',
+        isChecked: true
     },
     {
-        id: 2,
-        name: 'CSS 마스터',
-        flavor: { category: 'CSS', count: '2' },
-        img: 'medal2.png'
+        name: 'Python 마스터',
+        flavor: 'Python 2개 달성',
+        img: 'python.png',
+        isChecked: false
     },
     {
-        id: 3,
-        name: 'JS 마스터',
-        flavor: { category: 'JS', count: '2' },
-        img: 'medal3.png'
+        name: 'HTML/CSS 연습',
+        flavor: 'HTML 2개 달성',
+        img: 'htmlcss.png',
+        isChecked: false
     }
 ];
 
@@ -59,41 +57,46 @@ function loadDatabase() {
         db = new SQL.Database();
         console.log("🔹 새로운 데이터베이스 생성!");
         // 테이블 생성
-        db.run(
-            `CREATE TABLE user ( -- 사용자 테이블
-                user_id   INTEGER PRIMARY KEY AUTOINCREMENT, -- 사용자 ID (고유 값)
-                username  TEXT UNIQUE NOT NULL COLLATE NOCASE, -- 사용자 이름 (대소문자 구별 없이 UNIQUE)
-                email     TEXT UNIQUE NOT NULL, -- 사용자 이메일 (중복 방지)
-                password  CHAR(60) NOT NULL, -- 해싱된 비밀번호
-                lv        INTEGER NOT NULL DEFAULT 1, -- 사용자 레벨
-                xp        INTEGER NOT NULL DEFAULT 0, -- 사용자 경험치 (exp → xp로 통일)
-                img       TEXT DEFAULT 'default_profile.png' -- 기본 프로필 이미지
-             );
-                CREATE TABLE diary_events ( -- 일정 테이블
-                event_id    INTEGER PRIMARY KEY AUTOINCREMENT, -- 일정 ID (고유 값)
-                user_id     INTEGER NOT NULL, -- 사용자 ID (FK)
-                title       TEXT NOT NULL DEFAULT '', -- 일정 제목 (기본값 '')
-                com_lang    TEXT NOT NULL, -- 사용 언어
-                xp          INTEGER NOT NULL, -- 경험치 (exp → xp로 통일)
-                description TEXT DEFAULT '', -- 일정 내용 (기본값 '')
-                event_date  TEXT NOT NULL CHECK (event_date GLOB '????-??-??'), -- 일정 날짜 (YYYY-MM-DD 형식 강제)
-    
-                FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
+        db.run(`
+            CREATE TABLE IF NOT EXISTS user (
+                user_id  INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE NOT NULL COLLATE NOCASE,
+                email    TEXT UNIQUE NOT NULL,
+                password CHAR(60) NOT NULL,
+                lv       INTEGER NOT NULL DEFAULT 1,
+                xp       INTEGER NOT NULL DEFAULT 0,
+                img      TEXT DEFAULT 'default_profile.png'
             );
-            CREATE TABLE achievement ( -- 업적 테이블
-                id      INTEGER PRIMARY KEY AUTOINCREMENT, -- 업적 고유번호
-                name    TEXT NOT NULL, -- 업적 이름
-                flavor  TEXT NOT NULL CHECK (LENGTH(flavor) <= 255), -- 플레이버 텍스트 (길이 제한 가능)
-                img     TEXT -- 업적 이미지
+        `);
+        db.run(`
+            CREATE TABLE IF NOT EXISTS diary_events (
+                event_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id     INTEGER NOT NULL,
+                title       TEXT NOT NULL DEFAULT '',
+                com_lang    TEXT NOT NULL,
+                xp          INTEGER NOT NULL,
+                description TEXT DEFAULT '',
+                event_date  TEXT NOT NULL CHECK (event_date GLOB '????-??-??'),
+                FOREIGN KEY (user_id) REFERENCES user (user_id) ON DELETE CASCADE
             );
-            CREATE TABLE user_achievement ( -- 사용자-업적 테이블
-                user_id        INTEGER NOT NULL, -- 사용자 고유번호
-                achievement_id INTEGER NOT NULL, -- 업적 고유번호
-                PRIMARY KEY (user_id, achievement_id),
-                FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE, -- 유저 삭제 시 함께 삭제
-                FOREIGN KEY (achievement_id) REFERENCES achievement(id) ON DELETE CASCADE -- 업적 삭제 시 함께 삭제
-            );`
-        );
+        `);
+        db.run(`
+            CREATE TABLE IF NOT EXISTS achievement (
+                id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                name      TEXT NOT NULL,
+                flavor    TEXT NOT NULL CHECK (LENGTH(flavor) <= 255),
+                img      TEXT
+            );
+        `);
+        db.run(`
+            CREATE TABLE IF NOT EXISTS user_achievement (
+                user_id    INTEGER NOT NULL,
+                achievement_id INTEGER NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES user (user_id) ON DELETE CASCADE,
+                FOREIGN KEY (achievement_id) REFERENCES achievement (id) ON DELETE CASCADE,
+                PRIMARY KEY (user_id, achievement_id)
+            );
+        `);
         insertDummyData(); // 더미 데이터 삽입
     }
     isDbInitialized = true;
@@ -109,23 +112,20 @@ function insertDummyData() {
             ('joon', 'joon@example.com', 'test789', 1, 10, 'default_profile.png');
     `);
 
-    // 일정 더미 데이터 (diary_events 테이블)
+    // 기타 더미 데이터 (diary_events 테이블)
     db.run(`
-        INSERT INTO diary_events (user_id, title, com_lang, xp, description, event_date) cast(VALUES
+        INSERT INTO diary_events (user_id, title, com_lang, xp, description, event_date) VALUES
             (1, 'JavaScript 배우기', 'JavaScript', 30, '기본 문법 공부 완료', '2025-03-01'),
             (2, 'Python 프로젝트', 'Python', 50, '간단한 웹 앱 제작', '2025-03-02'),
             (3, 'HTML/CSS 연습', 'HTML', 20, '반응형 디자인 연습', '2025-03-03'),
-            (1, 'Python 프로젝트', 'Python', 50, '간단한 웹 앱 제작', '2025-03-02'),
-            (1, 'HTML/CSS 연습', 'HTML', 20, '반응형 디자인 연습', '2025-03-03')
-        );
+            (1, 'Python 프로젝트', 'Python', 50, '데이터 분석 프로젝트', '2025-03-04'),
+            (1, 'HTML/CSS 연습', 'HTML', 20, '포트폴리오 제작', '2025-03-05');
     `);
-
-    // 업적 더미 데이터 (achievement 테이블)
     db.run(`
         INSERT INTO achievement (name, flavor, img) VALUES
-            ('HTML 마스터', '{"category":"HTML","count":"1"}', 'medal1.png'),
-            ('CSS 마스터', '{"category":"CSS","count":"2"}', 'medal2.png'),
-            ('JS 마스터', '{"category":"JS","count":"2"}', 'medal3.png');
+            ('JavaScript 마스터', '{"category":"JavaScript","count":"1"}', 'js.png'),
+            ('Python 마스터', '{"category":"Python","count":"2"}', 'python.png'),
+            ('HTML/CSS 연습', '{"category":"HTML","count":"2"}', 'htmlcss.png');
     `);
     console.log("✅ 더미 데이터 삽입 완료!");
 }
@@ -207,13 +207,13 @@ function login() {
     let stmt = db.prepare("SELECT * FROM user WHERE email = ? AND password = ?");
     stmt.bind([email, password]);
     if (stmt.step()) {
-        let user = stmt.getAsObject();
+        let user = stmt.getAsObject(); // 로그인한 사용자 정보 전달
         currentUser.name = user.username;
         currentUser.email = user.email;
-        currentUser.password = user.password;
         currentUser.lv = user.lv;
         currentUser.xp = user.xp;
         currentUser.img = user.img;
+
         alert('✅ 로그인 성공!');
         window.location.href = 'index.html';
     } else {
