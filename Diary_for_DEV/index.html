@@ -17,25 +17,29 @@
 
   <!-- 리셋 스타일시트-->
   <link src="reset.css" type = "text/css" rel="stylesheet" />
+  <!-- 아이콘-->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=menu" />
 
-  <!-- 커스텀 스타일시트 -->
+<!-- 커스텀 스타일시트 -->
   <link rel="stylesheet" href="style.css">
-    <script defer src="script.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/locales-all.min.js"></script>
+</head>
+<!-- TODO : 업적 height 상대단위 수정 필요(화면별로 비율 달라짐)-->
 
-<!-- 아이콘-->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=menu" /></head>
+
 
 <!-- TODO : 업적 height 상대단위 수정 필요(화면별로 비율 달라짐)-->
 
 <body>
 <div class="container">
   <div class="main-column">
-    <header class="banner">
-      <h1>배너(개발자 명언)</h1>
-    </header>
-    <main class="calendar">
-      <h2>캘린더</h2>
-    </main>
+    <header class="banner">🌎Hello, World</header>
+    <div id="calendar-container">
+      <div id="calendar"></div>
+    </div>
   </div>
 
   <aside class="sidebar">
@@ -164,5 +168,26 @@
 
 
 </div>
+
+<!-- 모달 창 -->
+<div id="eventModal" class="modal">
+  <div class="modal-content">
+    <span class="close">×</span>
+    <h2>일정 관리</h2>
+    <form id="eventForm">
+      <input type="text" id="eventTitle" placeholder="일정 제목">
+      <select id="eventCategory">
+        <option value="Java">Java</option>
+        <option value="C">C</option>
+        <option value="JavaScript">JavaScript</option>
+        <option value="HTML">HTML</option>
+      </select>
+      <textarea id="eventMemo" placeholder="메모"></textarea>
+      <button type="submit" id="saveEvent">저장</button>
+      <button type="button" id="deleteEvent" style="display:none;">삭제</button>
+    </form>
+  </div>
+</div>
+<script defer src="script.js"></script>
 </body>
 </html>
