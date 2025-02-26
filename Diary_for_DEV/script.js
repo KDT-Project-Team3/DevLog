@@ -91,6 +91,8 @@ async function initDatabase() {
         );
     `);
     console.log("Database initialized successfully.");
+    isDbInitialized = true;
+    insertDummyData();
 }
 initDatabase().catch(error => console.error("Database Initialization Error:", error));
 
@@ -385,7 +387,6 @@ function signup() {
 
     console.log("🔍 삽입할 데이터:", { username, email, password });
     db.run("INSERT INTO user (username, email, password) VALUES (?, ?, ?)", [username, email, password]);
-    saveDatabase();
     alert('✅ 회원가입 성공! 로그인 해주세요.');
     showLogin();
     showUsers();
