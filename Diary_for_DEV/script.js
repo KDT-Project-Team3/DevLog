@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
         userInfoLayout.classList.add("profileInvisible");
 
         //프로필 비율
+        profileLayout.style.marginTop = "0";
         profileLayout.style.marginBottom = "0";
         // profileLayout.style.height = "20%";
         profileImg.style.width = "140px";
@@ -41,7 +42,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         content_title.forEach(title => {
             title.style.fontSize = "1.6em";
-            // title.style.width = "100px";
+            title.style.marginLeft = "1em";
+            title.style.width = "150px";
         });
     });
 
