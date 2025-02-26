@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>로그인 & 회원가입</title>
   <link rel="stylesheet" href="login.css">
-  <script src="script.js"></script>
 </head>
 <body>
 <div class="container" id="signup-container">
@@ -24,5 +23,9 @@
   <button onclick="login()">로그인</button>
   <a href="#" onclick="showSignup()">회원가입 하기</a>
 </div>
+
+<!-- 분리된 auth.js 로드 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.min.js"></script>
+<script src="auth.js"></script>
 </body>
 </html>
