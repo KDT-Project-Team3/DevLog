@@ -1,5 +1,7 @@
 // 페이지가 로드될 때 실행되는 이벤트 리스너
 document.addEventListener("DOMContentLoaded", function () {
+    console.log("✅ DOMContentLoaded 실행됨");
+
     const banner = document.querySelector(".banner");
     const messages = [
         "🚀 코드 한 줄이 세상을 바꾼다!",
@@ -219,6 +221,12 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedTitle.textContent = this.textContent;
         });
     });
+
+    // 메뉴 내부 요소(미니게임)
+    const minigame = document.querySelector(".mini_game");
+    minigame.addEventListener("click", function () {
+        window.open("game/game.html");
+    });
 });
 
 // 로컬 스토리지에서 이벤트 불러오기
@@ -249,3 +257,4 @@ function loadEventsFromLocalStorage() {
     }
     return eventList;
 }
+

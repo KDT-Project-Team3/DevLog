@@ -1,6 +1,6 @@
-/*todo : 업적 칸 비율 조절
-         메달 hover 효과 수정
-         드랍다운 메뉴 수정*/
+/*todo : 메뉴 에 게임추가
+         스타일 추가
+         메뉴 열었다가 닫으면 프로필 레이아웃 겹쳐짐(조견을 비율로 설정해야할듯)*/
 
 * {
     margin: 0;
@@ -62,7 +62,7 @@ body, html {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/*===========프로필 메뉴================*/
+/*===========사이드 바================*/
 .sidebar {
     /*todo : 프로필 테스트 후 300px 로 변경하기*/
     width: 300px;
@@ -81,30 +81,89 @@ body, html {
     width: 600px;
 }
 
-
+/* =========== 메뉴 버튼 =========== */
 .menuBtn {
     margin: 0;
     width: 50px;
     height: 40px;
     background: black;
-    /*border: 2px solid #c1c1c1;*/
+    border: 2px solid #c1c1c1;
     color: white;
     align-self: end;
     align-items: center;
     align-content: center;
 }
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 40;
+}
 
+/* ============= 메뉴 ============== */
+.offcanvas-header {
+    padding: 0;
+    height: 52px;
+    background: #e19229;
+}
 
- .material-symbols-outlined {
-     font-variation-settings:
-             'FILL' 0,
-             'wght' 400,
-             'GRAD' 0,
-             'opsz' 40;
- }
+.offcanvas-header .btn-close {
+    margin-left: 65%;
+}
 
+.offcanvas-header h5 {
+    font: bold 30px/1.5 "Poppins", sans-serif;
+    margin-left : 10px;
+}
 
-.sidebar>.profileLayout {
+.btn-close {
+    margin: 0;
+}
+
+.offcanvas-body {
+    background: linear-gradient(to right, #bc6c25, #bc6c25, #dda15e);
+    color: white;
+    margin: 0;
+    padding: 0;
+    align-items: flex-start;
+    align-content: start;
+}
+
+/* todo : 텍스트 왼쪽에 20px 공간 띄우기*/
+.offcanvas-body p {
+    color: white;
+    font: bold 50px/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    height: 50px;
+    margin: 0;
+    text-decoration: none;
+    align-content: center;
+    transition: ease 0.3s;
+    opacity: 0.7;
+    cursor: pointer;
+}
+.offcanvas-body p:hover {
+    opacity: 1;
+    padding-left: 20px;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.63), rgba(0, 0, 0, 0.14));
+}
+
+.offcanvas-footer {
+    padding: 0;
+    margin:0;
+    height: 70px;
+    background-color: white;
+}
+
+.offcanvas-footer h5 {
+    padding: 0;
+    margin-left: 0;
+    margin-right: 20px;
+    height: 50px;
+}
+
+/* ================================= */
+
+.sidebar > .profileLayout {
     align-items: center;
     width: 100%;
     height: 20%;
@@ -116,7 +175,8 @@ body, html {
     transition: ease 0.3s;
     left: 30%;
 }
-.sidebar>.profile {
+
+.sidebar > .profile {
     align-items: start;
     align-content: start;
 }
@@ -125,6 +185,7 @@ body, html {
 .profileInvisible {
     opacity: 0;
 }
+
 .profileInner {
     transition: ease 0.3s;
     display: flex;
@@ -132,15 +193,17 @@ body, html {
     align-items: center;
     font-size: 25px;
 }
+
 .exp {
     transition: ease 0.3s;
 }
+
 .medalBox {
     transition: ease 0.3s;
 }
 
 
-.sidebar>.profile {
+.sidebar > .profile {
     width: 200px;
     flex-direction: column;
     display: flex;
@@ -154,8 +217,10 @@ body, html {
     /*하얀배경은 이미지 넣고 지우기*/
     background: white;
     margin-bottom: 10px;
-    cursor: pointer;/* 클릭 가능하도록 커서 변경 */
-    /*background-image: url("");*/
+    cursor: pointer; /* 클릭 가능하도록 커서 변경 */
+    background-image: url("./Image/ProfileCharacter.jpg");
+    background-position: center;
+    background-size: cover;
     transition: ease 0.3s;
 
 }
@@ -174,7 +239,7 @@ body, html {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     animation: fadeIn 0.3s;
 }
 
@@ -183,7 +248,7 @@ body, html {
     margin: 15% auto;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 80%;
     max-width: 500px;
     animation: slideIn 0.3s;
@@ -207,6 +272,7 @@ input[type="text"], select, textarea {
     border: 1px solid #ddd;
     border-radius: 5px;
 }
+
 /*=============프로필 요소들===============*/
 
 .menu_button {
@@ -244,6 +310,7 @@ input[type="text"], select, textarea {
     overflow-x: auto;
     white-space: nowrap; /* 한 줄 유지 */
 }
+
 /*스크롤바 얇게 (크롬)*/
 .medalBox::-webkit-scrollbar {
     height: 6px;
@@ -260,6 +327,7 @@ input[type="text"], select, textarea {
     transition: ease 0.3s;
     opacity: 0.5;
 }
+
 .medal:hover {
     opacity: 1;
     scale: 120%;
@@ -273,9 +341,11 @@ input[type="text"], select, textarea {
     /*자바*/
     /*background-image: url("");*/
 }
+
 .medal:nth-child(2) {
     /*background-image: url("");*/
 }
+
 .medal:last-child {
     /*background-image: url("");*/
 }
@@ -298,11 +368,11 @@ input[type="text"], select, textarea {
 }
 
 
-
 /*==============경험치=============*/
 .exp {
-    margin:20px;
+    margin: 20px;
 }
+
 .exp-bar-container {
     width: 100%; /* 바의 전체 너비 */
     height: 20px; /* 바의 높이 */
@@ -351,11 +421,12 @@ input[type="text"], select, textarea {
     top: 0.5em;
     border-radius: 5px;
 }
+
 .achievement::-webkit-scrollbar {
     display: none;
 }
 
-.achievement div{
+.achievement div {
     /*height: 1500px;*/
     /*position: relative;*/
     display: inline-flex;
@@ -368,7 +439,8 @@ input[type="text"], select, textarea {
     opacity: 0.5;
     transition: ease 0.2s;
 }
-.achievement div:hover{
+
+.achievement div:hover {
     opacity: 1;
     scale: 102%;
 }
@@ -387,7 +459,7 @@ input[type="text"], select, textarea {
     flex-direction: row;
     width: 100%;
     height: 100%;
-    align-items: center ;
+    align-items: center;
     /*transition: ease s;*/
 }
 
@@ -400,7 +472,7 @@ input[type="text"], select, textarea {
 
 /*todo: 접히면 안보이게 구현*/
 .achievement .content p {
-    text-align:start;
+    text-align: start;
     margin: 0;
     width: 100%;
     color: black;
@@ -439,11 +511,21 @@ button {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes slideIn {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
