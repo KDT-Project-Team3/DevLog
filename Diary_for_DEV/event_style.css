@@ -148,3 +148,21 @@ h6 {
     text-decoration: line-through;
     color: #666;
 }
+
+.close-btn {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    background-color: #ccc;
+    border: none;
+    border-radius: 20%;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.close-btn:hover {
+    background-color: #999;
+}
