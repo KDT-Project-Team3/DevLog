@@ -13,5 +13,6 @@
     <orderEntry type="library" name="fullcalendar" level="application" />
     <orderEntry type="library" name="jquery-3.6.0" level="application" />
     <orderEntry type="library" name="jquery-3.6.0" level="application" />
+    <orderEntry type="library" name="devicon" level="application" />
   </component>
 </module>

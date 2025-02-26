@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const achievement_p = document.querySelectorAll(".achievement .content p"); // 업적 설명 텍스트
     const content_title = document.querySelectorAll(".achievement .content h2"); // 업적 제목
     const dropdownItems = document.querySelectorAll(".dropdown-item"); // 드롭다운 항목
+    const dropdownMenu = document.querySelector(".dropdown-menu"); // 드롭다운 메뉴
     const selectedTitle = document.getElementById("selectedTitle"); // 선택된 칭호
     const levelDisplay = document.querySelector(".LV h1"); // 레벨 표시 요소
 
@@ -136,16 +137,67 @@ document.addEventListener("DOMContentLoaded", function () {
         Holiday: '#FF0000'
     };
 
+    // 업적 - 카테고리 매핑 객체 정의 { 카테고리, 완료 수, 칭호 } // 테스트를 위해 조건을 낮게 수정!!
+    const achievementCategoryMap = {
+        // Java
+        "Java 첫걸음": { category: "Java", requiredCount: 1, title: "" },
+        "Java 고수": { category: "Java", requiredCount: 2, title: "" },
+        "객체지향의 달인": { category: "Java", requiredCount: 3, title: "" },
+        "Java의 신": { category: "Java", requiredCount: 4, title: "☕ Java의 신" },
+
+        // Python
+        "Python 첫걸음": { category: "Python", requiredCount: 1, title: "" },
+        "Python 마스터": { category: "Python", requiredCount: 2, title: "" },
+        "Python의 신": { category: "Python", requiredCount: 3, title: "🐍 Python의 신" },
+
+        // JS
+        "JS 첫걸음": { category: "JavaScript", requiredCount: 1, title: "" },
+        "JS DOM 조작의 달인": { category: "JavaScript", requiredCount: 2, title: "" },
+        "JS 코드 마스터": { category: "JavaScript", requiredCount: 3, title: "🧩 JS 코드 마스터" },
+
+        // HTML, CSS
+        "프론트엔드 첫걸음": { category: "HTML", requiredCount: 1, title: "" },
+        "반응형 디자인 고수": { category: "HTML", requiredCount: 2, title: "" },
+        "웹 디자인 마스터": { category: "HTML", requiredCount: 3, title: "📜 HTML의 신, 🎨 CSS의 신" },
+
+        // SQL
+        "SQL 첫걸음": { category: "SQL", requiredCount: 1, title: "" },
+        "SQL 고수": { category: "SQL", requiredCount: 2, title: "" },
+        "SQL의 신": { category: "SQL", requiredCount: 3, title: "🗄️ SQL의 신" },
+
+        // 커밋
+        "정원 관리사": { category: "General", requiredCount: 1, title: "🏡 정원 관리사" },
+        "지옥에서 온": { category: "General", requiredCount: 2, title: "🔥 지옥에서 온" },
+
+        // 일정 등록
+        "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이" },
+        "프로 갓생러": { category: "General", requiredCount: 2, title: "🚀 프로 갓생러" },
+        "파워 J": { category: "General", requiredCount: 3, title: "⚡ 파워 J" },
+        "자기계발 끝판왕": { category: "General", requiredCount: 4, title: "📚 자기계발 끝판왕" },
+        "닥터 스트레인지": { category: "General", requiredCount: 5, title: "⏳ 닥터 스트레인지" },
+
+        // 버그 헌터 관련 업적
+        // "새싹 디버거": { category: "Debug", requiredCount: 1, title: "🌱 새싹 디버거" },
+        // "버그 헌터": { category: "Debug", requiredCount: 3, title: "🔍 버그 헌터" },
+        // "디버깅 마스터": { category: "Debug", requiredCount: 5, title: "🛠️ 디버깅 마스터" },
+        // "버그 엑소시스트": { category: "Debug", requiredCount: 10, title: "👻 버그 엑소시스트" },
+        // "와일드 멘탈": { category: "Debug", requiredCount: 15, title: "" }
+    };
+
     // 업적 제목 스타일 설정
     content_title.forEach(title => {
         title.style.fontSize = "1.6em"; // 글꼴 크기
-        title.style.marginLeft = "1em"; // 왼쪽 여백
+        title.style.marginLeft = "0.2em"; // 왼쪽 여백
         title.style.width = "150px"; // 너비 설정
     });
 
     // 레벨 및 경험치 초기화 (전역 변수로 설정)
     window.userData = JSON.parse(localStorage.getItem('userData')) || { level: 1, xp: 0 }; // 사용자 데이터 로드 또는 초기화
     updateLevelAndExp(); // 초기 레벨 및 경험치 UI 업데이트
+
+    // 수정: 칭호 초기화 및 로드
+    let unlockedTitles = JSON.parse(localStorage.getItem('unlockedTitles')) || [];
+    initializeTitles();
 
     // 캘린더 초기화
     const calendarEl = document.getElementById('calendar'); // 캘린더 요소 선택
@@ -278,6 +330,33 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(`레벨 UI 업데이트 - Level: ${window.userData.level}, XP: ${window.userData.xp}/${requiredXp}`);
     }
 
+    //
+    // 칭호 초기화 함수
+    function initializeTitles() {
+        dropdownMenu.innerHTML = ''; // 기존 항목 초기화
+        const defaultItem = document.createElement('div');
+        defaultItem.className = 'dropdown-item';
+        defaultItem.textContent = '칭호 없음';
+        defaultItem.addEventListener('click', () => selectedTitle.textContent = '칭호 없음');
+        dropdownMenu.appendChild(defaultItem);
+
+        unlockedTitles.forEach(title => addTitleToDropdown(title));
+    }
+
+    // 드롭다운에 칭호 추가 함수
+    function addTitleToDropdown(title) {
+        if (!unlockedTitles.includes(title)) {
+            unlockedTitles.push(title);
+            localStorage.setItem('unlockedTitles', JSON.stringify(unlockedTitles));
+        }
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.textContent = title;
+        item.addEventListener('click', () => selectedTitle.textContent = title);
+        dropdownMenu.appendChild(item);
+        console.log(`칭호 추가됨: ${title}`);
+    }
+
     // 카테고리별 완료된 일정 집계 및 메달 업데이트
     function updateMedals() {
         const events = JSON.parse(localStorage.getItem('events') || '{}');
@@ -300,6 +379,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else {
                     medal.classList.remove('unlocked');
                 }
+            }
+        });
+
+        // 업적 해금 로직 (조건 기반)
+        const achievementItems = document.querySelectorAll('.achievementInner');
+        achievementItems.forEach(item => {
+            const title = item.querySelector('h2').textContent.trim();
+            const mapping = achievementCategoryMap[title] || { category: "General", requiredCount: 1 };
+            const category = mapping.category;
+            const requiredCount = mapping.requiredCount;
+            const completedCount = completedCounts[category] || 0;
+            const isUnlocked = completedCount >= requiredCount;
+
+            if (isUnlocked) {
+                item.classList.add('unlocked');
+                item.style.opacity = '1';
+
+                // 업적 해금 시 칭호 추가
+                if (mapping.title && !item.dataset.titleAdded) {
+                    const titles = mapping.title.split(',').map(t => t.trim());
+                    titles.forEach(title => {
+                        if (title && !unlockedTitles.includes(title)) {
+                            addTitleToDropdown(title);
+                        }
+                    });
+                    item.dataset.titleAdded = 'true'; // 중복 추가 방지
+                }
+            } else {
+                item.classList.remove('unlocked');
+                item.style.opacity = '0.7';
             }
         });
     }
