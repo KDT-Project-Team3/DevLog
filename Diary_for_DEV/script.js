@@ -9,10 +9,42 @@ const currentUser = {
     password: 'pass123',
     lv: 2,
     xp: 50,
-    img: 'suyeong.png'
+    img: 'suyeong.png',
+    lvUp: function (){
+        this.xp -= (this.lv - 1) * 100 + 50;
+        this.lv++;
+        console.log(`🎉 레벨 업! ${this.lv}레벨 달성!`);
+    },
+    xpUp: function (xp){
+        this.xp += xp;
+        console.log(`🎉 경험치 ${xp} 획득!`);
+        if(this.xp >= (this.lv - 1) * 100 + 50) {
+            this.lvUp();
+        }
+    }
 }
 
-
+// 업적 목록
+// 업적 달성 기능 구현 이후 db에서 데이터 불러오도록 수정할 것
+const userAchievements = [
+    {
+        id: 1, name: 'HTML 마스터',
+        flavor: { category: 'HTML', count: '1' },
+        img: 'medal1.png'
+    },
+    {
+        id: 2,
+        name: 'CSS 마스터',
+        flavor: { category: 'CSS', count: '2' },
+        img: 'medal2.png'
+    },
+    {
+        id: 3,
+        name: 'JS 마스터',
+        flavor: { category: 'JS', count: '2' },
+        img: 'medal3.png'
+    }
+];
 
 function saveDatabase() {
     localStorage.setItem('database', db.export());
@@ -175,6 +207,13 @@ function login() {
     let stmt = db.prepare("SELECT * FROM user WHERE email = ? AND password = ?");
     stmt.bind([email, password]);
     if (stmt.step()) {
+        let user = stmt.getAsObject();
+        currentUser.name = user.username;
+        currentUser.email = user.email;
+        currentUser.password = user.password;
+        currentUser.lv = user.lv;
+        currentUser.xp = user.xp;
+        currentUser.img = user.img;
         alert('✅ 로그인 성공!');
         window.location.href = 'index.html';
     } else {
