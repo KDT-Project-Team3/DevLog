@@ -74,14 +74,15 @@ document.addEventListener("DOMContentLoaded", function () {
         Java: '#FFA500',       // 주황색
         C: '#0000FF',          // 파란색
         JavaScript: '#FFFF00', // 노란색
-        HTML: '#008000'        // 초록색
+        HTML: '#008000',       // 초록색
+        Holiday: '#FF0000'     // 공휴일은 빨간색으로 설정
     };
 
     // 캘린더 설정
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
         height: '700px',
-        locale: 'ko', // 한국어 설정
+        locale: 'ko',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
@@ -100,6 +101,32 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     calendar.render();
 
+    // 대체 API 로 공휴일 가져오기 (date.nager.at)
+    async function fetchHolidays() {
+        const url = 'https://date.nager.at/api/v3/publicholidays/2025/KR'; // 공휴일 API
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP 오류: ${response.status} - ${response.statusText}`);
+            }
+            const holidays = await response.json();
+            holidays.forEach(holiday => {
+                calendar.addEvent({
+                    title: holiday.localName,
+                    start: holiday.date,
+                    allDay: true,
+                    backgroundColor: categoryColors['Holiday'],
+                    borderColor: categoryColors['Holiday'],
+                    extendedProps: { memo: holiday.name || '', isHoliday: true }
+                });
+            });
+            console.log('공휴일 로드 완료:', holidays);
+        } catch (error) {
+            console.error('공휴일 가져오기 오류:', error);
+        }
+    }
+    fetchHolidays();
+
     // 모달 창 열기 함수
     let selectedEvent = null;
     function openModal(date, event) {
@@ -111,14 +138,12 @@ document.addEventListener("DOMContentLoaded", function () {
         window.selectedDate = date;
 
         if (event) {
-            // 수정 모드
             selectedEvent = event;
             titleInput.value = event.title.split(' (')[0];
-            categorySelect.value = event.title.match(/\(([^)]+)\)/)[1];
+            categorySelect.value = event.title.match(/\(([^)]+)\)/)?.[1] || 'Java';
             memoInput.value = event.extendedProps.memo || '';
-            deleteBtn.style.display = 'inline';
+            deleteBtn.style.display = event.extendedProps.isHoliday ? 'none' : 'inline';
         } else {
-            // 생성 모드
             selectedEvent = null;
             titleInput.value = '';
             categorySelect.value = 'Java';
@@ -133,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('eventModal').style.display = 'none';
     };
 
-    // 일정 저장 (빈 제목 경고 문제 해결)
+    // 일정 저장
     document.getElementById('eventForm').onsubmit = function(e) {
         e.preventDefault();
         const title = document.getElementById('eventTitle').value.trim();
@@ -141,25 +166,22 @@ document.addEventListener("DOMContentLoaded", function () {
         const memo = document.getElementById('eventMemo').value.trim();
         const date = window.selectedDate;
 
-        // 빈 제목 체크를 최상단에서 처리
         if (!title) {
             alert('일정을 입력하시오');
-            return; // 빈 제목이면 여기서 함수 종료
+            return;
         }
 
         const events = JSON.parse(localStorage.getItem('events')) || {};
 
-        if (selectedEvent) {
-            // 수정
+        if (selectedEvent && !selectedEvent.extendedProps.isHoliday) {
             selectedEvent.remove();
             if (!events[date]) events[date] = [];
             events[date] = events[date].filter(ev => ev.title !== selectedEvent.title.split(' (')[0]);
             alert('일정이 수정되었습니다.');
-        } else {
+        } else if (!selectedEvent) {
             alert('일정이 등록되었습니다!');
         }
 
-        // 이벤트 저장 (중복 제거)
         if (!events[date]) events[date] = [];
         events[date].push({ title, category, memo });
         localStorage.setItem('events', JSON.stringify(events));
@@ -178,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 일정 삭제
     document.getElementById('deleteEvent').onclick = function() {
-        if (selectedEvent && confirm('일정을 정말 삭제하시겠습니까?')) {
+        if (selectedEvent && !selectedEvent.extendedProps.isHoliday && confirm('일정을 정말 삭제하시겠습니까?')) {
             const date = window.selectedDate;
             const events = JSON.parse(localStorage.getItem('events')) || {};
             events[date] = events[date].filter(ev => ev.title !== selectedEvent.title.split(' (')[0]);
@@ -196,10 +218,11 @@ function loadEventsFromLocalStorage() {
     const events = JSON.parse(localStorage.getItem('events')) || {};
     const eventList = [];
     const categoryColors = {
-        Java: '#FFA500',       // 주황색
-        C: '#0000FF',          // 파란색
-        JavaScript: '#FFFF00', // 노란색
-        HTML: '#008000'        // 초록색
+        Java: '#FFA500',
+        C: '#0000FF',
+        JavaScript: '#FFFF00',
+        HTML: '#008000',
+        Holiday: '#FF0000'
     };
     for (const date in events) {
         events[date].forEach(event => {
@@ -215,5 +238,3 @@ function loadEventsFromLocalStorage() {
     }
     return eventList;
 }
-
-
