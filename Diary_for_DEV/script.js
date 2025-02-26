@@ -487,6 +487,31 @@ function showUsers() {
     }
 }
 
+// 유저 정보 관련
+function showUserInfo() {
+    console.log("🔍 현재 사용자 정보:", currentUser);
+}
+
+function updateXP(xp) {
+    db.run("UPDATE user SET xp = ? WHERE email = ?", [xp, currentUser.email]);
+    console.log("✅ 경험치 업데이트 완료! : ", xp);
+}
+
+function updateLV(lv) {
+    db.run("UPDATE user SET lv = ? WHERE email = ?", [lv, currentUser.email]);
+    console.log("✅ 레벨 업데이트 완료! : ", lv);
+}
+
+function updateProfileImage(img) {
+    db.run("UPDATE user SET img = ? WHERE email = ?", [img, currentUser.email]);
+    console.log("✅ 프로필 이미지 업데이트 완료! : ", img);
+}
+
+function deleteUser(email) {
+    db.run("DELETE FROM user WHERE email = ?", [email]);
+    console.log("✅ 사용자 삭제 완료! : ", email);
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
     console.log("🔹 DOM 로드 완료. 데이터베이스 초기화 시작...");
     toggleButtons(true);
