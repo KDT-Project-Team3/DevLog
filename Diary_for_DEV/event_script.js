@@ -87,12 +87,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (title && selectedDate) {
             if (!events[selectedDate]) events[selectedDate] = [];
             events[selectedDate].push({ title, category, completed: false });
+
             localStorage.setItem('events', JSON.stringify(events));
 
             // 부모 창의 캘린더 업데이트
-            if (window.opener && window.opener.addEventToCalendar) {
-                window.opener.addEventToCalendar(selectedDate, title, category);
-            }
+            // if (window.opener && window.opener.addEventToCalendar) {
+            //     window.opener.addEventToCalendar(selectedDate, title, category);
+            // }
 
             // if (window.opener && window.opener.calendar) {
             //   window.opener.calendar.addEvent({
@@ -103,6 +104,9 @@ document.addEventListener('DOMContentLoaded', function() {
             //   window.opener.location.reload();
             // }
 
+            console.log("Checking window.calendar:", window.calendar);
+            console.log("Checking window.calendar.addEvent:", window.calendar?.addEvent);
+            console.log('window.calendar:', window.calendar);
 
             // 수정 1: addEvent로 즉시 반영
             if (window.calendar && typeof window.calendar.addEvent === 'function') {
@@ -123,6 +127,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+
+
+
     // 이벤트 위임으로 체크박스, 수정, 삭제 버튼 처리
     document.querySelector('.event').addEventListener('click', function(e) {
         const target = e.target;
@@ -132,15 +139,71 @@ document.addEventListener('DOMContentLoaded', function() {
         if (target.type === 'checkbox') {
             events[selectedDate][index].completed = target.checked;
             localStorage.setItem('events', JSON.stringify(events));
-            renderEvents(selectedDate, events);
+            // renderEvents(selectedDate, events);
 
             // 부모 캘린더 업데이트
             // if (window.opener && window.opener.calendar) {
             //     window.opener.calendar.refetchEvents();
             // }
-            if (window.opener) {
-                window.opener.location.reload();
+            // if (window.opener) {
+            //     window.opener.location.reload();
+            // }
+
+            // 수정 2: 체크박스 상태 변경 시 메인 캘린더에 반영
+            // if (window.calendar && typeof window.calendar.addEvent === 'function') {
+            //     const event = events[selectedDate][index];
+            //     const eventTitle = `${event.title} (${event.category})`;
+            //     const calendarEvents = window.calendar.getEvents();
+            //     const matchingEvent = calendarEvents.find(ev =>
+            //         ev.title === eventTitle && ev.startStr === selectedDate
+            //     );
+            //     if (matchingEvent) {
+            //         matchingEvent.remove(); // 기존 이벤트 제거
+            //     }
+            //     window.calendar.addEvent({
+            //         title: eventTitle,
+            //         start: selectedDate,
+            //         allDay: true,
+            //         extendedProps: { completed: event.completed } // 수정 2: completed 상태 전달
+            //     });
+            //     console.log(`Event updated in calendar: ${eventTitle}, completed: ${event.completed}`);
+            // } else {
+            //     console.warn('Calendar or addEvent not available');
+            //     if (window.opener) window.opener.location.reload();
+            // }
+
+            if (window.calendar) {
+                const event = events[selectedDate][index];
+                const eventTitle = `${event.title} (${event.category})`;
+
+                const calendarEvents = window.calendar.getEvents();
+                const matchingEvent = calendarEvents.find(ev =>
+                    ev.title === eventTitle && ev.startStr === selectedDate
+                );
+
+                if (matchingEvent) {
+                    matchingEvent.setProp('display', event.completed ? 'list-item' : 'block'); // 취소선 반영
+                    matchingEvent.setExtendedProp('completed', event.completed);
+                    
+                    // 완료된 이벤트에 취소선 적용
+                    if (event.completed) {
+                        matchingEvent.el.style.textDecoration = 'line-through';
+                    } else {
+                        matchingEvent.el.style.textDecoration = 'none';
+                    }
+                } else {
+                    // 새로운 이벤트 추가될 떄
+                    window.calendar.addEvent({
+                        title: eventTitle,
+                        start: selectedDate,
+                        allDay: true,
+                        extendedProps: { completed: event.completed },
+                        display: event.completed ? 'list-item' : 'block' // 취소선 반영
+                    });
+                }
             }
+
+            renderEvents(selectedDate, events);
 
         } else if (target.classList.contains('edit-btn')) {
             const newTitle = prompt('새 제목을 입력하세요:', events[selectedDate][index].title);

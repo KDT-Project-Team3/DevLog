@@ -50,6 +50,7 @@ async function initDatabase() {
 }
 initDatabase().catch(error => console.error("Database Initialization Error:", error));
 
+
 // 배너 문구 변경 및 캘린더 설정
 document.addEventListener("DOMContentLoaded", function () {
     const banner = document.querySelector(".banner");
@@ -71,15 +72,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 카테고리별 색상 매핑
     const categoryColors = {
-        Java: '#ff7a33',       // 주황색
-        C: '#0000FF',          // 파란색
+        Java: '#e48d6a',       // 주황색
+        C: '#86b0ff',          // 파란색
         JavaScript: '#ffae00', // 노란색
-        HTML: '#008000'        // 초록색
+        HTML: '#8de68d'        // 초록색
     };
 
     // 캘린더 설정
     var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+    window.calendar = new FullCalendar.Calendar(calendarEl, {
         height: '700px',
         locale: 'ko', // 한국어 설정
         headerToolbar: {
@@ -101,9 +102,14 @@ document.addEventListener("DOMContentLoaded", function () {
             window.open('check_event.html?date=' + info.event.startStr, 'eventPopup',
                 'width=500,height=500,top=100,left=100,scrollbars=no,resizable=no');
         },
-        events: loadEventsFromLocalStorage()
+        events: loadEventsFromLocalStorage(),
+        eventDone: function(info) {
+            if (info.event.extendedProps.completed) {
+                info.el.style.textDecoration = 'line-through';
+            }
+        }
     });
-    calendar.render();
+    window.calendar.render();
 
     // 모달 창 열기 함수
     let selectedEvent = null;
@@ -201,10 +207,10 @@ function loadEventsFromLocalStorage() {
     const events = JSON.parse(localStorage.getItem('events')) || {};
     const eventList = [];
     const categoryColors = {
-        Java: '#ff7a33',       // 주황색
-        C: '#0000FF',          // 파란색
+        Java: '#e48d6a',       // 주황색
+        C: '#86b0ff',          // 파란색
         JavaScript: '#ffae00', // 노란색
-        HTML: '#008000'        // 초록색
+        HTML: '#8de68d'        // 초록색
     };
     for (const date in events) {
         events[date].forEach(event => {
@@ -214,7 +220,8 @@ function loadEventsFromLocalStorage() {
                 allDay: true,
                 backgroundColor: categoryColors[event.category],
                 borderColor: categoryColors[event.category],
-                extendedProps: { memo: event.memo }
+                extendedProps: { completed: event.completed }
+                // extendedProps: { memo: event.memo }
             });
         });
     }
