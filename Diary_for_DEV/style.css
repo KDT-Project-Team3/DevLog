@@ -303,8 +303,8 @@ body {
 }
 
 .achievement div{
-    height: 1500px;
-    position: relative;
+    /*height: 1500px;*/
+    /*position: relative;*/
     display: inline-flex;
     flex-direction: row;
     border: 3px solid black;
@@ -335,19 +335,22 @@ body {
     width: 100%;
     height: 100%;
     align-items: center ;
+    /*transition: ease s;*/
 }
 
 .achievement h2 {
     margin: 9px;
-    width: 100%;
-    font: bold 1.9em "Lucida Grande", Helvetica, Arial, sans-serif;
+    width: 200px;
+    font: bold 2em "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 /*todo: 접히면 안보이게 구현*/
 .achievement .content p {
+    text-align:start;
+    margin: 0;
     width: 100%;
     color: black;
     transition: ease 0.3s;
-    /*opacity: 0;*/
+    opacity: 0;
 }
 

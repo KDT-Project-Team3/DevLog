@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const medal = document.querySelectorAll(".medal");
     const userInfoLayout = document.querySelector(".userInfoLayout");
     const profile = document.querySelector(".profile");
+    const achievement_p = document.querySelectorAll(".achievement .content p");
+    const content_title = document.querySelectorAll(".achievement .content h2");
 
     // 초기 상태: profileInner 숨기기
     profileInner.classList.add("profileInvisible");
@@ -33,8 +35,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         //업적 설명 텍스트
-        // achievement_p.style.opacity = "1";\
+        achievement_p.forEach(p => {
+            p.style.opacity = "1"; // 모든 요소에 opacity 적용
+        });
 
+        content_title.forEach(title => {
+            title.style.fontSize = "1.6em";
+            // title.style.width = "100px";
+        });
     });
 
     // hover 해제되면 클래스 추가
@@ -52,8 +60,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         //업적 설명 텍스트
-        // achievement_p.style.opacity = "0";
+        achievement_p.forEach(p => {
+            p.style.opacity = "0"; // 모든 요소에 opacity 적용
+        });
 
+        content_title.forEach(title => {
+            title.style.fontSize = "2em";
+            title.style.marginLeft = "1em";
+            title.style.width = "200px";
+        });
     });
 
     //칭호 드랍다운 버튼
@@ -67,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    console.log(medal.document);
+    // console.log(medal.document);
     //todo : 메달 호버하면 앞뒤 메달 조금 커지게
 
     //todo: 레벨 증가 로직
