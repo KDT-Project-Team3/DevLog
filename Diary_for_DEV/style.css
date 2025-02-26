@@ -62,7 +62,7 @@ body {
     display: flex;
     flex-direction: column;
     transition-property: width;
-    transition: ease 0.3s;
+    transition: ease 0.5s;
     overflow: hidden;
     align-content: center;
 }
@@ -142,8 +142,10 @@ body {
     height: 170px;
     border-radius: 50%;
     /*하얀배경은 이미지 넣고 지우기*/
-    background: white;
-    /*background-image: url("");*/
+    background: white ;
+    background-image: url("media/characterExample.jpg");
+    background-size: cover;
+    background-position: center;
     cursor: pointer; /* 클릭 가능하도록 커서 변경 */
     transition: ease 0.3s;
 
@@ -219,12 +221,18 @@ body {
 .medal::first-letter {
     /*자바*/
     /*background-image: url("");*/
+    background-size: cover;
+    background-position: center;
 }
 .medal:nth-child(2) {
     /*background-image: url("");*/
+    background-size: cover;
+    background-position: center;
 }
 .medal:last-child {
     /*background-image: url("");*/
+    background-size: cover;
+    background-position: center;
 }
 
 .id {
@@ -327,6 +335,8 @@ body {
     background: white;
     flex-shrink: 0;
     /*background-image: url("");*/
+    background-size: cover;
+    background-position: center;
 }
 
 .achievement .content {

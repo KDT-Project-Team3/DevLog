@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const profileImg = document.querySelector(".profileImg");
     const expBar = document.querySelector(".exp");
     const medalBox = document.querySelector(".medalBox");
-    const medal = document.querySelectorAll(".medal");
     const userInfoLayout = document.querySelector(".userInfoLayout");
     const profile = document.querySelector(".profile");
     const achievement_p = document.querySelectorAll(".achievement .content p");
