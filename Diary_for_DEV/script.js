@@ -1,9 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
     const sidebar = document.querySelector(".sidebar");
+    const profileLayout = document.querySelector(".profileLayout");
     const profileInner = document.querySelector(".profileInner");
     const profileImg = document.querySelector(".profileImg");
     const expBar = document.querySelector(".exp");
     const medalBox = document.querySelector(".medalBox");
+    const medal = document.querySelectorAll(".medal");
     const userInfoLayout = document.querySelector(".userInfoLayout");
     const profile = document.querySelector(".profile");
 
@@ -22,11 +24,13 @@ document.addEventListener("DOMContentLoaded", function () {
         userInfoLayout.classList.add("profileInvisible");
 
         //프로필 비율
-        // profileLayout.style.marginLeft = "0";
-        profileImg.style.width = "120px";
-        profileImg.style.height = "120px";
+        profileLayout.style.marginBottom = "0";
+        // profileLayout.style.height = "20%";
+        profileImg.style.width = "140px";
+        profileImg.style.height = "140px";
         profile.style.left = "70%";
-        // profileLayout.style.height = "100%";
+        userInfoLayout.style.marginTop = "0";
+
 
         //업적 설명 텍스트
         // achievement_p.style.opacity = "1";\
@@ -38,15 +42,13 @@ document.addEventListener("DOMContentLoaded", function () {
         profileInner.classList.add("profileInvisible"); // hover 해제 시 숨김
         expBar.classList.add("profileInvisible"); // hover 시 보이게
         medalBox.classList.add("profileInvisible");
-        medalBox.style.height = "5%";
-        userInfoLayout.classList.remove("profileInvisible");
+        medalBox.style.height = "0";
+        userInfoLayout.classList.remove("profileInvisible")
 
         //프로필 비율
-        // profileLayout.style.marginLeft = "47px";
-        profileImg.style.width = "160px";
-        profileImg.style.height = "160px";
-        // profileLayout.style.height = "25%";
-        // profile.style.left = "-7000px";
+        profileImg.style.width = "170px";
+        profileImg.style.height = "170px";
+        userInfoLayout.style.marginTop = "20%";
 
 
         //업적 설명 텍스트
@@ -64,4 +66,10 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedTitle.textContent = selectedText;// 칭호 텍스트 변경
         });
     });
+
+    console.log(medal.document);
+    //todo : 메달 호버하면 앞뒤 메달 조금 커지게
+
+    //todo: 레벨 증가 로직
+
 });

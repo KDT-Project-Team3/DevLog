@@ -14,13 +14,16 @@
           integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
           crossorigin="anonymous"></script>
 
+
   <!-- 리셋 스타일시트-->
   <link src="reset.css" type = "text/css" rel="stylesheet" />
 
   <!-- 커스텀 스타일시트 -->
   <link rel="stylesheet" href="style.css">
     <script defer src="script.js"></script>
-</head>
+
+<!-- 아이콘-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=menu" /></head>
 
 <!-- TODO : 업적 height 상대단위 수정 필요(화면별로 비율 달라짐)-->
 
@@ -36,18 +39,23 @@
   </div>
 
   <aside class="sidebar">
-
 <!--    메뉴 버튼 -->
-    <div class="menu_button dropdown d-inline btn-lg">
-      <button class="menu_dropdown btn btn-dark btn-sm dropdown-toggle" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-        <span id="dropdownMenu">메뉴</span>
+      <button class="menuBtn btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+          <span class="material-symbols-outlined">menu</span>
       </button>
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-menu" href="#">메뉴1</a></li>
-        <li><a class="dropdown-menu" href="#">메뉴2</a></li>
-        <li><a class="dropdown-menu" href="#">메뉴3</a></li>
-      </ul>
-    </div>
+
+      <!-- Offcanvas 메뉴 -->
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+          <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="offcanvasRightLabel">메뉴</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+              <a href="#" class="d-block mb-2">메뉴1</a>
+              <a href="#" class="d-block">메뉴2</a>
+          </div>
+      </div>
+
 
     <div class="profileLayout">
       <div class="profileImg">프로필 이미지</div>
@@ -88,6 +96,7 @@
         <div class="exp-bar">70%</div>
       </div>
     </div>
+
 
 <!--  todo : 업적 처럼 특수효과 추가 하기-->
     <div class="medalBox">
