@@ -9,7 +9,7 @@ async function initDatabase() {
     });
 
     // 1) 브라우저 IndexedDB 를 통한 초기화
-    const savedDb = await loadDatabaseFromIndexedDB();
+    const savedDb = await loadDBFromIdxDB();
     if (savedDb) {
         db = new SQL.Database(new Uint8Array(savedDb));
         console.log("✅ 브라우저 IndexedDB 에서 데이터 초기화 완료!");
@@ -66,7 +66,7 @@ async function initDatabase() {
 }
 
 // 데이터베이스 IndexedDB에 저장
-function saveDBToIndexedDB() {
+function saveDBToIdxDB() {
     const dbData = db.export();
     const blob = new Blob([dbData], { type: "application/octet-stream" });
     indexedDB.deleteDatabase(DB_NAME);
@@ -101,7 +101,7 @@ function saveDBToIndexedDB() {
 }
 
 // IndexedDB 에서 데이터베이스 불러오기
-async function loadDatabaseFromIndexedDB() {
+async function loadDBFromIdxDB() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(DB_NAME, 1);
         request.onsuccess = (event) => {
@@ -176,6 +176,7 @@ function deleteUser(id) {
     db.run("DELETE FROM user WHERE user_id=?", [id]);
     displayUsers();
 }
+
 // 이메일 유효성 검사
 function validateEmail(email) {
     let regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
