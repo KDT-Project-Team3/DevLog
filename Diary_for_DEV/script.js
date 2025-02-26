@@ -1,7 +1,7 @@
-// 배너 문구 변경 및 캘린더 설정
+// 페이지가 로드될 때 실행되는 이벤트 리스너
 document.addEventListener("DOMContentLoaded", function () {
-    const banner = document.querySelector(".banner");
-    const messages = [
+    const banner = document.querySelector(".banner"); // 배너 요소 선택
+    const messages = [ // 배너에 표시할 메시지 배열
         "🚀 코드 한 줄이 세상을 바꾼다!",
         "🐞 버그 없는 코드? 신화일 뿐!",
         "💡 주석이 없는 코드는 마법이다. 이해할 수 없으니까!",
@@ -16,13 +16,13 @@ document.addEventListener("DOMContentLoaded", function () {
         "🖥️ '이상하네, 내 컴퓨터에서는 되는데?'",
         "💾 'Ctrl + S'는 내 생명줄",
         "📜 TODO: 나중에 리팩토링하기 (절대 안 함)",
-        "🎭 CSS는 마법이다. 예상대로 동작할 때가 없다.",
+        "🎭 CSS는 마법이다. 예상대로 동작할 때가 없다。",
         "🌐 HTML은 프로그래밍 언어가 아니다! 하지만 없으면 웹도 없다!",
         "💀 'undefined'는 개발자의 최악의 악몽",
         "📌 null과 undefined의 차이를 안다면 이미 고수다.",
         "🔁 while(true) { work(); sleep(0); } // 개발자의 현실",
         "🔧 '이건 쉬운 수정이야'라고 말하면 안 돼...",
-        "🤯 개발자는 코드를 짜는 게 아니라 버그를 고치는 직업이다.",
+        "🤯 개발자는 코드를 짜는 게 아니라 버그를 고치는 직업이다。",
         "🚀 컴파일은 성공했지만 실행은 안 된다? 축하합니다, 진정한 개발자입니다!",
         "🤖 AI가 코드를 짜는 날이 와도, 버그는 우리가 고쳐야 한다!",
         "💡 '일단 작동하게 만들고, 나중에 깔끔하게 정리하자' - 영원히 정리되지 않음",
@@ -58,180 +58,128 @@ document.addEventListener("DOMContentLoaded", function () {
         "🚀 '아무도 안 건드렸는데 갑자기 안 돼요!' -> 자동으로 고장 난 서버는 없다"
     ];
 
-    let currentIndex = 0;
+    // 배너 문구를 랜덤으로 표시하는 함수
     function changeBannerText() {
-        banner.textContent = messages[currentIndex];
-        currentIndex = (currentIndex + 1) % messages.length;
+        const randomIndex = Math.floor(Math.random() * messages.length); // 랜덤 인덱스 생성
+        banner.textContent = messages[randomIndex]; // 배너에 메시지 표시
     }
-    setInterval(changeBannerText, 3000);
+    changeBannerText(); // 초기 로드 시 랜덤 메시지 표시
+    setInterval(changeBannerText, 3000); // 3초마다 랜덤 메시지 갱신
 
-    // 카테고리별 색상 매핑
+    // 카테고리별 색상 정의
     const categoryColors = {
-        Java: '#ff7a33',       // 주황색
-        C: '#0000FF',          // 파란색
-        JavaScript: '#ffae00', // 노란색
-        HTML: '#008000',        // 초록색
-        Holiday: '#FF0000'
+        Java: '#ff7a33',       // Java: 주황색
+        C: '#0000FF',          // C: 파란색
+        JavaScript: '#ffae00', // JavaScript: 노란색
+        HTML: '#008000',       // HTML: 초록색
+        Holiday: '#FF0000'     // 공휴일: 빨간색
     };
 
-    // 캘린더 설정
-    var calendarEl = document.getElementById('calendar');
+    // 캘린더 초기화 및 설정
+    var calendarEl = document.getElementById('calendar'); // 캘린더 요소 선택
     var calendar = new FullCalendar.Calendar(calendarEl, {
-        height: '700px',
-        locale: 'ko',
-        headerToolbar: {
+        height: '700px', // 캘린더 높이
+        locale: 'ko', // 한국어 설정
+        headerToolbar: { // 상단 툴바 설정
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
         },
-        initialView: 'dayGridMonth',
-        initialDate: '2025-02-26',
-        selectable: true,
-        dateClick: function(info) {
+        initialView: 'dayGridMonth', // 기본 뷰: 월간
+        initialDate: '2025-02-26', // 초기 날짜
+        selectable: true, // 날짜 선택 가능
+        dateClick: function(info) { // 날짜 클릭 시 팝업 열기
             window.open('check_event.html?date=' + info.dateStr, 'eventPopup',
                 'width=500,height=500,top=100,left=100,scrollbars=no,resizable=no');
         },
-        eventClick: function(info) {
+        eventClick: function(info) { // 이벤트 클릭 시 팝업 열기
             window.open('check_event.html?date=' + info.event.startStr, 'eventPopup',
                 'width=500,height=500,top=100,left=100,scrollbars=no,resizable=no');
         },
-        events: loadEventsFromLocalStorage()
+        events: async function(fetchInfo, successCallback, failureCallback) { // 이벤트 데이터 로드
+            const localEvents = loadEventsFromLocalStorage(); // 로컬 이벤트
+            const holidayEvents = await fetchHolidays(); // 공휴일 이벤트
+            successCallback([...localEvents, ...holidayEvents]); // 이벤트 결합 후 반환
+        },
+        eventDidMount: function(info) { // 이벤트 렌더링 후 호출
+            if (info.event.extendedProps.completed) { // 완료된 이벤트에 가운데 줄 적용
+                info.el.querySelector('.fc-event-title').style.textDecoration = 'line-through';
+            }
+        }
     });
-    calendar.render();
+    calendar.render(); // 캘린더 렌더링
 
-    // 대체 API 로 공휴일 가져오기 (date.nager.at)
+    // 공휴일 데이터를 API에서 가져오는 함수
     async function fetchHolidays() {
-        const url = 'https://date.nager.at/api/v3/publicholidays/2025/KR'; // 공휴일 API
+        const url = 'https://date.nager.at/api/v3/publicholidays/2025/KR'; // 한국 공휴일 API
         try {
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`HTTP 오류: ${response.status} - ${response.statusText}`);
             }
-            const holidays = await response.json();
-            holidays.forEach(holiday => {
-                calendar.addEvent({
-                    title: holiday.localName,
-                    start: holiday.date,
-                    allDay: true,
-                    backgroundColor: categoryColors['Holiday'],
-                    borderColor: categoryColors['Holiday'],
-                    extendedProps: { memo: holiday.name || '', isHoliday: true }
-                });
-            });
-            console.log('공휴일 로드 완료:', holidays);
+            const holidays = await response.json(); // 공휴일 데이터 파싱
+            return holidays.map(holiday => ({ // 공휴일 이벤트 객체 생성
+                title: holiday.localName,
+                start: holiday.date,
+                allDay: true,
+                backgroundColor: categoryColors['Holiday'],
+                borderColor: categoryColors['Holiday'],
+                extendedProps: {
+                    memo: holiday.name || '',
+                    category: 'Holiday',
+                    isHoliday: true,
+                    completed: false // 공휴일은 기본적으로 완료되지 않음
+                }
+            }));
         } catch (error) {
-            console.error('공휴일 가져오기 오류:', error);
+            console.error('공휴일 가져오기 오류:', error); // 오류 로그 출력
+            return [];
         }
     }
-    fetchHolidays();
 
-    // 모달 창 열기 함수
-    let selectedEvent = null;
-    function openModal(date, event) {
-        const modal = document.getElementById('eventModal');
-        const titleInput = document.getElementById('eventTitle');
-        const categorySelect = document.getElementById('eventCategory');
-        const memoInput = document.getElementById('eventMemo');
-        const deleteBtn = document.getElementById('deleteEvent');
-        window.selectedDate = date;
-
-        if (event) {
-            selectedEvent = event;
-            titleInput.value = event.title.split(' (')[0];
-            categorySelect.value = event.title.match(/\(([^)]+)\)/)?.[1] || 'Java';
-            memoInput.value = event.extendedProps.memo || '';
-            deleteBtn.style.display = event.extendedProps.isHoliday ? 'none' : 'inline';
-        } else {
-            selectedEvent = null;
-            titleInput.value = '';
-            categorySelect.value = 'Java';
-            memoInput.value = '';
-            deleteBtn.style.display = 'none';
-        }
-        modal.style.display = 'block';
-    }
-
-    // 모달 창 닫기 (사용되지 않음 제거 가능)
-    document.querySelector('.close').onclick = function() {
-        document.getElementById('eventModal').style.display = 'none';
-    };
-
-    // 일정 저장 (빈 제목 경고 문제 해결)
-    document.getElementById('eventForm').onsubmit = function(e) {
-        e.preventDefault();
-        const title = document.getElementById('eventTitle').value.trim();
-        const category = document.getElementById('eventCategory').value;
-        const memo = document.getElementById('eventMemo').value.trim();
-        const date = window.selectedDate;
-
-        if (!title) {
-            alert('일정을 입력하시오');
-            return;
-        }
-
-        const events = JSON.parse(localStorage.getItem('events')) || {};
-
-        if (selectedEvent) {
-            selectedEvent.remove();
-            if (!events[date]) events[date] = [];
-            events[date] = events[date].filter(ev => ev.title !== selectedEvent.title.split(' (')[0]);
-            alert('일정이 수정되었습니다.');
-        } else if (!selectedEvent) {
-            alert('일정이 등록되었습니다!');
-        }
-
-        if (!events[date]) events[date] = [];
-        events[date].push({ title, category, memo });
-        localStorage.setItem('events', JSON.stringify(events));
-        calendar.addEvent({
+    // 캘린더에 새 이벤트를 추가하는 함수 (팝업에서 호출)
+    window.addEventToCalendar = function(date, title, category) {
+        const events = JSON.parse(localStorage.getItem('events') || '{}'); // 로컬 스토리지에서 이벤트 가져오기
+        if (!events[date]) events[date] = []; // 해당 날짜에 이벤트 배열 없으면 초기화
+        events[date].push({ title, category, memo: '', completed: false }); // 새 이벤트 추가
+        localStorage.setItem('events', JSON.stringify(events)); // 로컬 스토리지 갱신
+        calendar.addEvent({ // 캘린더에 이벤트 추가
             title: `${title} (${category})`,
             start: date,
             allDay: true,
             backgroundColor: categoryColors[category],
             borderColor: categoryColors[category],
-            extendedProps: { memo }
+            extendedProps: { memo: '', completed: false }
         });
-
-        document.getElementById('eventModal').style.display = 'none';
-        document.getElementById('eventForm').reset();
-    };
-
-    // 일정 삭제 (사용되지 않음 제거 가능)
-    document.getElementById('deleteEvent').onclick = function() {
-        if (selectedEvent && !selectedEvent.extendedProps.isHoliday && confirm('일정을 정말 삭제하시겠습니까?')) {
-            const date = window.selectedDate;
-            const events = JSON.parse(localStorage.getItem('events')) || {};
-            events[date] = events[date].filter(ev => ev.title !== selectedEvent.title.split(' (')[0]);
-            if (events[date].length === 0) delete events[date];
-            localStorage.setItem('events', JSON.stringify(events));
-            selectedEvent.remove();
-            document.getElementById('eventModal').style.display = 'none';
-            alert('일정이 삭제되었습니다.');
-        }
+        console.log(`✅ 일정 추가 완료: ${date}, ${title}, ${category}`); // 추가 로그
     };
 });
 
-// 로컬 스토리지에서 일정 불러오기
+// 로컬 스토리지에서 기존 이벤트 불러오는 함수
 function loadEventsFromLocalStorage() {
-    const events = JSON.parse(localStorage.getItem('events')) || {};
-    const eventList = [];
-    const categoryColors = {
+    const events = JSON.parse(localStorage.getItem('events') || '{}'); // 로컬 스토리지 데이터 파싱
+    const eventList = []; // 이벤트 목록 배열
+    const categoryColors = { // 색상 매핑 재정의
         Java: '#ff7a33',
         C: '#0000FF',
         JavaScript: '#ffae00',
         HTML: '#008000',
+        Holiday: '#FF0000'
     };
-    for (const date in events) {
-        events[date].forEach(event => {
+    for (const date in events) { // 날짜별 이벤트 순회
+        events[date].forEach(event => { // 각 이벤트 처리
             eventList.push({
                 title: `${event.title} (${event.category})`,
                 start: date,
                 allDay: true,
                 backgroundColor: categoryColors[event.category],
                 borderColor: categoryColors[event.category],
-                extendedProps: { memo: event.memo }
+                extendedProps: {
+                    memo: event.memo,
+                    completed: event.completed || false // 완료 여부 반영
+                }
             });
         });
     }
-    return eventList;
+    return eventList; // 이벤트 목록 반환
 }

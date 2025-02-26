@@ -17,18 +17,18 @@ function renderEvents(selectedDate, events) {
             li.className = 'event-item';
             if (event.completed) {
                 li.innerHTML = `
-            <span>${event.title} (${event.category})</span>
-            <button class="edit-btn" data-index="${index}">수정</button>
-            <button class="delete-btn" data-index="${index}">삭제</button>
-          `;
+                    <span>${event.title} (${event.category})</span>
+                    <button class="edit-btn" data-index="${index}">수정</button>
+                    <button class="delete-btn" data-index="${index}">삭제</button>
+                `;
                 doneList.appendChild(li);
             } else {
                 li.innerHTML = `
-            <input type="checkbox" data-index="${index}">
-            <span>${event.title} (${event.category})</span>
-            <button class="edit-btn" data-index="${index}">수정</button>
-            <button class="delete-btn" data-index="${index}">삭제</button>
-          `;
+                    <input type="checkbox" data-index="${index}" ${event.completed ? 'checked' : ''}>
+                    <span>${event.title} (${event.category})</span>
+                    <button class="edit-btn" data-index="${index}">수정</button>
+                    <button class="delete-btn" data-index="${index}">삭제</button>
+                `;
                 eventList.appendChild(li);
             }
         });
@@ -48,39 +48,30 @@ function renderEvents(selectedDate, events) {
     }
 }
 
-// x 버튼 클릭시 저장 및 닫기
+// x 버튼 클릭 시 저장 및 닫기
 function saveAndClose() {
     const selectedDate = getQueryParam('date');
     const events = JSON.parse(localStorage.getItem('events') || '{}');
-
-    // localStorage에 저장된 이벤트를 변수로 준비
     const updatedEvents = events[selectedDate] || [];
 
-    // 부모 창의 캘린더에 반영
     if (window.opener) {
-        window.opener.updateEvents = updatedEvents; // 변슈 전달
-        window.opener.location.reload(); // 부모 창 새로 고침
-        console.log('updated events', updatedEvents);
+        window.opener.location.reload();
     } else {
-        console.warn('failed to save events');
+        console.warn('Failed to save events');
     }
-    // 창 닫기
     window.close();
 }
 
 // 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', function() {
     const selectedDate = getQueryParam('date');
-    const events = JSON.parse(localStorage.getItem('events')) || {};
+    const events = JSON.parse(localStorage.getItem('events') || '{}');
 
-    // 날짜 표시
     document.getElementById('event-date').textContent = selectedDate ? `📅 ${selectedDate}` : '날짜를 선택하세요';
-
-    // 초기 이벤트 렌더링
     renderEvents(selectedDate, events);
 
-    // 추가 버튼 클릭 이벤트
-    document.getElementById('add-btn').addEventListener('click', function() {
+    const addBtn = document.getElementById('add-btn');
+    function addEventHandler() {
         const title = document.getElementById('new-title').value.trim();
         const category = document.getElementById('new-category').value;
 
@@ -89,41 +80,16 @@ document.addEventListener('DOMContentLoaded', function() {
             events[selectedDate].push({ title, category, completed: false });
             localStorage.setItem('events', JSON.stringify(events));
 
-            // 부모 창의 캘린더 업데이트
             if (window.opener && window.opener.addEventToCalendar) {
                 window.opener.addEventToCalendar(selectedDate, title, category);
             }
 
-            // if (window.opener && window.opener.calendar) {
-            //   window.opener.calendar.addEvent({
-            //     title: `${title} (${category})`,
-            //     start: selectedDate,
-            //     allDay: true
-            //   });
-            //   window.opener.location.reload();
-            // }
-
-
-            // 수정 1: addEvent로 즉시 반영
-            if (window.calendar && typeof window.calendar.addEvent === 'function') {
-                window.calendar.addEvent({
-                    title: `${title} (${category})`,
-                    start: selectedDate,
-                    allDay: true
-                });
-                console.log(`Event added to calendar: ${title} (${category})`);
-            } else {
-                console.warn('Calendar or addEvent not available');
-                if (window.opener) window.opener.location.reload();
-            }
-
-            renderEvents(selectedDate, events); // 팝업창에 즉시 반영
+            renderEvents(selectedDate, events);
             document.getElementById('new-title').value = '';
-
         }
-    });
+    }
+    addBtn.addEventListener('click', addEventHandler);
 
-    // 이벤트 위임으로 체크박스, 수정, 삭제 버튼 처리
     document.querySelector('.event').addEventListener('click', function(e) {
         const target = e.target;
         const index = target.dataset.index;
@@ -133,44 +99,49 @@ document.addEventListener('DOMContentLoaded', function() {
             events[selectedDate][index].completed = target.checked;
             localStorage.setItem('events', JSON.stringify(events));
             renderEvents(selectedDate, events);
-
-            // 부모 캘린더 업데이트
-            // if (window.opener && window.opener.calendar) {
-            //     window.opener.calendar.refetchEvents();
-            // }
             if (window.opener) {
                 window.opener.location.reload();
             }
-
         } else if (target.classList.contains('edit-btn')) {
-            const newTitle = prompt('새 제목을 입력하세요:', events[selectedDate][index].title);
-            const newCategory = prompt('새 카테고리를 입력하세요:', events[selectedDate][index].category);
-            if (newTitle && newCategory) {
-                events[selectedDate][index].title = newTitle;
-                events[selectedDate][index].category = newCategory;
-                localStorage.setItem('events', JSON.stringify(events));
-                renderEvents(selectedDate, events);
+            const event = events[selectedDate][index];
+            const titleInput = document.getElementById('new-title');
+            const categorySelect = document.getElementById('new-category');
+            const addBtn = document.getElementById('add-btn');
 
-                // 부모 캘린더 업데이트
-                // if (window.opener && window.opener.calendar) {
-                //     window.opener.calendar.refetchEvents();
-                // }
+            titleInput.value = event.title;
+            categorySelect.value = event.category;
+            addBtn.textContent = '수정 저장';
+            addBtn.dataset.editIndex = index;
 
-                if (window.opener) {
-                    window.opener.location.reload();
+            addBtn.removeEventListener('click', addEventHandler);
+            addBtn.addEventListener('click', function editHandler() {
+                const newTitle = titleInput.value.trim();
+                const newCategory = categorySelect.value;
+
+                if (newTitle) {
+                    events[selectedDate][index].title = newTitle;
+                    events[selectedDate][index].category = newCategory;
+                    localStorage.setItem('events', JSON.stringify(events));
+
+                    if (window.opener) {
+                        window.opener.location.reload();
+                    }
+
+                    renderEvents(selectedDate, events);
+                    titleInput.value = '';
+                    addBtn.textContent = '+';
+                    delete addBtn.dataset.editIndex;
+
+                    addBtn.removeEventListener('click', editHandler);
+                    addBtn.addEventListener('click', addEventHandler);
                 }
-            }
+            }, { once: true });
         } else if (target.classList.contains('delete-btn')) {
             if (confirm('정말 삭제하시겠습니까?')) {
                 events[selectedDate].splice(index, 1);
                 if (events[selectedDate].length === 0) delete events[selectedDate];
                 localStorage.setItem('events', JSON.stringify(events));
                 renderEvents(selectedDate, events);
-
-                // 부모 캘린더 업데이트
-                // if (window.opener && window.opener.calendar) {
-                //     window.opener.calendar.refetchEvents();
-                // }
 
                 if (window.opener) {
                     window.opener.location.reload();
