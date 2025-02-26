@@ -50,7 +50,6 @@ h6 {
     font-size: 14px;
     color: #333;
 }
-/* 예쁜 체크박스 */
 .event-item input[type="checkbox"] {
     appearance: none;
     width: 18px;
@@ -75,7 +74,6 @@ h6 {
     left: 50%;
     transform: translate(-50%, -50%);
 }
-/* 버튼 공통 스타일 */
 .event-item button {
     margin-left: 8px;
     padding: 6px 12px;
@@ -89,17 +87,14 @@ h6 {
 .event-item button:hover {
     transform: scale(1.05);
 }
-/* 수정 버튼 */
 .edit-btn {
     background-color: #66b3ff;
 }
 .edit-btn:hover {
     background-color: #3385ff;
 }
-/* 삭제 버튼 */
 .delete-btn {
     background-color: #ff8080;
-    position: relative;
 }
 .delete-btn:hover {
     background-color: #ff4d4d;
