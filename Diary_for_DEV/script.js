@@ -71,9 +71,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 카테고리별 색상 매핑
     const categoryColors = {
-        Java: '#FFA500',       // 주황색
+        Java: '#ff7a33',       // 주황색
         C: '#0000FF',          // 파란색
-        JavaScript: '#FFFF00', // 노란색
+        JavaScript: '#ffae00', // 노란색
         HTML: '#008000'        // 초록색
     };
 
@@ -91,10 +91,15 @@ document.addEventListener("DOMContentLoaded", function () {
         initialDate: '2025-02-26',
         selectable: true,
         dateClick: function(info) {
-            openModal(info.dateStr, null);
+            // openModal(info.dateStr, null);
+            // 날짜 클릭 시 check_event.html을 새창으로 열기
+            window.open('check_event.html?date=' + info.dateStr, 'eventPopup',
+                'width=500,height=500,top=100,left=100,scrollbars=no,resizable=no');
         },
         eventClick: function(info) {
-            openModal(info.event.startStr, info.event);
+            // openModal(info.event.startStr, info.event);
+            window.open('check_event.html?date=' + info.event.startStr, 'eventPopup',
+                'width=500,height=500,top=100,left=100,scrollbars=no,resizable=no');
         },
         events: loadEventsFromLocalStorage()
     });
@@ -196,9 +201,9 @@ function loadEventsFromLocalStorage() {
     const events = JSON.parse(localStorage.getItem('events')) || {};
     const eventList = [];
     const categoryColors = {
-        Java: '#FFA500',       // 주황색
+        Java: '#ff7a33',       // 주황색
         C: '#0000FF',          // 파란색
-        JavaScript: '#FFFF00', // 노란색
+        JavaScript: '#ffae00', // 노란색
         HTML: '#008000'        // 초록색
     };
     for (const date in events) {
