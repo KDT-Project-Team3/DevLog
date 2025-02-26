@@ -1,7 +1,7 @@
 // 페이지가 로드될 때 실행되는 이벤트 리스너
 document.addEventListener("DOMContentLoaded", function () {
-    const banner = document.querySelector(".banner"); // 배너 요소 선택
-    const messages = [ // 배너에 표시할 메시지 배열
+    const banner = document.querySelector(".banner");
+    const messages = [
         "🚀 코드 한 줄이 세상을 바꾼다!",
         "🐞 버그 없는 코드? 신화일 뿐!",
         "💡 주석이 없는 코드는 마법이다. 이해할 수 없으니까!",
@@ -63,118 +63,116 @@ document.addEventListener("DOMContentLoaded", function () {
     const profileImg = document.querySelector(".profileImg");
     const expBar = document.querySelector(".exp");
     const medalBox = document.querySelector(".medalBox");
-    const medal = document.querySelectorAll(".medal");
     const userInfoLayout = document.querySelector(".userInfoLayout");
     const profile = document.querySelector(".profile");
     const achievement_p = document.querySelectorAll(".achievement .content p");
     const content_title = document.querySelectorAll(".achievement .content h2");
+    const dropdownItems = document.querySelectorAll(".dropdown-item");
+    const selectedTitle = document.getElementById("selectedTitle");
 
-    // 초기 상태: profileInner 숨기기
+    // 초기 상태 설정
     profileInner.classList.add("profileInvisible");
     expBar.classList.add("profileInvisible");
     medalBox.classList.add("profileInvisible");
     userInfoLayout.classList.remove("profileInvisible");
 
-    // hover 하면 클래스제거
+    // 배너 문구를 랜덤으로 표시하는 함수
+    function changeBannerText() {
+        const randomIndex = Math.floor(Math.random() * messages.length);
+        banner.textContent = messages[randomIndex];
+    }
+    changeBannerText();
+    setInterval(changeBannerText, 3000);
+
+    // 사이드바 호버 이벤트
     sidebar.addEventListener("mouseenter", function () {
-        profileInner.classList.remove("profileInvisible"); // hover 시 보이게
-        expBar.classList.remove("profileInvisible"); // hover 시 보이게
+        profileInner.classList.remove("profileInvisible");
+        expBar.classList.remove("profileInvisible");
         medalBox.classList.remove("profileInvisible");
         medalBox.style.height = "30%";
         userInfoLayout.classList.add("profileInvisible");
 
-        //프로필 비율
         profileLayout.style.marginTop = "0";
         profileLayout.style.marginBottom = "0";
-        // profileLayout.style.height = "20%";
         profileImg.style.width = "140px";
         profileImg.style.height = "140px";
         profile.style.left = "70%";
         userInfoLayout.style.marginTop = "0";
 
-    // 배너 문구를 랜덤으로 표시하는 함수
-    function changeBannerText() {
-        const randomIndex = Math.floor(Math.random() * messages.length); // 랜덤 인덱스 생성
-        banner.textContent = messages[randomIndex]; // 배너에 메시지 표시
-    }
-    changeBannerText(); // 초기 로드 시 랜덤 메시지 표시
-    setInterval(changeBannerText, 3000); // 3초마다 랜덤 메시지 갱신
+        achievement_p.forEach(p => p.style.opacity = "1");
+    });
 
-        //업적 설명 텍스트
-        achievement_p.forEach(p => {
-            p.style.opacity = "1"; // 모든 요소에 opacity 적용
-        });
+    sidebar.addEventListener("mouseleave", function () {
+        profileInner.classList.add("profileInvisible");
+        expBar.classList.add("profileInvisible");
+        medalBox.classList.add("profileInvisible");
+        medalBox.style.height = "0";
+        userInfoLayout.classList.remove("profileInvisible");
+
+        profileImg.style.width = "170px";
+        profileImg.style.height = "170px";
+        userInfoLayout.style.marginTop = "20%";
+
+        achievement_p.forEach(p => p.style.opacity = "0");
+    });
+
     // 카테고리별 색상 정의
     const categoryColors = {
-        Java: '#ff7a33',       // Java: 주황색
-        C: '#0000FF',          // C: 파란색
-        JavaScript: '#ffae00', // JavaScript: 노란색
-        HTML: '#008000',       // HTML: 초록색
-        Holiday: '#FF0000'     // 공휴일: 빨간색
+        Java: '#ff7a33',
+        C: '#0000FF',
+        JavaScript: '#ffae00',
+        HTML: '#008000',
+        Holiday: '#FF0000'
     };
 
-        content_title.forEach(title => {
-            title.style.fontSize = "1.6em";
-            title.style.marginLeft = "1em";
-            title.style.width = "150px";
-        });
-    // 캘린더 초기화 및 설정
-    var calendarEl = document.getElementById('calendar'); // 캘린더 요소 선택
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        height: '700px', // 캘린더 높이
-        locale: 'ko', // 한국어 설정
-        headerToolbar: { // 상단 툴바 설정
+    content_title.forEach(title => {
+        title.style.fontSize = "1.6em";
+        title.style.marginLeft = "1em";
+        title.style.width = "150px";
+    });
+
+    // 캘린더 초기화
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        height: '700px',
+        locale: 'ko',
+        headerToolbar: {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
         },
-        initialView: 'dayGridMonth', // 기본 뷰: 월간
-        initialDate: '2025-02-26', // 초기 날짜
-        selectable: true, // 날짜 선택 가능
-        dateClick: function(info) { // 날짜 클릭 시 팝업 열기
+        initialView: 'dayGridMonth',
+        initialDate: '2025-02-26',
+        selectable: true,
+        dateClick: function(info) {
             window.open('check_event.html?date=' + info.dateStr, 'eventPopup',
                 'width=500,height=500,top=100,left=100,scrollbars=no,resizable=no');
         },
-        eventClick: function(info) { // 이벤트 클릭 시 팝업 열기
+        eventClick: function(info) {
             window.open('check_event.html?date=' + info.event.startStr, 'eventPopup',
                 'width=500,height=500,top=100,left=100,scrollbars=no,resizable=no');
         },
-        events: async function(fetchInfo, successCallback, failureCallback) { // 이벤트 데이터 로드
-            const localEvents = loadEventsFromLocalStorage(); // 로컬 이벤트
-            const holidayEvents = await fetchHolidays(); // 공휴일 이벤트
-            successCallback([...localEvents, ...holidayEvents]); // 이벤트 결합 후 반환
+        events: async function(fetchInfo, successCallback, failureCallback) {
+            const localEvents = loadEventsFromLocalStorage();
+            const holidayEvents = await fetchHolidays();
+            successCallback([...localEvents, ...holidayEvents]);
         },
-        eventDidMount: function(info) { // 이벤트 렌더링 후 호출
-            if (info.event.extendedProps.completed) { // 완료된 이벤트에 가운데 줄 적용
+        eventDidMount: function(info) {
+            if (info.event.extendedProps.completed) {
                 info.el.querySelector('.fc-event-title').style.textDecoration = 'line-through';
             }
         }
     });
+    calendar.render();
 
-    // hover 해제되면 클래스 추가
-    sidebar.addEventListener("mouseleave", function () {
-        profileInner.classList.add("profileInvisible"); // hover 해제 시 숨김
-        expBar.classList.add("profileInvisible"); // hover 시 보이게
-        medalBox.classList.add("profileInvisible");
-        medalBox.style.height = "0";
-        userInfoLayout.classList.remove("profileInvisible")
-
-        //프로필 비율
-        profileImg.style.width = "170px";
-        profileImg.style.height = "170px";
-        userInfoLayout.style.marginTop = "20%";
-    calendar.render(); // 캘린더 렌더링
-
-    // 공휴일 데이터를 API에서 가져오는 함수
+    // 공휴일 데이터 가져오기
     async function fetchHolidays() {
-        const url = 'https://date.nager.at/api/v3/publicholidays/2025/KR'; // 한국 공휴일 API
+        const url = 'https://date.nager.at/api/v3/publicholidays/2025/KR';
         try {
             const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP 오류: ${response.status} - ${response.statusText}`);
-            }
-            const holidays = await response.json(); // 공휴일 데이터 파싱
-            return holidays.map(holiday => ({ // 공휴일 이벤트 객체 생성
+            if (!response.ok) throw new Error(`HTTP 오류: ${response.status}`);
+            const holidays = await response.json();
+            return holidays.map(holiday => ({
                 title: holiday.localName,
                 start: holiday.date,
                 allDay: true,
@@ -184,25 +182,22 @@ document.addEventListener("DOMContentLoaded", function () {
                     memo: holiday.name || '',
                     category: 'Holiday',
                     isHoliday: true,
-                    completed: false // 공휴일은 기본적으로 완료되지 않음
+                    completed: false
                 }
             }));
         } catch (error) {
-            console.error('공휴일 가져오기 오류:', error); // 오류 로그 출력
+            console.error('공휴일 가져오기 오류:', error);
             return [];
         }
     }
 
-        //업적 설명 텍스트
-        achievement_p.forEach(p => {
-            p.style.opacity = "0"; // 모든 요소에 opacity 적용
-    // 캘린더에 새 이벤트를 추가하는 함수 (팝업에서 호출)
+    // 캘린더에 이벤트 추가
     window.addEventToCalendar = function(date, title, category) {
-        const events = JSON.parse(localStorage.getItem('events') || '{}'); // 로컬 스토리지에서 이벤트 가져오기
-        if (!events[date]) events[date] = []; // 해당 날짜에 이벤트 배열 없으면 초기화
-        events[date].push({ title, category, memo: '', completed: false }); // 새 이벤트 추가
-        localStorage.setItem('events', JSON.stringify(events)); // 로컬 스토리지 갱신
-        calendar.addEvent({ // 캘린더에 이벤트 추가
+        const events = JSON.parse(localStorage.getItem('events') || '{}');
+        if (!events[date]) events[date] = [];
+        events[date].push({ title, category, memo: '', completed: false });
+        localStorage.setItem('events', JSON.stringify(events));
+        calendar.addEvent({
             title: `${title} (${category})`,
             start: date,
             allDay: true,
@@ -210,48 +205,35 @@ document.addEventListener("DOMContentLoaded", function () {
             borderColor: categoryColors[category],
             extendedProps: { memo: '', completed: false }
         });
-
         content_title.forEach(title => {
             title.style.fontSize = "2em";
             title.style.marginLeft = "1em";
             title.style.width = "200px";
         });
-    });
-
-    //칭호 드랍다운 버튼
-    const dropdownItems = document.querySelectorAll(".dropdown-item");
-    const selectedTitle = document.getElementById("selectedTitle");
-        console.log(`✅ 일정 추가 완료: ${date}, ${title}, ${category}`); // 추가 로그
+        console.log(`✅ 일정 추가 완료: ${date}, ${title}, ${category}`);
     };
-});
 
+    // 칭호 드랍다운
     dropdownItems.forEach(item => {
         item.addEventListener("click", function () {
-            const selectedText = this.textContent;
-            selectedTitle.textContent = selectedText;// 칭호 텍스트 변경
+            selectedTitle.textContent = this.textContent;
         });
     });
-
-    // console.log(medal.document);
-    //todo : 메달 호버하면 앞뒤 메달 조금 커지게
-
-    //todo: 레벨 증가 로직
-
 });
 
-// 로컬 스토리지에서 기존 이벤트 불러오는 함수
+// 로컬 스토리지에서 이벤트 불러오기
 function loadEventsFromLocalStorage() {
-    const events = JSON.parse(localStorage.getItem('events') || '{}'); // 로컬 스토리지 데이터 파싱
-    const eventList = []; // 이벤트 목록 배열
-    const categoryColors = { // 색상 매핑 재정의
+    const events = JSON.parse(localStorage.getItem('events') || '{}');
+    const eventList = [];
+    const categoryColors = {
         Java: '#ff7a33',
         C: '#0000FF',
         JavaScript: '#ffae00',
         HTML: '#008000',
         Holiday: '#FF0000'
     };
-    for (const date in events) { // 날짜별 이벤트 순회
-        events[date].forEach(event => { // 각 이벤트 처리
+    for (const date in events) {
+        events[date].forEach(event => {
             eventList.push({
                 title: `${event.title} (${event.category})`,
                 start: date,
@@ -260,10 +242,10 @@ function loadEventsFromLocalStorage() {
                 borderColor: categoryColors[event.category],
                 extendedProps: {
                     memo: event.memo,
-                    completed: event.completed || false // 완료 여부 반영
+                    completed: event.completed || false
                 }
             });
         });
     }
-    return eventList; // 이벤트 목록 반환
+    return eventList;
 }
