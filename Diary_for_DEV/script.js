@@ -1,3 +1,5 @@
+// branch init
+
 // 페이지가 로드될 때 실행되는 이벤트 리스너
 document.addEventListener("DOMContentLoaded", function () {
     const banner = document.querySelector(".banner");
