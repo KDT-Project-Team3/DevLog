@@ -1,6 +1,7 @@
 // DB 관련
 let db; // 데이터베이스 객체
 const DB_NAME = 'sqliteDB'; // IndexedDB 데이터베이스 이름
+let dbInitialized = false; // 데이터베이스 초기화 여부
 
 // SQLite 환경 초기화
 async function initDatabase() {
@@ -68,8 +69,8 @@ async function initDatabase() {
 // 데이터베이스 IndexedDB에 저장
 function saveDBToIdxDB() {
     const dbData = db.export();
-    const blob = new Blob([dbData], { type: "application/octet-stream" });
-    indexedDB.deleteDatabase(DB_NAME);
+    const buffer = dbData.buffer; // ArrayBuffer 추출
+    // indexedDB.deleteDatabase(DB_NAME);
     const request = indexedDB.open(DB_NAME, 1);
     request.onsuccess = (event) => {
         const db = event.target.result;
@@ -79,7 +80,7 @@ function saveDBToIdxDB() {
         }
         const transaction = db.transaction("sqliteDB", "readwrite");
         const store = transaction.objectStore("sqliteDB");
-        const putRequest = store.put(blob, "db");
+        const putRequest = store.put(buffer, "db");
         putRequest.onsuccess = () => {
             console.log("💾 데이터베이스가 IndexedDB에 안전하게 저장되었습니다.");
         };
@@ -88,7 +89,7 @@ function saveDBToIdxDB() {
         };
         // 트랜잭션 완료 시점까지 기다리기
         transaction.oncomplete = () => {
-            console.log("✅ IndexedDB 트랜잭션 완료");
+            console.log("✅ (DB 저장) IndexedDB 트랜잭션 완료");
         }
     };
     request.onerror = (err) => {
@@ -398,6 +399,14 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedTitle.textContent = this.textContent;
         });
     });
+});
+
+// 페이지가 처음 로드될 때 DB 초기화
+document.addEventListener("DOMContentLoaded", async function() {
+    if (!localStorage.getItem('dbInitialized')) {
+        await initDatabase();
+        localStorage.setItem('dbInitialized', 'true');
+    }
 });
 
 // 로컬 스토리지에서 이벤트 불러오기

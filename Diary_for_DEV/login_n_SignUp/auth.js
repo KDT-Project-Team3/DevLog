@@ -68,8 +68,8 @@ async function initDatabase() {
 // 데이터베이스 IndexedDB에 저장
 function saveDBToIdxDB() {
     const dbData = db.export();
-    const blob = new Blob([dbData], { type: "application/octet-stream" });
-    indexedDB.deleteDatabase(DB_NAME);
+    const buffer = dbData.buffer; // ArrayBuffer 추출
+    // indexedDB.deleteDatabase(DB_NAME);
     const request = indexedDB.open(DB_NAME, 1);
     request.onsuccess = (event) => {
         const db = event.target.result;
@@ -79,7 +79,7 @@ function saveDBToIdxDB() {
         }
         const transaction = db.transaction("sqliteDB", "readwrite");
         const store = transaction.objectStore("sqliteDB");
-        const putRequest = store.put(blob, "db");
+        const putRequest = store.put(buffer, "db");
         putRequest.onsuccess = () => {
             console.log("💾 데이터베이스가 IndexedDB에 안전하게 저장되었습니다.");
         };
@@ -88,7 +88,7 @@ function saveDBToIdxDB() {
         };
         // 트랜잭션 완료 시점까지 기다리기
         transaction.oncomplete = () => {
-            console.log("✅ IndexedDB 트랜잭션 완료");
+            console.log("✅ (DB 저장) IndexedDB 트랜잭션 완료");
         }
     };
     request.onerror = (err) => {
@@ -229,6 +229,7 @@ function login() {
     // 데이터베이스에서 사용자 확인
     const result = db.exec("SELECT * FROM user WHERE email = ? AND password = ?", [email, password]);
     if (result.length > 0) {
+        saveDBToIdxDB(); // 로그인 성공 시 IndexedDB에 저장
         alert('로그인 성공!');
         window.location.href = '../index.html'; // 캘린더 페이지로 이동
     } else {
@@ -246,3 +247,8 @@ function showSignup() {
     document.getElementById('login-container').style.display = 'none';
     document.getElementById('signup-container').style.display = 'block';
 }
+
+// 페이지 로드 시 실행
+document.addEventListener('DOMContentLoaded', async function() {
+    await initDatabase();
+});
