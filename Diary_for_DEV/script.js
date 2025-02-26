@@ -70,7 +70,8 @@ document.addEventListener("DOMContentLoaded", function () {
         Java: '#ff7a33',       // 주황색
         C: '#0000FF',          // 파란색
         JavaScript: '#ffae00', // 노란색
-        HTML: '#008000'        // 초록색
+        HTML: '#008000',        // 초록색
+        Holiday: '#FF0000'
     };
 
     // 캘린더 설정
@@ -218,7 +219,7 @@ function loadEventsFromLocalStorage() {
         Java: '#ff7a33',
         C: '#0000FF',
         JavaScript: '#ffae00',
-        HTML: '#008000'
+        HTML: '#008000',
     };
     for (const date in events) {
         events[date].forEach(event => {
