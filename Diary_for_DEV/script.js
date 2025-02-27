@@ -11,15 +11,14 @@ const currentUser = { // 현재 로그인한 유저 정보
     img: 'default_profile.png',
     xpUp: function (xp) { // 경험치 증가
         this.xp += xp;
-        this.lvUp();
-        console.log(`✅ 경험치 ${xp} 획득! (현재 경험치: ${this.xp}, 레벨: ${this.lv})`);
-    },
-    lvUp: function () { // 레벨 증가
+        console.log(`✅ 경험치 ${xp} 획득! (현재 레벨: ${this.lv}, 현재 경험치: ${this.xp}`);
         if (this.xp >= this.lv + 1) {
             this.xp -= this.lv + 1;
             this.lv++;
-            console.log(`✅ 레벨 업! (현재 경험치: ${this.xp}, 레벨: ${this.lv})`);
+            console.log(`✨ 레벨 업! (현재 레벨: ${this.lv}, 현재 경험치: ${this.xp}`);
         }
+        db.exec("UPDATE user SET xp=?, lv=? WHERE user_id=?", [this.xp, this.lv,this.user_id]);
+        console.log("✅ 데이터베이스에 경험치 및 레벨 업데이트 완료!");
     }
 };
 
