@@ -173,7 +173,7 @@ async function initDatabase() {
             event_id    INTEGER PRIMARY KEY AUTOINCREMENT,  -- 이벤트 ID
             user_id     INTEGER NOT NULL,                   -- 사용자 ID
             title       TEXT NOT NULL,                      -- 제목
-            com_lang    TEXT NOT NULL,                      -- 관련 언어
+            category    TEXT NOT NULL,                      -- 분류
             memo        TEXT,                               -- 메모
             date        TEXT NOT NULL,                      -- 날짜
             completed   BOOLEAN DEFAULT FALSE,              -- 완료 여부
@@ -561,13 +561,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 이벤트 추가 함수 (중복 체크 강화)
     window.addEventToCalendar = function(date, title, category) {
-        const events = JSON.parse(localStorage.getItem('events') || '{}');
-        if (!events[date]) events[date] = [];
-        const exists = events[date].some(event => event.title === title && event.category === category);
-        if (!exists) {
-            events[date].push({ title, category, memo: '', completed: false });
-            localStorage.setItem('events', JSON.stringify(events));
-            // 캘린더에 이벤트 추가 후 중복 렌더링 방지를 위해 refetchEvents 호출 제거
+        // Check if the event already exists in the database
+        const existingEvents = db.exec("SELECT * FROM diary_event WHERE date = ? AND title = ? AND category = ?", [date, title, category]);
+        if (existingEvents.length === 0) {
+            // Insert the new event into the diary_event table
+            db.run("INSERT INTO diary_event (user_id, title, category, date, completed) VALUES (?, ?, ?, ?, ?)", [currentUser.user_id, title, category, date, false]);
+            console.log(`✅ 일정 추가 완료: ${date}, ${title}, ${category}`);
+
+            // Add the event to the calendar
             calendar.addEvent({
                 title: `${title} (${category})`,
                 start: date,
@@ -576,7 +577,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 borderColor: categoryColors[category],
                 extendedProps: { memo: '', completed: false }
             });
-            console.log(`✅ 일정 추가 완료: ${date}, ${title}, ${category}`);
         } else {
             console.log(`이미 존재하는 일정: ${title} (${category})`);
         }
@@ -599,23 +599,22 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    function checkLevelUp() {
-        const requiredXp = window.userData.level * 5;
-        while (window.userData.xp >= requiredXp) {
-            window.userData.level += 1;
-            window.userData.xp -= requiredXp;
-            console.log(`🎉 레벨업! 현재 레벨: ${window.userData.level}, 남은 XP: ${window.userData.xp}`);
-        }
-        localStorage.setItem('userData', JSON.stringify(window.userData));
-    }
+    // function checkLevelUp() {
+    //     const requiredXp = window.userData.level * 5;
+    //     while (window.userData.xp >= requiredXp) {
+    //         window.userData.level += 1;
+    //         window.userData.xp -= requiredXp;
+    //         console.log(`🎉 레벨업! 현재 레벨: ${window.userData.level}, 남은 XP: ${window.userData.xp}`);
+    //     }
+    //     localStorage.setItem('userData', JSON.stringify(window.userData));
+    // }
 
     function updateLevelAndExp() {
-        const requiredXp = window.userData.level * 5;
-        levelDisplay.textContent = `LV: ${window.userData.level}`;
-        const expPercentage = (window.userData.xp / requiredXp) * 100;
+        const requiredXp = currentUser.lv + 1;
+        levelDisplay.textContent = `LV: ${currentUser.lv}`;
+        const expPercentage = (currentUser.xp / requiredXp) * 100;
         expBar.style.width = `${expPercentage}%`;
-        expBar.textContent = `${window.userData.xp}/${requiredXp}`;
-        localStorage.setItem('userData', JSON.stringify(window.userData));
+        expBar.textContent = `${currentUser.xp}/${requiredXp}`;
     }
 
     function updateMedals() {
@@ -651,25 +650,25 @@ document.addEventListener("DOMContentLoaded", async function() {
     await initDatabase();
 });
 
-function loadEventsFromLocalStorage() {
-    const events = JSON.parse(localStorage.getItem('events') || '{}');
-    const eventList = [];
-    const categoryColors = {
-        Python: '#3776AB', Java: '#007396', C: '#A8B9CC', Cpp: '#00599C', Csharp: '#68217A',
-        JavaScript: '#F7DF1E', HTML: '#E34F26', R: '#276DC3', Kotlin: '#F18E33', SQL: '#4479A1',
-        Holiday: '#FF0000'
-    };
-    for (const date in events) {
-        events[date].forEach(event => {
-            eventList.push({
-                title: `${event.title} (${event.category})`,
-                start: date,
-                allDay: true,
-                backgroundColor: categoryColors[event.category],
-                borderColor: categoryColors[event.category],
-                extendedProps: { memo: event.memo || '', completed: event.completed || false }
-            });
-        });
-    }
-    return eventList;
-}
+// function loadEventsFromLocalStorage() {
+//     const events = JSON.parse(localStorage.getItem('events') || '{}');
+//     const eventList = [];
+//     const categoryColors = {
+//         Python: '#3776AB', Java: '#007396', C: '#A8B9CC', Cpp: '#00599C', Csharp: '#68217A',
+//         JavaScript: '#F7DF1E', HTML: '#E34F26', R: '#276DC3', Kotlin: '#F18E33', SQL: '#4479A1',
+//         Holiday: '#FF0000'
+//     };
+//     for (const date in events) {
+//         events[date].forEach(event => {
+//             eventList.push({
+//                 title: `${event.title} (${event.category})`,
+//                 start: date,
+//                 allDay: true,
+//                 backgroundColor: categoryColors[event.category],
+//                 borderColor: categoryColors[event.category],
+//                 extendedProps: { memo: event.memo || '', completed: event.completed || false }
+//             });
+//         });
+//     }
+//     return eventList;
+// }
