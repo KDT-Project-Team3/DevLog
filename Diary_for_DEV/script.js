@@ -1,6 +1,27 @@
-// DB 관련
 let db; // 데이터베이스 객체
 // const DB_NAME = 'sqliteDB'; // IndexedDB 데이터베이스 이름
+
+const currentUser = { // 현재 로그인한 유저 정보
+    user_id: null,
+    username: null,
+    email: null,
+    password: null,
+    lv: 1,
+    xp: 0,
+    img: 'default_profile.png',
+    xpUp: function (xp) { // 경험치 증가
+        this.xp += xp;
+        this.lvUp();
+        console.log(`✅ 경험치 ${xp} 획득! (현재 경험치: ${this.xp}, 레벨: ${this.lv})`);
+    },
+    lvUp: function () { // 레벨 증가
+        if (this.xp >= this.lv + 1) {
+            this.xp -= this.lv + 1;
+            this.lv++;
+            console.log(`✅ 레벨 업! (현재 경험치: ${this.xp}, 레벨: ${this.lv})`);
+        }
+    }
+};
 
 // IndexedDB는 이슈 해결 전까지 사용하지 않음
 // async function initDatabase() {
@@ -271,16 +292,21 @@ function displayUsers() {
     console.log(result);
 }
 
-// 회원 정보 수정(현재는 콘솔용)
+// 회원 정보 수정(콘솔용)
 function updateUser(name, email, password, lv, xp, img, id) {
     db.run("UPDATE user SET username=?, email=?, password=?, lv=?, xp=?, img=? WHERE user_id=?", [name, email, password, lv, xp, img, id]);
     displayUsers();
 }
 
-// 회원 삭제(현재는 콘솔용)
+// 회원 삭제(콘솔용)
 function deleteUser(id) {
     db.run("DELETE FROM user WHERE user_id=?", [id]);
     displayUsers();
+}
+
+// 로그인한 유저 확인(콘솔용)
+function checkCurrentUser() {
+    console.log(currentUser);
 }
 
 // 페이지가 로드될 때 실행되는 이벤트 리스너
@@ -417,8 +443,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // 로그인한 유저 정보 불러오기
-    const currentUser = JSON.parse(localStorage.getItem('current_user'));
-    // currentUser를 바탕으로 프로필 이미지/아이디/칭호 등등을 호출하기
+    let tmp = JSON.parse(localStorage.getItem('current_user'));
+    if (tmp && tmp.length > 0) {
+        const user = tmp[0].values[0];
+        currentUser.user_id = user[0];
+        currentUser.username = user[1];
+        currentUser.email = user[2];
+        currentUser.password = user[3];
+        currentUser.lv = user[4];
+        currentUser.xp = user[5];
+        currentUser.img = user[6];
+    }
 
     // 캘린더 초기화
     const calendarEl = document.getElementById('calendar');
