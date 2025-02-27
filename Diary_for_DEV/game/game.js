@@ -131,6 +131,7 @@ function updateTimer() {
         document.getElementById('submit-btn').disabled = true;
         setTimeout(() => {
             window.location.href = '../main/main.html'; // 시간 초과 시 게임 오버 페이지로 이동
+            window.parent.postMessage({ action: "closeModal" }, "*"); // index.JS 에 모달 닫기 위한 메시지 전송
         }, 2000);
     }
 }
@@ -154,6 +155,8 @@ document.getElementById('submit-btn').addEventListener('click', function() {
             setTimeout(() => {
                 window.location.href = '../main.html'; // 모든 레벨 클리어 후 승리 페이지로 이동
                 window.location.href = '../main/main.html'; // 모든 레벨 클리어 후 승리 페이지로 이동
+                // window.location.href = '../index.html'; // 모든 레벨 클리어 후 승리 페이지로 이동
+                window.parent.postMessage({ action: "closeModal" }, "*"); // index.JS 에 모달 닫기 위한 메시지 전송
             }, 2000);
         }
     } else {

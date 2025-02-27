@@ -589,6 +589,34 @@ document.addEventListener("DOMContentLoaded", async function () {
             eventForm.reset();
         };
     }
+    // 칭호 드랍다운
+    dropdownItems.forEach(item => {
+        item.addEventListener("click", function () {
+            selectedTitle.textContent = this.textContent;
+        });
+    });
+
+    // 버그헌터 (클릭 시 새 탭으로 열리는 버전)
+    // const bugHunter = document.querySelector(".bugHunter");
+    // bugHunter.addEventListener("click", function () {
+    //     window.open("game/game.html", "popupWindow", "width=500,height=500,top=100,left=100,scrollbars=no,resizable=no");
+    // });
+
+    // 버그헌터 게임종료시, game.js에서 메세지 받아 모달창 닫음
+    window.addEventListener("message", function(event) {
+        if (event.data.action === "closeModal") {
+            var modalElement = document.getElementById('exampleModal');
+            var modalInstance = bootstrap.Modal.getInstance(modalElement);
+
+            if (modalInstance) {
+                modalInstance.hide();
+                console.log("game페이지로부터 메세지를 받아 모달 닫힘");
+            }
+        }
+    });
+
+
+});
 
     const deleteEventBtn = document.getElementById('deleteEvent');
     if (deleteEventBtn) {
@@ -798,3 +826,4 @@ function loadEventsFromLocalStorage() {
     }
     return eventList;
 }
+
