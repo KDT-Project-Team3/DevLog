@@ -9,6 +9,7 @@ const currentUser = { // 현재 로그인한 유저 정보
     lv: 1,
     xp: 0,
     img: 'default_profile.png',
+    highscore: 0,
     xpUp: function (xp) { // 경험치 증가
         this.xp += xp;
         console.log(`✅ 경험치 ${xp} 획득! (현재 레벨: ${this.lv}, 현재 경험치: ${this.xp}`);
