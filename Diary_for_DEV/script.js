@@ -139,59 +139,37 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 
-    // 업적 - 카테고리 매핑 객체 정의 { 카테고리, 완료 수, 칭호, 이미지 } // 테스트를 위해 조건을 낮게 수정!!
     const achievementCategoryMap = {
-        // Java
         "Java 첫걸음": { category: "Java", requiredCount: 1, title: "", condition: "Java 일정 1개 완료" },
         "Java 고수": { category: "Java", requiredCount: 2, title: "", condition: "Java 일정 2개 완료" },
         "Java의 신": { category: "Java", requiredCount: 3, title: "☕ Java의 신", condition: "Java 일정 3개 완료" },
-
-        // Python
         "Python 첫걸음": { category: "Python", requiredCount: 1, title: "", condition: "Python 일정 1개 완료" },
         "Python 마스터": { category: "Python", requiredCount: 2, title: "", condition: "Python 일정 2개 완료" },
         "Python의 신": { category: "Python", requiredCount: 3, title: "🐍 Python의 신", condition: "Python 일정 3개 완료" },
-
-        // JavaScript
         "JS 첫걸음": { category: "JavaScript", requiredCount: 1, title: "", condition: "JavaScript 일정 1개 완료" },
         "JS DOM의 달인": { category: "JavaScript", requiredCount: 2, title: "", condition: "JavaScript 일정 2개 완료" },
         "JS 마스터": { category: "JavaScript", requiredCount: 3, title: "🧩 JS 코드 마스터", condition: "JavaScript 일정 3개 완료" },
-
-        // HTML
         "초보 프론트엔드": { category: "HTML", requiredCount: 1, title: "", condition: "HTML 일정 1개 완료" },
         "HTML 고수": { category: "HTML", requiredCount: 2, title: "", condition: "HTML 일정 2개 완료" },
         "HTML의 신": { category: "HTML", requiredCount: 3, title: "📜 HTML의 신, 🎨 CSS의 신", condition: "HTML 일정 3개 완료" },
-
-        // SQL
         "SQL 첫걸음": { category: "SQL", requiredCount: 1, title: "", condition: "SQL 일정 1개 완료" },
         "SQL 고수": { category: "SQL", requiredCount: 2, title: "", condition: "SQL 일정 2개 완료" },
         "SQL의 신": { category: "SQL", requiredCount: 3, title: "🗄️ SQL의 신", condition: "SQL 일정 3개 완료" },
-
-        // C
         "C 첫걸음": { category: "C", requiredCount: 1, title: "", condition: "C 일정 1개 완료" },
         "C 고수": { category: "C", requiredCount: 2, title: "", condition: "C 일정 2개 완료" },
         "C의 신": { category: "C", requiredCount: 3, title: "🔧 C의 신", condition: "C 일정 3개 완료" },
-
-        // Cpp (C++)
         "C++ 첫걸음": { category: "Cpp", requiredCount: 1, title: "", condition: "C++ 일정 1개 완료" },
         "C++ 고수": { category: "Cpp", requiredCount: 2, title: "", condition: "C++ 일정 2개 완료" },
         "C++의 신": { category: "Cpp", requiredCount: 3, title: "⚙️ C++의 신", condition: "C++ 일정 3개 완료" },
-
-        // Csharp (C#)
         "C# 첫걸음": { category: "Csharp", requiredCount: 1, title: "", condition: "C# 일정 1개 완료" },
         "C# 고수": { category: "Csharp", requiredCount: 2, title: "", condition: "C# 일정 2개 완료" },
         "C#의 신": { category: "Csharp", requiredCount: 3, title: "🎹 C#의 신", condition: "C# 일정 3개 완료" },
-
-        // R
         "R 첫걸음": { category: "R", requiredCount: 1, title: "", condition: "R 일정 1개 완료" },
         "R 고수": { category: "R", requiredCount: 2, title: "", condition: "R 일정 2개 완료" },
         "R의 신": { category: "R", requiredCount: 3, title: "📊 R의 신", condition: "R 일정 3개 완료" },
-
-        // Kotlin
         "Kotlin 첫걸음": { category: "Kotlin", requiredCount: 1, title: "", condition: "Kotlin 일정 1개 완료" },
         "Kotlin 고수": { category: "Kotlin", requiredCount: 2, title: "", condition: "Kotlin 일정 2개 완료" },
         "Kotlin의 신": { category: "Kotlin", requiredCount: 3, title: "🤖 Kotlin의 신", condition: "Kotlin 일정 3개 완료" },
-
-        // General
         "정원 관리사": { category: "General", requiredCount: 1, title: "🏡 정원 관리사", condition: "어떤 일정 1개 완료" },
         "지옥에서 온": { category: "General", requiredCount: 2, title: "🔥 지옥에서 온", condition: "어떤 일정 2개 완료" },
         "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이", condition: "어떤 일정 1개 완료" },
@@ -199,21 +177,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         "파워J": { category: "General", requiredCount: 3, title: "⚡ 파워 J", condition: "어떤 일정 3개 완료" },
         "자기계발왕": { category: "General", requiredCount: 4, title: "📚 자기계발 끝판왕", condition: "어떤 일정 4개 완료" },
         "닥터 스트레인지": { category: "General", requiredCount: 5, title: "⏳ 닥터 스트레인지", condition: "어떤 일정 5개 완료" },
-
-        // 버그 헌터 관련 업적
-        // "새싹 디버거": { category: "Debug", requiredCount: 1, title: "🌱 새싹 디버거" },
-        // "버그 헌터": { category: "Debug", requiredCount: 3, title: "🔍 버그 헌터" },
-        // "디버깅 마스터": { category: "Debug", requiredCount: 5, title: "🛠️ 디버깅 마스터" },
-        // "버그 엑소시스트": { category: "Debug", requiredCount: 10, title: "👻 버그 엑소시스트" },
-        // "와일드 멘탈": { category: "Debug", requiredCount: 15, title: "" }
     };
 
-
-    // 업적 제목 스타일 설정
     content_title.forEach(title => {
-        title.style.fontSize = "1.3em"; // 글꼴 크기
-        title.style.marginLeft = "0.2em"; // 왼쪽 여백
-        title.style.width = "300px"; // 너비 설정
+        title.style.fontSize = "1.3em";
+        title.style.marginLeft = "0.2em";
+        title.style.width = "300px";
     });
 
     let tmp = JSON.parse(localStorage.getItem('current_user'));
@@ -393,13 +362,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    // 카테고리별 완료된 일정 집계 및 메달 업데이트
     function updateMedals() {
         const events = JSON.parse(localStorage.getItem('events') || '{}');
         const completedCounts = {};
         let totalCompleted = 0;
 
-        // 완료된 일정 수 계산
         for (const date in events) {
             events[date].forEach(event => {
                 if (event.completed) {
@@ -409,7 +376,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             });
         }
 
-        // 디버깅 로그
         console.log("Completed Counts:", completedCounts);
         console.log("Total Completed:", totalCompleted);
 
@@ -435,7 +401,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             const category = mapping.category;
             const requiredCount = mapping.requiredCount;
             const completedCount = completedCounts[category] || 0;
-            // const isUnlocked = completedCount >= requiredCount;
             const isUnlocked = category === "General" ? totalCompleted >= requiredCount : completedCount >= requiredCount;
 
             achievementStatus[title] = { item, isUnlocked, mapping };
@@ -447,14 +412,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 item.style.opacity = '1';
                 descriptionP.textContent = descriptionP.dataset.originalText || descriptionP.textContent;
 
-                // 업적 해금되었고, 아직 맨 위로 이동하지 않았다면 이동!
-                // if (!item.dataset.movedToBottom) {
-                //     achievementContainer.prepend(item); // 맨 아래로 이동
-                //     item.dataset.movedToTop = 'true'; // 이동 완료 표시
-                //     console.log(`업적 이동: ${title} -> 맨 위로`);
-                // }
-
-                // 업적 해금 시 칭호 추가
                 if (mapping.title && !item.dataset.titleAdded) {
                     const titles = mapping.title.split(',').map(t => t.trim());
                     titles.forEach(title => {
@@ -462,22 +419,18 @@ document.addEventListener("DOMContentLoaded", async function () {
                             addTitleToDropdown(title);
                         }
                     });
-                    item.dataset.titleAdded = 'true'; // 중복 추가 방지
+                    item.dataset.titleAdded = 'true';
                 }
             } else {
                 item.classList.remove('unlocked');
                 item.style.opacity = '0.7';
-                // 원래 설명 저장 후 해금 조건으로 변경
                 if (!descriptionP.dataset.originalText) {
                     descriptionP.dataset.originalText = descriptionP.textContent;
                 }
                 descriptionP.textContent = mapping.condition || "해금 조건 미정";
             }
-
-            achievementStatus[title] = { item, isUnlocked, mapping };
-
         });
-        // achievementCategoryMap의 순서대로 재정렬
+
         const unlockedItems = [];
         const lockedItems = [];
 
@@ -492,12 +445,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
         });
 
-        // 컨테이너 비우고 순서대로 다시 추가
         achievementContainer.innerHTML = '';
         unlockedItems.forEach(item => achievementContainer.appendChild(item));
         lockedItems.forEach(item => achievementContainer.appendChild(item));
     }
-
 
     initializeTitles();
     updateMedals();
@@ -589,34 +540,12 @@ document.addEventListener("DOMContentLoaded", async function () {
             eventForm.reset();
         };
     }
-    // 칭호 드랍다운
+
     dropdownItems.forEach(item => {
         item.addEventListener("click", function () {
             selectedTitle.textContent = this.textContent;
         });
     });
-
-    // 버그헌터 (클릭 시 새 탭으로 열리는 버전)
-    // const bugHunter = document.querySelector(".bugHunter");
-    // bugHunter.addEventListener("click", function () {
-    //     window.open("game/game.html", "popupWindow", "width=500,height=500,top=100,left=100,scrollbars=no,resizable=no");
-    // });
-
-    // 버그헌터 게임종료시, game.js에서 메세지 받아 모달창 닫음
-    window.addEventListener("message", function(event) {
-        if (event.data.action === "closeModal") {
-            var modalElement = document.getElementById('exampleModal');
-            var modalInstance = bootstrap.Modal.getInstance(modalElement);
-
-            if (modalInstance) {
-                modalInstance.hide();
-                console.log("game페이지로부터 메세지를 받아 모달 닫힘");
-            }
-        }
-    });
-
-
-});
 
     const deleteEventBtn = document.getElementById('deleteEvent');
     if (deleteEventBtn) {
@@ -793,6 +722,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 });
 
+// 수정된 loadEventsFromLocalStorage 함수
 function loadEventsFromLocalStorage() {
     const events = JSON.parse(localStorage.getItem('events') || '{}');
     const eventList = [];
@@ -809,17 +739,36 @@ function loadEventsFromLocalStorage() {
         SQL: '#4479A1',
         Holiday: '#FF0000'
     };
+
     for (const date in events) {
-        events[date].forEach(event => {
+        // events[date]가 배열인지 확인
+        if (!Array.isArray(events[date])) {
+            console.error(`이벤트 데이터 오류: ${date}의 데이터가 배열이 아님`, events[date]);
+            continue; // 배열이 아니면 건너뜀
+        }
+
+        events[date].forEach((event, index) => {
+            // event 객체가 유효한지 확인
+            if (!event || typeof event !== 'object') {
+                console.error(`유효하지 않은 이벤트 객체: 날짜 ${date}, 인덱스 ${index}`, event);
+                return;
+            }
+
+            // 필수 속성에 기본값 제공
+            const eventTitle = event.title || '제목 없음';
+            const eventCategory = event.category || 'Java'; // 기본 카테고리
+            const backgroundColor = categoryColors[eventCategory] || '#000000'; // 기본 색상
+            const borderColor = categoryColors[eventCategory] || '#000000';
+
             eventList.push({
-                title: `${event.title} (${event.category})`,
+                title: `${eventTitle} (${eventCategory})`,
                 start: date,
                 allDay: true,
-                backgroundColor: categoryColors[event.category],
-                borderColor: categoryColors[event.category],
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
                 extendedProps: {
                     memo: event.memo || '',
-                    completed: event.completed || false
+                    completed: !!event.completed // 부울 값으로 강제 변환
                 }
             });
         });
@@ -827,3 +776,18 @@ function loadEventsFromLocalStorage() {
     return eventList;
 }
 
+// 누락된 유틸리티 함수 추가 (코드에서 호출되지만 정의되지 않음)
+function saveDiaryEventToLocalStorage() {
+    // db에서 diary_event 데이터를 가져와 localStorage에 저장하는 로직 필요
+    console.log("saveDiaryEventToLocalStorage 호출됨 - 구현 필요");
+}
+
+function saveUserToLocalStorage() {
+    const userData = [{
+        values: [
+            [currentUser.user_id, currentUser.username, currentUser.email, currentUser.password, currentUser.lv, currentUser.xp, currentUser.img]
+        ]
+    }];
+    localStorage.setItem('current_user', JSON.stringify(userData));
+    console.log("사용자 데이터가 localStorage에 저장됨");
+}
