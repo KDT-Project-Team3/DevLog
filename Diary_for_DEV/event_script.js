@@ -4,7 +4,7 @@ function getQueryParam(name) {
     return params.get(name);
 }
 
-// 이벤트 목록 렌더링
+// 이벤트 목록 렌더링 - 완료된 항목은 항상 "Done" 아래로 이동
 function renderEvents(selectedDate, events) {
     const eventList = document.getElementById('event-list');
     const doneList = document.getElementById('done-list');
@@ -48,16 +48,15 @@ function renderEvents(selectedDate, events) {
     }
 }
 
-// 저장 후 닫기 (단순히 창 닫기만 수행)
+// 저장 후 닫기
 function saveAndClose() {
-    // refetchEvents 호출 제거, 단순히 창 닫기만 수행
     window.close();
 }
 
 // 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', function() {
     const selectedDate = getQueryParam('date');
-    const events = JSON.parse(localStorage.getItem('events') || '{}');
+    let events = JSON.parse(localStorage.getItem('events') || '{}');
 
     document.getElementById('event-date').textContent = selectedDate ? `📅 ${selectedDate}` : '날짜를 선택하세요';
     renderEvents(selectedDate, events);
@@ -67,15 +66,24 @@ document.addEventListener('DOMContentLoaded', function() {
         const title = document.getElementById('new-title').value.trim();
         const category = document.getElementById('new-category').value;
 
-        if (title && selectedDate) {
+        if (!title || !selectedDate) {
+            console.warn('제목 또는 날짜가 누락되었습니다.');
+            return;
+        }
+
+        try {
             if (window.opener && window.opener.addEventToCalendar) {
                 window.opener.addEventToCalendar(selectedDate, title, category);
+                events = JSON.parse(localStorage.getItem('events') || '{}'); // 최신 데이터 가져오기
+                renderEvents(selectedDate, events);
+                document.getElementById('new-title').value = '';
+                console.log(`✅ 팝업에서 일정 추가 완료: ${title}`);
             }
-            // 로컬 저장소 갱신 후 UI 업데이트
-            renderEvents(selectedDate, JSON.parse(localStorage.getItem('events') || '{}'));
-            document.getElementById('new-title').value = '';
+        } catch (error) {
+            console.error('일정 추가 실패:', error);
         }
     }
+
     // 이벤트 리스너 중복 방지
     addBtn.removeEventListener('click', addEventHandler);
     addBtn.addEventListener('click', addEventHandler);
@@ -91,7 +99,12 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('events', JSON.stringify(events));
             renderEvents(selectedDate, events);
             if (!wasCompleted && target.checked && window.opener && window.opener.completeEvent) {
-                window.opener.completeEvent(selectedDate, index);
+                try {
+                    window.opener.completeEvent(selectedDate, index); // 완료 처리 및 메인 페이지 갱신
+                    console.log(`✅ 팝업에서 일정 완료: ${events[selectedDate][index].title}`);
+                } catch (error) {
+                    console.error('완료 처리 실패:', error);
+                }
             }
         } else if (target.classList.contains('edit-btn')) {
             const event = events[selectedDate][index];
