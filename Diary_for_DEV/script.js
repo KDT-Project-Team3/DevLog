@@ -17,12 +17,11 @@ const content_title = document.querySelectorAll(".achievement .content h2");
 const dropdownItems = document.querySelectorAll(".dropdown-item");
 const selectedTitle = document.getElementById("selectedTitle");
 const levelDisplay = document.querySelector(".level-display");
-const dropdownMenu = document.querySelector(".dropdown-menu"); // 두 번째 코드에서 추가된 요소
+const dropdownMenu = document.querySelector(".dropdown-menu");
 
-// 전역으로 캘린더 객체 접근 가능하도록 설정
 let calendarInstance = null;
 
-const currentUser = { // 현재 로그인한 유저 정보
+const currentUser = {
     user_id: null,
     username: null,
     email: null,
@@ -31,7 +30,7 @@ const currentUser = { // 현재 로그인한 유저 정보
     xp: 0,
     img: 'default_profile.png',
     highscore: 0,
-    xpUp: function (xp) { // 경험치 증가
+    xpUp: function (xp) {
         this.xp += xp;
         console.log(`✅ 경험치 ${xp} 획득! (현재 레벨: ${this.lv}, 현재 경험치: ${this.xp}`);
         const requiredXp = this.lv + 1;
@@ -42,8 +41,8 @@ const currentUser = { // 현재 로그인한 유저 정보
         }
         try {
             db.exec("UPDATE user SET xp=?, lv=? WHERE user_id=?", [this.xp, this.lv, this.user_id]);
-            saveUserToLocalStorage(); // 데이터베이스 저장
-            updateLevelAndExp(); // UI 즉시 갱신
+            saveUserToLocalStorage();
+            updateLevelAndExp();
             if (calendarInstance) calendarInstance.render();
             console.log("✅ 데이터베이스에 경험치 및 레벨 업데이트 완료!");
         } catch (error) {
@@ -52,7 +51,6 @@ const currentUser = { // 현재 로그인한 유저 정보
     }
 };
 
-// 데이터베이스 초기화
 async function initDatabase() {
     try {
         const SQL = await initSqlJs({
@@ -62,44 +60,44 @@ async function initDatabase() {
         db = new SQL.Database();
         db.run(`
             CREATE TABLE IF NOT EXISTS user (
-                user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE NOT NULL COLLATE NOCASE,
-                email TEXT UNIQUE NOT NULL,
-                password TEXT NOT NULL,
-                lv INTEGER DEFAULT 1,
-                xp INTEGER DEFAULT 0,
-                img TEXT DEFAULT 'default_profile.png'
+                                                user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                                username TEXT UNIQUE NOT NULL COLLATE NOCASE,
+                                                email TEXT UNIQUE NOT NULL,
+                                                password TEXT NOT NULL,
+                                                lv INTEGER DEFAULT 1,
+                                                xp INTEGER DEFAULT 0,
+                                                img TEXT DEFAULT 'default_profile.png'
             );
         `);
         db.run(`
             CREATE TABLE IF NOT EXISTS diary_event (
-                event_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                title TEXT NOT NULL,
-                com_lang TEXT NOT NULL,
-                memo TEXT,
-                date TEXT NOT NULL,
-                completed BOOLEAN DEFAULT FALSE,
-                FOREIGN KEY (user_id) REFERENCES user(user_id)
-            );
+                                                       event_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                                       user_id INTEGER NOT NULL,
+                                                       title TEXT NOT NULL,
+                                                       com_lang TEXT NOT NULL,
+                                                       memo TEXT,
+                                                       date TEXT NOT NULL,
+                                                       completed BOOLEAN DEFAULT FALSE,
+                                                       FOREIGN KEY (user_id) REFERENCES user(user_id)
+                );
         `);
         db.run(`
             CREATE TABLE IF NOT EXISTS achievement (
-                ach_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT NOT NULL,
-                flavor TEXT NOT NULL,
-                trigger TEXT NOT NULL,
-                img TEXT NOT NULL
+                                                       ach_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                                       title TEXT NOT NULL,
+                                                       flavor TEXT NOT NULL,
+                                                       trigger TEXT NOT NULL,
+                                                       img TEXT NOT NULL
             );
         `);
         db.run(`
             CREATE TABLE IF NOT EXISTS user_achievement (
-                user_id INTEGER NOT NULL,
-                ach_id INTEGER NOT NULL,
-                FOREIGN KEY (user_id) REFERENCES user(user_id),
+                                                            user_id INTEGER NOT NULL,
+                                                            ach_id INTEGER NOT NULL,
+                                                            FOREIGN KEY (user_id) REFERENCES user(user_id),
                 FOREIGN KEY (ach_id) REFERENCES achievement(ach_id),
                 PRIMARY KEY (user_id, ach_id)
-            );
+                );
         `);
         console.log("✅ 데이터베이스 초기화 완료!");
         loadDatabaseFromLocalStorage();
@@ -109,7 +107,6 @@ async function initDatabase() {
     }
 }
 
-// localStorage 에서 데이터베이스 불러오기
 function loadDatabaseFromLocalStorage() {
     try {
         const userData = JSON.parse(localStorage.getItem('user'));
@@ -157,12 +154,11 @@ function loadDatabaseFromLocalStorage() {
     }
 }
 
-// 데이터베이스 저장 함수들
 function saveUserToLocalStorage() {
     try {
         const user = db.exec("SELECT * FROM user");
         localStorage.setItem('user', JSON.stringify(user));
-        localStorage.setItem('current_user', JSON.stringify(user)); // 두 코드에서 사용
+        localStorage.setItem('current_user', JSON.stringify(user));
         console.log("✅ user 테이블 데이터 저장 완료!");
     } catch (error) {
         console.error('user 저장 실패:', error);
@@ -214,7 +210,6 @@ function updateLevelAndExp() {
     }
 }
 
-// 회원 추가(콘솔용)
 window.addUser = function(name, email, password) {
     try {
         db.run("INSERT INTO user (username, email, password) VALUES (?, ?, ?)", [name, email, password]);
@@ -225,18 +220,15 @@ window.addUser = function(name, email, password) {
     }
 };
 
-// 회원 목록 표시(콘솔용)
 window.displayUsers = function() {
     try {
         const result = db.exec("SELECT * FROM user");
-        console.log("✅ user 테이블:");
-        console.log(result.length > 0 ? result[0].values.map(row => Object.fromEntries(row.map((val, idx) => [result[0].columns[idx], val]))) : []);
+        console.log("✅ user 테이블:", result.length > 0 ? result[0].values.map(row => Object.fromEntries(row.map((val, idx) => [result[0].columns[idx], val]))) : []);
     } catch (error) {
         console.error('user 확인 실패:', error);
     }
 };
 
-// 회원 정보 수정(콘솔용)
 window.updateUser = function(name, email, password, lv, xp, img, id) {
     try {
         db.run("UPDATE user SET username=?, email=?, password=?, lv=?, xp=?, img=? WHERE user_id=?", [name, email, password, lv, xp, img, id]);
@@ -247,7 +239,6 @@ window.updateUser = function(name, email, password, lv, xp, img, id) {
     }
 };
 
-// 회원 삭제(콘솔용)
 window.deleteUser = function(id) {
     try {
         db.run("DELETE FROM user WHERE user_id=?", [id]);
@@ -258,41 +249,30 @@ window.deleteUser = function(id) {
     }
 };
 
-// 로그인한 유저 확인(콘솔용)
 window.checkCurrentUser = function() {
     console.log(currentUser);
 };
 
-// 데이터베이스 전체 상태 확인 함수 (전역 노출)
 window.checkDatabase = function() {
     try {
         console.log("✅ 데이터베이스 상태 확인:");
         const users = db.exec("SELECT * FROM user");
-        console.log("- user 테이블:");
-        console.log(users.length > 0 ? users[0].values.map(row => Object.fromEntries(row.map((val, idx) => [users[0].columns[idx], val]))) : []);
-
+        console.log("- user 테이블:", users.length > 0 ? users[0].values.map(row => Object.fromEntries(row.map((val, idx) => [users[0].columns[idx], val]))) : []);
         const diaryEvents = db.exec("SELECT * FROM diary_event");
-        console.log("- diary_event 테이블:");
-        console.log(diaryEvents.length > 0 ? diaryEvents[0].values.map(row => Object.fromEntries(row.map((val, idx) => [diaryEvents[0].columns[idx], val]))) : []);
-
+        console.log("- diary_event 테이블:", diaryEvents.length > 0 ? diaryEvents[0].values.map(row => Object.fromEntries(row.map((val, idx) => [diaryEvents[0].columns[idx], val]))) : []);
         const achievements = db.exec("SELECT * FROM achievement");
-        console.log("- achievement 테이블:");
-        console.log(achievements.length > 0 ? achievements[0].values.map(row => Object.fromEntries(row.map((val, idx) => [achievements[0].columns[idx], val]))) : []);
-
+        console.log("- achievement 테이블:", achievements.length > 0 ? achievements[0].values.map(row => Object.fromEntries(row.map((val, idx) => [achievements[0].columns[idx], val]))) : []);
         const userAchievements = db.exec("SELECT * FROM user_achievement");
-        console.log("- user_achievement 테이블:");
-        console.log(userAchievements.length > 0 ? userAchievements[0].values.map(row => Object.fromEntries(row.map((val, idx) => [userAchievements[0].columns[idx], val]))) : []);
+        console.log("- user_achievement 테이블:", userAchievements.length > 0 ? userAchievements[0].values.map(row => Object.fromEntries(row.map((val, idx) => [userAchievements[0].columns[idx], val]))) : []);
     } catch (error) {
         console.error('데이터베이스 상태 확인 실패:', error);
     }
 };
 
-// 개별 테이블 확인 함수 (전역 노출)
 window.displayDiaryEvents = function() {
     try {
         const result = db.exec("SELECT * FROM diary_event");
-        console.log("✅ diary_event 테이블:");
-        console.log(result.length > 0 ? result[0].values.map(row => Object.fromEntries(row.map((val, idx) => [result[0].columns[idx], val]))) : []);
+        console.log("✅ diary_event 테이블:", result.length > 0 ? result[0].values.map(row => Object.fromEntries(row.map((val, idx) => [result[0].columns[idx], val]))) : []);
     } catch (error) {
         console.error('diary_event 확인 실패:', error);
     }
@@ -301,8 +281,7 @@ window.displayDiaryEvents = function() {
 window.displayAchievements = function() {
     try {
         const result = db.exec("SELECT * FROM achievement");
-        console.log("✅ achievement 테이블:");
-        console.log(result.length > 0 ? result[0].values.map(row => Object.fromEntries(row.map((val, idx) => [result[0].columns[idx], val]))) : []);
+        console.log("✅ achievement 테이블:", result.length > 0 ? result[0].values.map(row => Object.fromEntries(row.map((val, idx) => [result[0].columns[idx], val]))) : []);
     } catch (error) {
         console.error('achievement 확인 실패:', error);
     }
@@ -311,14 +290,12 @@ window.displayAchievements = function() {
 window.displayUserAchievements = function() {
     try {
         const result = db.exec("SELECT * FROM user_achievement");
-        console.log("✅ user_achievement 테이블:");
-        console.log(result.length > 0 ? result[0].values.map(row => Object.fromEntries(row.map((val, idx) => [result[0].columns[idx], val]))) : []);
+        console.log("✅ user_achievement 테이블:", result.length > 0 ? result[0].values.map(row => Object.fromEntries(row.map((val, idx) => [result[0].columns[idx], val]))) : []);
     } catch (error) {
         console.error('user_achievement 확인 실패:', error);
     }
 };
 
-// 이벤트 로드 함수 통합
 function loadEventsFromLocalStorage() {
     try {
         const events = JSON.parse(localStorage.getItem('events') || '{}');
@@ -372,59 +349,43 @@ async function fetchHolidays() {
     }
 }
 
-// 업적 - 카테고리 매핑 객체 정의 { 카테고리, 완료 수, 칭호, 이미지 } // 테스트를 위해 조건을 낮게 수정!!
+const categoryColors = {
+    Python: '#3776AB', Java: '#007396', C: '#A8B9CC', Cpp: '#00599C', Csharp: '#68217A',
+    JavaScript: '#F7DF1E', HTML: '#E34F26', R: '#276DC3', Kotlin: '#F18E33', SQL: '#4479A1',
+    Holiday: '#FF0000'
+};
+
 const achievementCategoryMap = {
-    // Java
     "Java 첫걸음": { category: "Java", requiredCount: 1, title: "", condition: "Java 일정 1개 완료" },
     "Java 고수": { category: "Java", requiredCount: 2, title: "", condition: "Java 일정 2개 완료" },
     "Java의 신": { category: "Java", requiredCount: 3, title: "☕ Java의 신", condition: "Java 일정 3개 완료" },
-
-    // Python
     "Python 첫걸음": { category: "Python", requiredCount: 1, title: "", condition: "Python 일정 1개 완료" },
     "Python 마스터": { category: "Python", requiredCount: 2, title: "", condition: "Python 일정 2개 완료" },
     "Python의 신": { category: "Python", requiredCount: 3, title: "🐍 Python의 신", condition: "Python 일정 3개 완료" },
-
-    // JavaScript
     "JS 첫걸음": { category: "JavaScript", requiredCount: 1, title: "", condition: "JavaScript 일정 1개 완료" },
     "JS DOM의 달인": { category: "JavaScript", requiredCount: 2, title: "", condition: "JavaScript 일정 2개 완료" },
     "JS 마스터": { category: "JavaScript", requiredCount: 3, title: "🧩 JS 코드 마스터", condition: "JavaScript 일정 3개 완료" },
-
-    // HTML
     "초보 프론트엔드": { category: "HTML", requiredCount: 1, title: "", condition: "HTML 일정 1개 완료" },
     "HTML 고수": { category: "HTML", requiredCount: 2, title: "", condition: "HTML 일정 2개 완료" },
     "HTML의 신": { category: "HTML", requiredCount: 3, title: "📜 HTML의 신, 🎨 CSS의 신", condition: "HTML 일정 3개 완료" },
-
-    // SQL
     "SQL 첫걸음": { category: "SQL", requiredCount: 1, title: "", condition: "SQL 일정 1개 완료" },
     "SQL 고수": { category: "SQL", requiredCount: 2, title: "", condition: "SQL 일정 2개 완료" },
     "SQL의 신": { category: "SQL", requiredCount: 3, title: "🗄️ SQL의 신", condition: "SQL 일정 3개 완료" },
-
-    // C
     "C 첫걸음": { category: "C", requiredCount: 1, title: "", condition: "C 일정 1개 완료" },
     "C 고수": { category: "C", requiredCount: 2, title: "", condition: "C 일정 2개 완료" },
     "C의 신": { category: "C", requiredCount: 3, title: "🔧 C의 신", condition: "C 일정 3개 완료" },
-
-    // Cpp (C++)
     "C++ 첫걸음": { category: "Cpp", requiredCount: 1, title: "", condition: "C++ 일정 1개 완료" },
     "C++ 고수": { category: "Cpp", requiredCount: 2, title: "", condition: "C++ 일정 2개 완료" },
     "C++의 신": { category: "Cpp", requiredCount: 3, title: "⚙️ C++의 신", condition: "C++ 일정 3개 완료" },
-
-    // Csharp (C#)
     "C# 첫걸음": { category: "Csharp", requiredCount: 1, title: "", condition: "C# 일정 1개 완료" },
     "C# 고수": { category: "Csharp", requiredCount: 2, title: "", condition: "C# 일정 2개 완료" },
     "C#의 신": { category: "Csharp", requiredCount: 3, title: "🎹 C#의 신", condition: "C# 일정 3개 완료" },
-
-    // R
     "R 첫걸음": { category: "R", requiredCount: 1, title: "", condition: "R 일정 1개 완료" },
     "R 고수": { category: "R", requiredCount: 2, title: "", condition: "R 일정 2개 완료" },
     "R의 신": { category: "R", requiredCount: 3, title: "📊 R의 신", condition: "R 일정 3개 완료" },
-
-    // Kotlin
     "Kotlin 첫걸음": { category: "Kotlin", requiredCount: 1, title: "", condition: "Kotlin 일정 1개 완료" },
     "Kotlin 고수": { category: "Kotlin", requiredCount: 2, title: "", condition: "Kotlin 일정 2개 완료" },
     "Kotlin의 신": { category: "Kotlin", requiredCount: 3, title: "🤖 Kotlin의 신", condition: "Kotlin 일정 3개 완료" },
-
-    // General
     "정원 관리사": { category: "General", requiredCount: 1, title: "🏡 정원 관리사", condition: "어떤 일정 1개 완료" },
     "지옥에서 온": { category: "General", requiredCount: 2, title: "🔥 지옥에서 온", condition: "어떤 일정 2개 완료" },
     "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이", condition: "어떤 일정 1개 완료" },
@@ -434,17 +395,9 @@ const achievementCategoryMap = {
     "닥터 스트레인지": { category: "General", requiredCount: 5, title: "⏳ 닥터 스트레인지", condition: "어떤 일정 5개 완료" },
 };
 
-const categoryColors = {
-    Python: '#3776AB', Java: '#007396', C: '#A8B9CC', Cpp: '#00599C', Csharp: '#68217A',
-    JavaScript: '#F7DF1E', HTML: '#E34F26', R: '#276DC3', Kotlin: '#F18E33', SQL: '#4479A1',
-    Holiday: '#FF0000'
-};
-
-// 페이지 로드 시 실행 (두 코드의 DOMContentLoaded 통합)
 document.addEventListener("DOMContentLoaded", async function () {
     await initDatabase();
 
-    // 초기 상태 설정
     if (!calendarInstance) {
         const calendarEl = document.getElementById('calendar');
         if (calendarEl) {
@@ -460,12 +413,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                 initialDate: '2025-02-26',
                 selectable: true,
                 dateClick: function(info) {
-                    window.open('check_event.html?date=' + info.dateStr, 'eventPopup',
-                        'width=500,height=500,top=100,left=100,scrollbars=no,resizable=no');
+                    window.open('check_event.html?date=' + info.dateStr, 'eventPopup', 'width=500,height=500,top=100,left=100,scrollbars=no,resizable=no');
                 },
                 eventClick: function(info) {
-                    window.open('check_event.html?date=' + info.event.startStr, 'eventPopup',
-                        'width=500,height=500,top=100,left=100,scrollbars=no,resizable=no');
+                    window.open('check_event.html?date=' + info.event.startStr, 'eventPopup', 'width=500,height=500,top=100,left=100,scrollbars=no,resizable=no');
                 },
                 events: async function(fetchInfo, successCallback) {
                     const localEvents = loadEventsFromLocalStorage();
@@ -540,8 +491,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const categorySelect = document.getElementById("eventCategory");
     if (categorySelect) {
-        const categories = Object.keys(categoryColors);
-        categories.forEach(category => {
+        Object.keys(categoryColors).forEach(category => {
             const option = document.createElement("option");
             option.value = category;
             option.textContent = category;
@@ -549,14 +499,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 
-    // 업적 제목 스타일 설정
     content_title.forEach(title => {
-        title.style.fontSize = "1.6em"; // 첫 번째 코드에서 1.6em 사용
+        title.style.fontSize = "1.6em";
         title.style.marginLeft = "1em";
-        title.style.width = "300px"; // 두 번째 코드에서 300px 사용
+        title.style.width = "300px";
     });
 
-    // 로그인한 유저 정보 불러오기 및 닉네임 표시
     let tmp = JSON.parse(localStorage.getItem('current_user'));
     if (tmp && tmp.length > 0) {
         const user = tmp[0].values[0];
@@ -569,7 +517,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         currentUser.img = user[6];
         const idElement = document.querySelector(".id");
         if (idElement) idElement.textContent = currentUser.username;
-        updateLevelAndExp(); // 초기 UI 설정
     } else {
         console.warn("⚠️ 로그인된 유저 정보가 없습니다.");
     }
@@ -583,7 +530,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 events[date].push({ title, category, memo: '', completed: false });
                 localStorage.setItem('events', JSON.stringify(events));
 
-                // 기존 이벤트 제거 후 추가하여 중복 방지
                 if (calendarInstance) {
                     calendarInstance.getEvents().forEach(event => {
                         if (event.startStr === date && event.title === `${title} (${category})`) {
@@ -600,7 +546,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                     });
                 }
 
-                // 로그인 확인 후 diary_event 에 삽입
                 if (!currentUser.user_id) {
                     console.error("⚠️ 로그인이 필요합니다. user_id가 없습니다.");
                     alert("일정을 추가하려면 로그인이 필요합니다.");
@@ -622,17 +567,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     };
 
     window.completeEvent = function(date, index) {
-        // console.log("====completeEvent 호출됨====")
         try {
             const events = JSON.parse(localStorage.getItem('events') || '{}');
             if (events[date] && events[date][index]) {
                 const wasCompleted = events[date][index].completed;
-                if (!wasCompleted) { // 첫 번째 코드의 조건 수정
+                if (wasCompleted) { // 완료되지 않은 경우만 처리
                     events[date][index].completed = true;
                     localStorage.setItem('events', JSON.stringify(events));
-                    currentUser.xpUp(1); // XP 증가 및 UI 갱신
+                    currentUser.xpUp(1);
 
-                    // 캘린더 이벤트 실시간 업데이트
                     if (calendarInstance) {
                         const calendarEvents = calendarInstance.getEvents();
                         const targetEvent = calendarEvents.find(event =>
@@ -646,11 +589,11 @@ document.addEventListener("DOMContentLoaded", async function () {
                                 console.log(`✅ 라인스루 적용: ${events[date][index].title}`);
                             } else {
                                 console.warn('타이틀 요소를 찾을 수 없습니다.');
-                                calendarInstance.render(); // 강제 렌더링
+                                calendarInstance.render();
                             }
                         } else {
                             console.warn('캘린더에서 이벤트를 찾을 수 없습니다.');
-                            calendarInstance.render(); // 강제 렌더링
+                            calendarInstance.render();
                         }
                     }
 
@@ -665,13 +608,13 @@ document.addEventListener("DOMContentLoaded", async function () {
                     }
                     updateMedals();
                     console.log(`✅ 일정 완료: ${events[date][index].title}`);
-                    if (calendarInstance) calendarInstance.render(); // 캘린더 전체 강제 렌더링
-                    checkDatabase(); // 완료 후 데이터베이스 상태 확인
+                    if (calendarInstance) calendarInstance.render();
+                    checkDatabase();
                 }
             }
         } catch (error) {
             console.error('일정 완료 처리 실패:', error);
-            if (calendarInstance) calendarInstance.render(); // 오류 발생 시에도 렌더링 시도
+            if (calendarInstance) calendarInstance.render();
         }
     };
 
@@ -691,10 +634,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                 });
             }
 
-            // 디버깅 로그
             console.log("Completed Counts:", completedCounts);
             console.log("Total Completed:", totalCompleted);
 
+            // 메달 업데이트
             Object.keys(categoryColors).forEach(category => {
                 const medal = document.getElementById(category.toLowerCase());
                 if (medal) {
@@ -704,68 +647,44 @@ document.addEventListener("DOMContentLoaded", async function () {
                 }
             });
 
+            // 업적 업데이트 (재정렬 제거, 기존 요소 유지)
             const achievementItems = document.querySelectorAll('.achievementInner');
-            const achievementContainer = document.querySelector('.achievement');
-            if (achievementItems.length && achievementContainer) {
-                const achievementStatus = {};
+            achievementItems.forEach(item => {
+                const title = item.querySelector('h2').textContent.trim();
+                const mapping = achievementCategoryMap[title] || { category: "General", requiredCount: 1 };
+                const category = mapping.category;
+                const requiredCount = mapping.requiredCount;
+                const completedCount = completedCounts[category] || 0;
+                const isUnlocked = category === "General" ? totalCompleted >= requiredCount : completedCount >= requiredCount;
 
-                achievementItems.forEach(item => {
-                    const title = item.querySelector('h2').textContent.trim();
-                    const mapping = achievementCategoryMap[title] || { category: "General", requiredCount: 1 };
-                    const category = mapping.category;
-                    const requiredCount = mapping.requiredCount;
-                    const completedCount = completedCounts[category] || 0;
-                    const isUnlocked = category === "General" ? totalCompleted >= requiredCount : completedCount >= requiredCount;
+                const descriptionP = item.querySelector('.content p');
 
-                    achievementStatus[title] = { item, isUnlocked, mapping };
+                if (isUnlocked) {
+                    item.classList.add('unlocked');
+                    descriptionP.textContent = descriptionP.dataset.originalText || descriptionP.textContent;
 
-                    const descriptionP = item.querySelector('.content p');
-
-                    if (isUnlocked) {
-                        item.classList.add('unlocked');
-                        item.style.opacity = '1';
-                        descriptionP.textContent = descriptionP.dataset.originalText || descriptionP.textContent;
-
-                        // 업적 해금 시 칭호 추가
-                        if (mapping.title && !item.dataset.titleAdded) {
-                            const titles = mapping.title.split(',').map(t => t.trim());
-                            titles.forEach(title => {
-                                if (title && !unlockedTitles.includes(title)) {
-                                    addTitleToDropdown(title);
-                                }
-                            });
-                            item.dataset.titleAdded = 'true'; // 중복 추가 방지
-                        }
-                    } else {
-                        item.classList.remove('unlocked');
-                        item.style.opacity = '0.7';
-                        if (!descriptionP.dataset.originalText) {
-                            descriptionP.dataset.originalText = descriptionP.textContent;
-                        }
-                        descriptionP.textContent = mapping.condition || "해금 조건 미정";
+                    // 업적 해금 시에만 칭호 추가
+                    if (mapping.title && !item.dataset.titleAdded) {
+                        const titles = mapping.title.split(',').map(t => t.trim());
+                        titles.forEach(title => {
+                            if (title && !unlockedTitles.includes(title)) {
+                                addTitleToDropdown(title);
+                            }
+                        });
+                        item.dataset.titleAdded = 'true';
                     }
-                });
-
-                // achievementCategoryMap의 순서대로 재정렬
-                const unlockedItems = [];
-                const lockedItems = [];
-
-                Object.keys(achievementCategoryMap).forEach(title => {
-                    const status = achievementStatus[title];
-                    if (status) {
-                        if (status.isUnlocked) unlockedItems.push(status.item);
-                        else lockedItems.push(status.item);
+                } else {
+                    item.classList.remove('unlocked');
+                    if (!descriptionP.dataset.originalText) {
+                        descriptionP.dataset.originalText = descriptionP.textContent;
                     }
-                });
+                    descriptionP.textContent = mapping.condition || "해금 조건 미정";
+                }
+            });
 
-                // 컨테이너 비우고 순서대로 다시 추가
-                achievementContainer.innerHTML = '';
-                unlockedItems.forEach(item => achievementContainer.appendChild(item));
-                lockedItems.forEach(item => achievementContainer.appendChild(item));
-            }
-            console.log("✅ 메달 상태 업데이트 완료");
+            console.log("✅ 메달 및 업적 상태 업데이트 완료");
         } catch (error) {
-            console.error('메달 업데이트 실패:', error);
+            console.error('메달 및 업적 업데이트 실패:', error);
         }
     }
 
@@ -777,13 +696,13 @@ document.addEventListener("DOMContentLoaded", async function () {
             defaultItem.textContent = ' ';
             defaultItem.addEventListener('click', () => {
                 if (selectedTitle) {
-                    selectedTitle.textContent = '  ';
+                    selectedTitle.textContent = ' ';
                     selectedTitle.className = 'userTitle text-white fw-bold';
                 }
             });
             dropdownMenu.appendChild(defaultItem);
 
-            unlockedTitles.forEach(title => addTitleToDropdown(title));
+            // 초기 칭호는 업적 해금 시에만 추가되므로 여기서 추가하지 않음
         }
     }
 
@@ -792,20 +711,20 @@ document.addEventListener("DOMContentLoaded", async function () {
             if (!unlockedTitles.includes(title)) {
                 unlockedTitles.push(title);
                 localStorage.setItem('unlockedTitles', JSON.stringify(unlockedTitles));
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.textContent = title;
+                item.addEventListener('click', () => {
+                    selectedTitle.textContent = title;
+                    selectedTitle.className = 'userTitle text-white fw-bold';
+                    if (title === "🔥 지옥에서 온") {
+                        selectedTitle.classList.add('title-hell');
+                        selectedTitle.style.fontSize = '0.8em';
+                    }
+                });
+                dropdownMenu.appendChild(item);
+                console.log(`칭호 추가됨: ${title}`);
             }
-            const item = document.createElement('div');
-            item.className = 'dropdown-item';
-            item.textContent = title;
-            item.addEventListener('click', () => {
-                selectedTitle.textContent = title;
-                selectedTitle.className = 'userTitle text-white fw-bold';
-                if (title === "🔥 지옥에서 온") {
-                    selectedTitle.classList.add('title-hell');
-                    selectedTitle.style.fontSize = '0.8em';
-                }
-            });
-            dropdownMenu.appendChild(item);
-            console.log(`칭호 추가됨: ${title}`);
         }
     }
 
@@ -1063,7 +982,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    // 칭호 드랍다운
     if (dropdownItems) {
         dropdownItems.forEach(item => {
             item.addEventListener("click", function () {
@@ -1072,7 +990,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 
-    // 버그헌터 게임종료시, game.js에서 메세지 받아 모달창 닫음
     window.addEventListener("message", function(event) {
         if (event.data.action === "closeModal") {
             var modalElement = document.getElementById('exampleModal');

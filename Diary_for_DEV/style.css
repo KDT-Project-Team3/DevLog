@@ -1,4 +1,3 @@
-
 /*todo : 디자인 개선 시급*/
 /*todo : 버그헌터 팝업창 시간지나면 닫히게 구현*/
 * {
@@ -34,7 +33,6 @@ body, html {
 }
 
 .banner {
-    /*background: #000000;*/
     color: white;
     padding: 20px;
     text-align: center;
@@ -44,7 +42,6 @@ body, html {
     justify-content: center;
     font-size: 24px;
     font-weight: bold;
-
     background: linear-gradient(-45deg, #051937, #004d7a, #008793, #00bf72, #a8eb12);
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
@@ -68,7 +65,6 @@ body, html {
 
 /*===========사이드 바================*/
 .sidebar {
-    /*todo : 프로필 테스트 후 300px 로 변경하기*/
     width: 300px;
     background: linear-gradient(to right, black, black);
     padding-left: 10px;
@@ -87,22 +83,20 @@ body, html {
     background: linear-gradient(to right, black, #46198e);
 }
 
-
 /* =========== 메뉴 버튼 =========== */
 .menuBtn {
     margin: 0;
     width: 50px;
     height: 40px;
     margin-right: 10px;
-    /*background: black;*/
     border: 2px solid #c1c1c1;
     color: white;
     align-self: end;
     align-items: center;
     align-content: center;
     background: linear-gradient(to right, black, black);
-
 }
+
 .menuBtn:hover {
     background: linear-gradient(to right, #46198e, black);
 }
@@ -115,7 +109,6 @@ body, html {
 }
 
 /* ============= 메뉴 ============== */
-
 .offcanvas-header {
     padding: 0;
     height: 52px;
@@ -128,8 +121,7 @@ body, html {
 
 .offcanvas-header h5 {
     font: bold 30px/1.5 "Poppins", sans-serif;
-    margin-left : 10px;
-
+    margin-left: 10px;
 }
 
 .btn-close {
@@ -144,9 +136,10 @@ body, html {
     align-content: start;
 }
 
-.offcanvas-body p {
+.offcanvas-body .menu-item,
+.offcanvas-body .bugHunter {
     color: white;
-    font: bold 50px/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    font: bold 20px/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
     height: 60px;
     margin: 0;
     padding: 10px;
@@ -155,8 +148,11 @@ body, html {
     transition: ease 0.3s;
     opacity: 0.7;
     cursor: pointer;
+    display: block;
 }
-.offcanvas-body p:hover {
+
+.offcanvas-body .menu-item:hover,
+.offcanvas-body .bugHunter:hover {
     opacity: 1;
     padding-left: 20px;
     background: linear-gradient(to right, rgba(0, 0, 0, 0.63), rgba(0, 0, 0, 0.14));
@@ -164,7 +160,7 @@ body, html {
 
 .offcanvas-footer {
     padding: 0;
-    margin:0;
+    margin: 0;
     height: 70px;
     background-color: rgb(255, 255, 255);
 }
@@ -177,7 +173,6 @@ body, html {
 }
 
 /* ================================= */
-
 .sidebar > .profileLayout {
     align-items: center;
     width: 100%;
@@ -196,7 +191,6 @@ body, html {
     align-content: start;
 }
 
-/*사이드바 접혔을때 프로필 정보 가리는 클래스 (토글)*/
 .profileInvisible {
     opacity: 0;
 }
@@ -217,27 +211,23 @@ body, html {
     transition: ease 0.3s;
 }
 
-
 .sidebar > .profile {
     width: 200px;
     flex-direction: column;
     display: flex;
 }
 
-/*todo : 프로필이미지 반응형으로 구현*/
 .profileImg {
     width: 190px;
     height: 190px;
     border-radius: 50%;
-    /*하얀배경은 이미지 넣고 지우기*/
     background: white;
     margin-bottom: 10px;
-    cursor: pointer; /* 클릭 가능하도록 커서 변경 */
+    cursor: pointer;
     background-image: url("./Image/ProfileCharacter.jpg");
     background-position: center;
     background-size: cover;
     transition: ease 0.3s;
-
 }
 
 .sidebar p {
@@ -252,7 +242,7 @@ body, html {
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,0.5);
-    --bs-modal-width: -500px; /*가운데 정렬*/
+    --bs-modal-width: -500px;
 }
 
 .bugHunter-modal-content {
@@ -271,17 +261,16 @@ body, html {
     justify-content: center;
     width: 100%;
     height: 90%;
-
 }
+
 .modal-body iframe {
     width: 100%;
     height: 100%;
     border-radius: 5%;
-
 }
 
 .modal-dialog {
-    pointer-events: auto !important;  /* 내부 요소 클릭 가능하게 함 */
+    pointer-events: auto !important;
 }
 
 .close {
@@ -312,7 +301,6 @@ input[type="text"], select, textarea {
     margin-right: 25px;
 }
 
-/*아이디, 칭호, 레벨 (메뉴 : 접혔을때)*/
 .userInfoLayout {
     color: white;
     font: bold 1em/1.5em "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -320,7 +308,6 @@ input[type="text"], select, textarea {
     margin-top: 20%;
     margin-bottom: 10px;
     transition: 0.3s;
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -328,7 +315,7 @@ input[type="text"], select, textarea {
 }
 
 .title-id-closed {
-    align-items: end ;
+    align-items: end;
 }
 
 .id {
@@ -336,65 +323,68 @@ input[type="text"], select, textarea {
     color: aliceblue;
     margin-top: 5px;
     margin-bottom: 5px;
-    margin-left: 20px;
 }
 
 .LV {
-    /*background: white;*/
     font: bold 100%/2 "Lucida Grande", Helvetica, Arial, sans-serif;
     color: aliceblue;
     margin-top: 10px;
     margin-bottom: 5px;
-    margin-left: 20px;
 }
 
 /*==============경험치=============*/
 .exp {
-    margin:20px;
+    margin: 20px 10px;
     overflow: hidden;
+    width: 90%;
 }
+
 .exp-bar-container {
-    width: 100%; /* 바의 전체 너비 */
-    height: 20px; /* 바의 높이 */
-    background-color: #ccc; /* 배경색 */
-    border-radius: 10px; /* 둥근 모서리 */
+    width: 100%;
+    height: 25px;
+    background-color: #e0e0e0;
+    border-radius: 12px;
     overflow: hidden;
-    border: 2px solid #444;
+    border: 2px solid #555;
+    position: relative;
 }
 
 .exp-bar {
-    width: 20%; /* 경험치 상태 (예: 70%) */
     height: 100%;
-    background: linear-gradient(to right, #e4b61b, #8bc34a); /* 색상 그라데이션 */
+    background: linear-gradient(to right, #ffca28, #66bb6a);
     text-align: center;
-    /*color: white;*/
-    font: bold 100%/1 "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: #fff;
+    font: bold 14px/25px "Lucida Grande", Helvetica, Arial, sans-serif;
     transition: width 0.5s ease-in-out;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* ========= 메달 ===========*/
-/*메달 요소 담긴 부모 요소*/
 .medalBox {
-    height: 2%;
-    width: 95%;
+    height: 100px;
+    width: 90%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    position: relative;
+    margin: 10px auto;
+    padding: 0 10px;
     flex-direction: row;
     overflow-x: auto;
-    white-space: nowrap; /* 한 줄 유지 */
-    mask-image: linear-gradient( /* 앰블럼 양쪽 투명화 그라데이션 */
+    white-space: nowrap;
+    mask-image: linear-gradient(
             to right,
             rgba(0,0,0,0) 0%,
-            rgba(0,0,0,1) 10%,
-            rgba(0,0,0,1) 80%,
-            rgba(0,0,0,0) 100%);
+            rgba(0,0,0,1) 15%,
+            rgba(0,0,0,1) 85%,
+            rgba(0,0,0,0) 100%
+    );
 }
 
-/*스크롤바 얇게 (크롬)*/
 .medalBox::-webkit-scrollbar {
     height: 0;
     width: 0;
@@ -403,117 +393,49 @@ input[type="text"], select, textarea {
 .medal {
     background: white;
     display: flex;
-    width: 80px;
-    height: 80px;
-    margin-left: 10px;
+    width: 60px;
+    height: 60px;
+    margin: 0 8px;
     border-radius: 50%;
     flex-shrink: 0;
-    transition: ease 0.2s;
+    transition: all 0.3s ease;
     opacity: 0.5;
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
+    justify-content: center;
+    align-items: center;
 }
 
 .medal:hover {
     opacity: 1;
-    scale: 120%;
-    margin-left: 20px;
-    margin-right: 10px;
+    transform: scale(1.2);
+    margin: 0 12px;
     box-shadow: 0 0 7px 6px rgba(143, 102, 244, 0.63);
 }
 
-
-/*각 메달별 이미지 추가*/
-.medal::first-letter {
-    /*자바*/
-    /*background-image: url("");*/
-}
-
-.medal:nth-child(2) {
-    /*background-image: url("");*/
-}
-
-.medal:last-child {
-    /*background-image: url("");*/
-}
-
-.id {
-    font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
-    color: aliceblue;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    margin-left: 20px;
-}
-
-.LV {
-    /*background: white;*/
-    font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
-    color: aliceblue;
-    margin-top: 10px;
-    margin-bottom: 5px;
-    margin-left: 20px;
-}
-
-
-/*==============경험치=============*/
-.exp {
-    margin: 20px;
-}
-
-.exp-bar-container {
-    width: 100%; /* 바의 전체 너비 */
-    height: 20px; /* 바의 높이 */
-    background-color: #ccc; /* 배경색 */
-    border-radius: 10px; /* 둥근 모서리 */
-    overflow: hidden;
-    border: 2px solid #444;
-}
-
-.exp-bar {
-    width: 20%; /* 경험치 상태 (예: 70%) */
-    height: 100%;
-    background: linear-gradient(to right, #e4b61b, #8bc34a); /* 색상 그라데이션 */
-    text-align: center;
-    /*color: white;*/
-    font: bold 100%/1 "Lucida Grande", Helvetica, Arial, sans-serif;
-    transition: width 0.5s ease-in-out;
-}
-
-/*=========유저 정보(아이디, 창호, 레벨)==========*/
 .userTitle {
     font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
-    width: 20px;
-    height: 10px;
     color: white;
     background-color: black;
     margin-top: 5px;
     margin-bottom: 5px;
-    margin-left: 20px;
 }
 
 .userInfoLayout {
     height: 0;
 }
 
-/* "지옥에서 온" 칭호 전용 스타일 */
 .title-hell {
     font-size: 0.8em;
-    color: #ff4500; /* 불타는 오렌지색 */
-    background: linear-gradient(90deg, #1a0000, #4d0000); /* 어두운 붉은 그라데이션 */
-    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500; /* 불꽃 그림자 효과 */
-    animation: flicker 1.5s infinite alternate; /* 깜빡이는 불꽃 효과 */
+    color: #ff4500;
+    background: linear-gradient(90deg, #1a0000, #4d0000);
+    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500;
+    animation: flicker 1.5s infinite alternate;
 }
 
-/* 깜빡이는 애니메이션 */
 @keyframes flicker {
-    0% {
-        text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500;
-    }
-    50% {
-        text-shadow: 0 0 8px #ff0000, 0 0 15px #ff4500, 0 0 20px #ff0000;
-    }
-    100% {
-        text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500;
-    }
+    0% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500; }
+    50% { text-shadow: 0 0 8px #ff0000, 0 0 15px #ff4500, 0 0 20px #ff0000; }
+    100% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500; }
 }
 
 /*===========업적=========*/
@@ -537,9 +459,7 @@ input[type="text"], select, textarea {
     transition: all 0.5s ease;
 }
 
-.achievement div{
-    /*height: 1500px;*/
-    /*position: relative;*/
+.achievement div {
     display: inline-flex;
     flex-direction: row;
     border: 3px solid black;
@@ -548,7 +468,7 @@ input[type="text"], select, textarea {
     border-radius: 10px;
     margin: 10px;
     opacity: 0.5;
-    background-color: gray; /* 해금 전 업적 회색 배경 추가 */
+    background-color: gray;
     transition: ease 0.2s;
 }
 
@@ -558,24 +478,20 @@ input[type="text"], select, textarea {
 }
 
 .achievement .achivImg {
-    /*width: 60px;*/
-    /*height: 60px;*/
     width: 50px;
     height: 50px;
     border-radius: 50%;
     flex-shrink: 0;
-    /*background-image: url("");*/
     background: white center/cover no-repeat;
     align-items: center;
     justify-content: center;
-    position: relative; /* 오버레이를 위한 기준점 */
+    position: relative;
 }
 
 .achievement .achivImg i {
-    font-size: 30px; /* 아이콘 크기 */
+    font-size: 30px;
 }
 
-/* 해금 전 자물쇠 오버레이 */
 .achievementInner .achivImg::before {
     content: '';
     position: absolute;
@@ -583,60 +499,47 @@ input[type="text"], select, textarea {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('img/자물쇠.png'); /* 자물쇠 이미지 경로 */
+    background-image: url('img/자물쇠.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     border-radius: 50%;
-    /*opacity: 0.8; !* 자물쇠 투명도 *!*/
 }
 
-/* 해금 시 자물쇠 제거 */
 .achievementInner.unlocked .achivImg::before {
     display: none;
 }
 
-/*todo : 펼쳤을 때 column 형태로 바뀌게*/
 .achievement .content {
     display: flex;
-    /*flex-direction: row;*/
     flex-direction: column;
     width: 100%;
     height: 100%;
-    align-items: start ;
-    /*justify-content: center;*/
-    /*transition: ease s;*/
+    align-items: start;
 }
 
-/* 업적 이름 */
 .achievement h2 {
     margin: 9px;
-    /*margin-left: 1em;*/
     margin-right: 10px;
     width: 100%;
     font: bold 1.2em "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-/* 업적 설명 */
 .achievement .content p {
-    text-align:start;
+    text-align: start;
     margin-left: 0.5px;
     width: 100%;
     color: black;
     transition: ease 0.3s;
     opacity: 0;
-    /*height: 0;*/
-    /*overflow: hidden;*/
 }
 
-/* 해금 전 조건 스타일 */
 .achievementInner:not(.unlocked) .content p {
     color: #39287a;
-    font-size: 0.9em; /* 조금 작게 */
+    font-size: 0.9em;
     margin-left: 1.5px;
 }
 
-/* 해금된 업적 */
 .achievement div.unlocked {
     opacity: 1;
     background-color: white;
@@ -648,8 +551,6 @@ input[type="text"], select, textarea {
     scale: 1.02;
     background-color: #e8f5e9;
 }
-
-
 
 textarea {
     resize: vertical;
@@ -680,83 +581,18 @@ button {
     background-color: #e53935;
 }
 
-/*캘린더 폰트 기본컬러,밑줄 제거*/
 .fc-daygrid-day-number {
     text-decoration: none;
     color: black;
-}.fc-col-header-cell-cushion {
-     text-decoration: none;
-     color: black;
- }
-
-.offcanvas-body {
-    background: #845EC2;
-    color: white;
-    padding: 0;
-    align-items: flex-start;
-    align-content: start;
 }
 
-/* "메뉴1"과 "버그 헌터"에 공통 스타일 적용 */
-.offcanvas-body .menu-item,
-.offcanvas-body .bugHunter {
-    color: white;
-    font: bold 20px/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
-    height: 60px;
-    margin: 0;
-    padding: 10px;
-    text-decoration: none; /* 링크 밑줄 제거 */
-    align-content: center;
-    transition: ease 0.3s;
-    opacity: 0.7;
-    cursor: pointer;
-    display: block; /* 블록 요소로 통일 */
+.fc-col-header-cell-cushion {
+    text-decoration: none;
+    color: black;
 }
-
-.offcanvas-body .menu-item:hover,
-.offcanvas-body .bugHunter:hover {
-    opacity: 1;
-    padding-left: 20px;
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.63), rgba(0, 0, 0, 0.14));
-}
-
-/* 기존 p 스타일 제거 또는 덮어쓰기 */
-.offcanvas-body p {
-    margin: 0; /* 불필요한 기본 스타일 제거 */
-}
-
-
-/* 사용 안하는거 같은데,,?*/
-/*@keyframes fadeIn {*/
-/*    from {*/
-/*        opacity: 0;*/
-/*    }*/
-/*    to {*/
-/*        opacity: 1;*/
-/*    }*/
-/*}*/
-
-/*@keyframes slideIn {*/
-/*    from {*/
-/*        transform: translateY(-50px);*/
-/*        opacity: 0;*/
-/*    }*/
-/*    to {*/
-/*        transform: translateY(0);*/
-/*        opacity: 1;*/
-/*    }*/
-/*}*/
 
 @keyframes gradient {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
-
-
