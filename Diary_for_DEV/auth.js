@@ -285,7 +285,7 @@ function login() {
     if (result.length > 0) {
         localStorage.setItem('current_user', JSON.stringify(result));
         alert('로그인 성공!');
-        window.location.href = '../index.html'; // 캘린더 페이지로 이동
+        window.location.href = 'main.html'; // 캘린더 페이지로 이동
     } else {
         alert('이메일 또는 비밀번호가 잘못되었습니다.');
     }

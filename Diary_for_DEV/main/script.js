@@ -308,6 +308,11 @@ function checkCurrentUser() {
     console.log(currentUser);
 }
 
+// 유저 경험치 증가(콘솔용)
+function increaseUserXP(xp) {
+    currentUser.xpUp(xp);
+}
+
 // 페이지가 로드될 때 실행되는 이벤트 리스너
 document.addEventListener("DOMContentLoaded", function () {
     const banner = document.querySelector(".banner");
