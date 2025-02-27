@@ -1,10 +1,8 @@
-// URL에서 날짜 가져오기
 function getQueryParam(name) {
     const params = new URLSearchParams(window.location.search);
     return params.get(name);
 }
 
-// 이벤트 목록 렌더링
 function renderEvents(selectedDate, events) {
     const eventList = document.getElementById('event-list');
     const doneList = document.getElementById('done-list');
@@ -48,13 +46,10 @@ function renderEvents(selectedDate, events) {
     }
 }
 
-// 저장 후 닫기 (단순히 창 닫기만 수행)
 function saveAndClose() {
-    // refetchEvents 호출 제거, 단순히 창 닫기만 수행
     window.close();
 }
 
-// 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', function() {
     const selectedDate = getQueryParam('date');
     const events = JSON.parse(localStorage.getItem('events') || '{}');
@@ -70,13 +65,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (title && selectedDate) {
             if (window.opener && window.opener.addEventToCalendar) {
                 window.opener.addEventToCalendar(selectedDate, title, category);
+                window.opener.calendar.refetchEvents();
             }
-            // 로컬 저장소 갱신 후 UI 업데이트
             renderEvents(selectedDate, JSON.parse(localStorage.getItem('events') || '{}'));
             document.getElementById('new-title').value = '';
         }
     }
-    // 이벤트 리스너 중복 방지
     addBtn.removeEventListener('click', addEventHandler);
     addBtn.addEventListener('click', addEventHandler);
 
