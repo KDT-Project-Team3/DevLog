@@ -51,15 +51,17 @@
         </button>
 
         <!-- Offcanvas 메뉴 드랍다운버튼-->
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title " id="offcanvasRightLabel">MENU</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
 
             <div class="offcanvas-body">
-                <p class="mini_game">미니게임</p>
-                <p class="">메뉴2</p>
+                <p class="">메뉴1</p>
+                <p class="" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    버그 헌터 🐛🔍
+                </p>
             </div>
 
             <div class="offcanvas-footer">
@@ -69,7 +71,7 @@
 
 
         <div class="profileLayout">
-            <div class="profileImg">프로필 캐릭터</div>
+            <div class="profileImg"></div>
             <div class="profileInner">
 
                 <div class="profile">
@@ -173,8 +175,6 @@
 
         </div>
     </aside>
-
-
 </div>
 
 <!-- 모달 창 -->
@@ -196,6 +196,21 @@
         </form>
     </div>
 </div>
+<!-- 미니게임 모달 -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="bugHunter-modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">버그 헌터 🐛🔍</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <iframe src="./game/game.html"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script defer src="script.js"></script>
 </body>
 </html>

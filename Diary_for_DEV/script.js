@@ -111,9 +111,9 @@ document.addEventListener("DOMContentLoaded", function () {
         medalBox.style.height = "0";
         userInfoLayout.classList.remove("profileInvisible");
 
-        profileImg.style.width = "170px";
-        profileImg.style.height = "170px";
-        userInfoLayout.style.marginTop = "20%";
+        profileImg.style.width = "190px";
+        profileImg.style.height = "190px";
+        userInfoLayout.style.marginTop = "27%";
 
         achievement_p.forEach(p => p.style.opacity = "0");
     });
@@ -225,8 +225,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // 메뉴 내부 요소(미니게임)
     const minigame = document.querySelector(".mini_game");
     minigame.addEventListener("click", function () {
-        window.open("game/game.html");
+        window.open("game/game.html", "popupWindow", "width=500,height=500,top=100,left=100,scrollbars=no,resizable=no");
     });
+
 });
 
 // 로컬 스토리지에서 이벤트 불러오기

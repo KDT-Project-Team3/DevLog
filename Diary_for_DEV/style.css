@@ -1,7 +1,6 @@
-/*todo : 메뉴 에 게임추가
-         스타일 추가
-         메뉴 열었다가 닫으면 프로필 레이아웃 겹쳐짐(조견을 비율로 설정해야할듯)*/
 
+/*todo : 디자인 개선 시급*/
+/*todo : +@ 미니게임 팝업창으로 구현해보기*/
 * {
     margin: 0;
     padding: 0;
@@ -31,19 +30,24 @@ body, html {
     margin: 0;
     padding: 0;
     width: 100%;
+    background-color: black;
 }
 
 .banner {
-    background: black;
+    /*background: #000000;*/
     color: white;
     padding: 20px;
     text-align: center;
-    height: 50px;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 24px;
     font-weight: bold;
+
+    background: linear-gradient(-45deg, #051937, #004d7a, #008793, #00bf72, #a8eb12);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
 }
 
 #calendar-container {
@@ -66,19 +70,22 @@ body, html {
 .sidebar {
     /*todo : 프로필 테스트 후 300px 로 변경하기*/
     width: 300px;
-    background: black;
-    padding: 20px;
+    background: linear-gradient(to right, black, black);
+    /*padding: 10px;*/
+    padding-left: 10px;
     padding-top: 10px;
+    padding-bottom: 20px;
     display: flex;
     flex-direction: column;
     transition-property: width;
-    transition: ease 0.3s;
+    transition: ease 0.5s;
     overflow: hidden;
     align-content: center;
 }
 
 .sidebar:hover {
     width: 600px;
+    background: linear-gradient(to right, black, #46198e);
 }
 
 /* =========== 메뉴 버튼 =========== */
@@ -86,6 +93,7 @@ body, html {
     margin: 0;
     width: 50px;
     height: 40px;
+    margin-right: 10px;
     background: black;
     border: 2px solid #c1c1c1;
     color: white;
@@ -101,10 +109,11 @@ body, html {
 }
 
 /* ============= 메뉴 ============== */
+
 .offcanvas-header {
     padding: 0;
     height: 52px;
-    background: #e19229;
+    background: #845EC2;
 }
 
 .offcanvas-header .btn-close {
@@ -114,6 +123,7 @@ body, html {
 .offcanvas-header h5 {
     font: bold 30px/1.5 "Poppins", sans-serif;
     margin-left : 10px;
+
 }
 
 .btn-close {
@@ -121,20 +131,19 @@ body, html {
 }
 
 .offcanvas-body {
-    background: linear-gradient(to right, #bc6c25, #bc6c25, #dda15e);
+    background: #845EC2;
     color: white;
-    margin: 0;
     padding: 0;
     align-items: flex-start;
     align-content: start;
 }
 
-/* todo : 텍스트 왼쪽에 20px 공간 띄우기*/
 .offcanvas-body p {
     color: white;
     font: bold 50px/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
-    height: 50px;
+    height: 60px;
     margin: 0;
+    padding: 10px;
     text-decoration: none;
     align-content: center;
     transition: ease 0.3s;
@@ -151,7 +160,7 @@ body, html {
     padding: 0;
     margin:0;
     height: 70px;
-    background-color: white;
+    background-color: rgb(255, 255, 255);
 }
 
 .offcanvas-footer h5 {
@@ -211,8 +220,8 @@ body, html {
 
 /*todo : 프로필이미지 반응형으로 구현*/
 .profileImg {
-    width: 170px;
-    height: 170px;
+    width: 190px;
+    height: 190px;
     border-radius: 50%;
     /*하얀배경은 이미지 넣고 지우기*/
     background: white;
@@ -230,18 +239,19 @@ body, html {
     font-size: 1.2em;
 }
 
+/*todo : 지워도 되는지 확인 안됨*/
 /* 모달 스타일 */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    animation: fadeIn 0.3s;
-}
+/*.modal {*/
+/*    display: none;*/
+/*    position: fixed;*/
+/*    z-index: 1;*/
+/*    left: 0;*/
+/*    top: 0;*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    background-color: rgba(0, 0, 0, 0.5);*/
+/*    animation: fadeIn 0.3s;*/
+/*}*/
 
 .modal-content {
     background-color: white;
@@ -288,18 +298,16 @@ input[type="text"], select, textarea {
     color: white;
     font: bold 1em/1.5em "Lucida Grande", Helvetica, Arial, sans-serif;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 20%;
     margin-bottom: 10px;
     transition: 0.3s;
 }
 
 
 /*메달 요소 담긴 부모 요소*/
-/*todo: 브라우저 비율 테스트
-        접혀있을때 레이아웃 사라지게*/
 .medalBox {
     height: 2%;
-    width: 100%;
+    width: 95%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -309,11 +317,18 @@ input[type="text"], select, textarea {
     flex-direction: row;
     overflow-x: auto;
     white-space: nowrap; /* 한 줄 유지 */
+    mask-image: linear-gradient( /* 앰블럼 양쪽 투명화 그라데이션 */
+            to right,
+            rgba(0,0,0,0) 0%,
+            rgba(0,0,0,1) 40%,
+            rgba(0,0,0,1) 60%,
+            rgba(0,0,0,0) 100%);
 }
 
 /*스크롤바 얇게 (크롬)*/
 .medalBox::-webkit-scrollbar {
-    height: 6px;
+    height: 0;
+    width: 0;
 }
 
 .medal {
@@ -324,8 +339,9 @@ input[type="text"], select, textarea {
     margin-left: 10px;
     border-radius: 50%;
     flex-shrink: 0;
-    transition: ease 0.3s;
+    transition: ease 0.2s;
     opacity: 0.5;
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
 }
 
 .medal:hover {
@@ -333,6 +349,7 @@ input[type="text"], select, textarea {
     scale: 120%;
     margin-left: 20px;
     margin-right: 10px;
+    box-shadow: 0 0 7px 6px rgba(143, 102, 244, 0.63);
 }
 
 
@@ -409,9 +426,8 @@ input[type="text"], select, textarea {
 }
 
 /*===========업적=========*/
-/*todo : height 상대단위 수정 필요(화면별로 비율 달라짐)*/
 .achievement {
-    width: 100%;
+    width: 95%;
     height: 70vh;
     background: #f5f5f5;
     display: flex;
@@ -454,15 +470,16 @@ input[type="text"], select, textarea {
     /*background-image: url("");*/
 }
 
+/*todo : 펼쳤을 때 column 형태로 바뀌게*/
 .achievement .content {
     display: flex;
     flex-direction: row;
     width: 100%;
     height: 100%;
     align-items: center;
-    /*transition: ease s;*/
 }
 
+/* 업적 이름 */
 .achievement h2 {
     margin: 9px;
     margin-left: 1em;
@@ -470,7 +487,7 @@ input[type="text"], select, textarea {
     font: bold 2em "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-/*todo: 접히면 안보이게 구현*/
+/* 업적 설명 */
 .achievement .content p {
     text-align: start;
     margin: 0;
@@ -528,4 +545,69 @@ button {
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+
+/*캘린더 폰트컬러,밑줄 제거*/
+.fc-daygrid-day-number {
+    text-decoration: none;
+    color: black;
+}.fc-col-header-cell-cushion {
+     text-decoration: none;
+     color: black;
+ }
+
+
+.modal {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    --bs-modal-width: -500px; /*가운데 정렬*/
+}
+
+.bugHunter-modal-content {
+    background-color: white;
+    margin: auto;
+    padding: 20px;
+    width: 800px;
+    height: 700px;
+    left: -200px;
+    border-radius: 5%;
+}
+
+.modal-body {
+    align-self: center;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 90%;
+
+}
+.modal-body iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 5%;
+
+}
+
+.modal-footer {
+    height: 0;
+}
+
+.modal-dialog {
+    pointer-events: auto !important;  /* 내부 요소 클릭 가능하게 함 */
 }
