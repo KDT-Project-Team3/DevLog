@@ -139,42 +139,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 업적 - 카테고리 매핑 객체 정의 { 카테고리, 완료 수, 칭호, 이미지 } // 테스트를 위해 조건을 낮게 수정!!
     const achievementCategoryMap = {
-        // Java
-        "Java 첫걸음": { category: "Java", requiredCount: 1, title: "" },
-        "Java 고수": { category: "Java", requiredCount: 2, title: "" },
-        "객체지향 달인": { category: "Java", requiredCount: 3, title: "" },
-        "Java의 신": { category: "Java", requiredCount: 4, title: "☕ Java의 신" },
-
-        // Python
-        "Python 첫걸음": { category: "Python", requiredCount: 1, title: "" },
-        "Python 마스터": { category: "Python", requiredCount: 2, title: "" },
-        "Python의 신": { category: "Python", requiredCount: 3, title: "🐍 Python의 신" },
-
-        // JS
-        "JS 첫걸음": { category: "JavaScript", requiredCount: 1, title: "" },
-        "JS DOM의 달인": { category: "JavaScript", requiredCount: 2, title: "" },
-        "JS 마스터": { category: "JavaScript", requiredCount: 3, title: "🧩 JS 코드 마스터" },
-
-        // HTML
-        "초보 프론트엔드": { category: "HTML", requiredCount: 1, title: "" },
-        "HTML 고수": { category: "HTML", requiredCount: 2, title: "" },
-        "HTML의 신": { category: "HTML", requiredCount: 3, title: "📜 HTML의 신, 🎨 CSS의 신" },
-
-        // SQL
-        "SQL 첫걸음": { category: "SQL", requiredCount: 1, title: "" },
-        "SQL 고수": { category: "SQL", requiredCount: 2, title: "" },
-        "SQL의 신": { category: "SQL", requiredCount: 3, title: "🗄️ SQL의 신" },
-
-        // 커밋
-        "정원 관리사": { category: "General", requiredCount: 1, title: "🏡 정원 관리사" },
-        "지옥에서 온": { category: "General", requiredCount: 2, title: "🔥 지옥에서 온" },
-
-        // 일정 등록
-        "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이" },
-        "프로갓생러": { category: "General", requiredCount: 2, title: "🚀 프로 갓생러" },
-        "파워J": { category: "General", requiredCount: 3, title: "⚡ 파워 J" },
-        "자기계발왕": { category: "General", requiredCount: 4, title: "📚 자기계발 끝판왕" },
-        "닥터 스트레인지": { category: "General", requiredCount: 5, title: "⏳ 닥터 스트레인지" },
+        "Java 첫걸음": { category: "Java", requiredCount: 1, title: "", condition: "Java 일정 1개 완료" },
+        "Java 고수": { category: "Java", requiredCount: 2, title: "", condition: "Java 일정 2개 완료" },
+        "객체지향 달인": { category: "Java", requiredCount: 3, title: "", condition: "Java 일정 3개 완료" },
+        "Java의 신": { category: "Java", requiredCount: 4, title: "☕ Java의 신", condition: "Java 일정 4개 완료" },
+        "Python 첫걸음": { category: "Python", requiredCount: 1, title: "", condition: "Python 일정 1개 완료" },
+        "Python 마스터": { category: "Python", requiredCount: 2, title: "", condition: "Python 일정 2개 완료" },
+        "Python의 신": { category: "Python", requiredCount: 3, title: "🐍 Python의 신", condition: "Python 일정 3개 완료" },
+        "JS 첫걸음": { category: "JavaScript", requiredCount: 1, title: "", condition: "JavaScript 일정 1개 완료" },
+        "JS DOM의 달인": { category: "JavaScript", requiredCount: 2, title: "", condition: "JavaScript 일정 2개 완료" },
+        "JS 마스터": { category: "JavaScript", requiredCount: 3, title: "🧩 JS 코드 마스터", condition: "JavaScript 일정 3개 완료" },
+        "초보 프론트엔드": { category: "HTML", requiredCount: 1, title: "", condition: "HTML 일정 1개 완료" }, // "HTML 초보"로 변경 필요
+        "HTML 고수": { category: "HTML", requiredCount: 2, title: "", condition: "HTML 일정 2개 완료" },
+        "HTML의 신": { category: "HTML", requiredCount: 3, title: "📜 HTML의 신, 🎨 CSS의 신", condition: "HTML 일정 3개 완료" },
+        "SQL 첫걸음": { category: "SQL", requiredCount: 1, title: "", condition: "SQL 일정 1개 완료" },
+        "SQL 고수": { category: "SQL", requiredCount: 2, title: "", condition: "SQL 일정 2개 완료" },
+        "SQL의 신": { category: "SQL", requiredCount: 3, title: "🗄️ SQL의 신", condition: "SQL 일정 3개 완료" },
+        "정원 관리사": { category: "General", requiredCount: 1, title: "🏡 정원 관리사", condition: "어떤 일정 1개 완료" },
+        "지옥에서 온": { category: "General", requiredCount: 2, title: "🔥 지옥에서 온", condition: "어떤 일정 2개 완료" },
+        "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이", condition: "어떤 일정 1개 완료" },
+        "프로갓생러": { category: "General", requiredCount: 2, title: "🚀 프로 갓생러", condition: "어떤 일정 2개 완료" },
+        "파워J": { category: "General", requiredCount: 3, title: "⚡ 파워 J", condition: "어떤 일정 3개 완료" },
+        "자기계발왕": { category: "General", requiredCount: 4, title: "📚 자기계발 끝판왕", condition: "어떤 일정 4개 완료" },
+        "닥터 스트레인지": { category: "General", requiredCount: 5, title: "⏳ 닥터 스트레인지", condition: "어떤 일정 5개 완료" }
 
         // 버그 헌터 관련 업적
         // "새싹 디버거": { category: "Debug", requiredCount: 1, title: "🌱 새싹 디버거" },
@@ -387,8 +374,8 @@ document.addEventListener("DOMContentLoaded", function () {
         // 업적 해금 로직 (조건 기반)
         const achievementItems = document.querySelectorAll('.achievementInner');
         const achievementContainer = document.querySelector('.achievement');
-
         const achievementStatus = {};
+
         achievementItems.forEach(item => {
             const title = item.querySelector('h2').textContent.trim();
             const mapping = achievementCategoryMap[title] || { category: "General", requiredCount: 1 };
@@ -400,16 +387,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
             achievementStatus[title] = { item, isUnlocked, mapping };
 
+            const descriptionP = item.querySelector('.content p');
+
             if (isUnlocked) {
                 item.classList.add('unlocked');
                 item.style.opacity = '1';
+                descriptionP.textContent = descriptionP.dataset.originalText || descriptionP.textContent;
 
                 // 업적 해금되었고, 아직 맨 위로 이동하지 않았다면 이동!
-                if (!item.dataset.movedToBottom) {
-                    achievementContainer.prepend(item); // 맨 아래로 이동
-                    item.dataset.movedToTop = 'true'; // 이동 완료 표시
-                    console.log(`업적 이동: ${title} -> 맨 위로`);
-                }
+                // if (!item.dataset.movedToBottom) {
+                //     achievementContainer.prepend(item); // 맨 아래로 이동
+                //     item.dataset.movedToTop = 'true'; // 이동 완료 표시
+                //     console.log(`업적 이동: ${title} -> 맨 위로`);
+                // }
 
                 // 업적 해금 시 칭호 추가
                 if (mapping.title && !item.dataset.titleAdded) {
@@ -424,7 +414,15 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 item.classList.remove('unlocked');
                 item.style.opacity = '0.7';
+                // 원래 설명 저장 후 해금 조건으로 변경
+                if (!descriptionP.dataset.originalText) {
+                    descriptionP.dataset.originalText = descriptionP.textContent;
+                }
+                descriptionP.textContent = mapping.condition || "해금 조건 미정";
             }
+
+            achievementStatus[title] = { item, isUnlocked, mapping };
+
         });
         // achievementCategoryMap의 순서대로 재정렬
         const unlockedItems = [];

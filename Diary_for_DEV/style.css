@@ -446,13 +446,14 @@ input[type="text"], select, textarea {
     /*overflow: hidden;*/
 }
 
-/*.achievement:hover .content p{*/
-/*    opacity: 1;*/
-/*    height: auto;*/
-/*}*/
+/* 해금 전 조건 스타일 */
+.achievementInner:not(.unlocked) .content p {
+    color: #39287a;
+    font-size: 0.9em; /* 조금 작게 */
+    margin-left: 1.5px;
+}
 
 /* 해금된 업적 */
-/* TODO: 디자인 상의 필요 */
 .achievement div.unlocked {
     opacity: 1;
     background-color: white;
@@ -464,6 +465,8 @@ input[type="text"], select, textarea {
     scale: 1.02;
     background-color: #e8f5e9;
 }
+
+
 
 textarea {
     resize: vertical;
