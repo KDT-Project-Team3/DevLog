@@ -66,7 +66,6 @@
           <div class="LV">
             <h1>LV: </h1>
           </div>
-          <p class="id">아이디</p>
           <span id="selectedTitle" class="userTitle text-white fw-bold">칭호</span>
           <div class="dropdown d-inline">
             <button class="btn btn-dark btn-sm dropdown-toggle" type="button" id="titleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -78,16 +77,21 @@
               <li><a class="dropdown-item" href="#">칭호3</a></li>
             </ul>
           </div>
+<!--          <p class="id">아이디</p>-->
+          <p class="id">예은티비</p>
         </div>
       </div>
     </div>
 
     <div class="userInfoLayout">
-      <p class="id_closed">아이디</p>
-      <div class="userTitle_closed">칭호</div>
       <div class="LV_closed">
         <h1>LV: </h1>
       </div>
+      <div class="title-id-closed">
+        <div class="userTitle_closed">칭호</div>
+        <p class="id_closed">아이디</p>
+      </div>
+
     </div>
 
     <div class="exp">
@@ -417,12 +421,7 @@
     <h2>일정 관리</h2>
     <form id="eventForm">
       <input type="text" id="eventTitle" placeholder="일정 제목">
-      <select id="eventCategory">
-        <option value="Java">Java</option>
-        <option value="C">C</option>
-        <option value="JavaScript">JavaScript</option>
-        <option value="HTML">HTML</option>
-      </select>
+      <select id="eventCategory"></select>
       <textarea id="eventMemo" placeholder="메모"></textarea>
       <button type="submit" id="saveEvent">저장</button>
       <button type="button" id="deleteEvent" style="display:none;">삭제</button>

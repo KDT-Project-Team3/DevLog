@@ -217,7 +217,7 @@ input[type="text"], select, textarea {
     margin-right: 25px;
 }
 
-/*아이디, 칭호 레벨 (메뉴 : 접혔을때)*/
+/*아이디, 칭호, 레벨 (메뉴 : 접혔을때)*/
 .userInfoLayout {
     color: white;
     font: bold 1em/1.5em "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -225,9 +225,64 @@ input[type="text"], select, textarea {
     margin-top: 20px;
     margin-bottom: 10px;
     transition: 0.3s;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
 }
 
+.title-id-closed {
+    align-items: end ;
+}
 
+.id {
+    font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: aliceblue;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+}
+
+.LV {
+    /*background: white;*/
+    font: bold 100%/2 "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: aliceblue;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+}
+
+/*==============경험치=============*/
+.exp {
+    margin:20px;
+}
+.exp-bar-container {
+    width: 100%; /* 바의 전체 너비 */
+    height: 20px; /* 바의 높이 */
+    background-color: #ccc; /* 배경색 */
+    border-radius: 10px; /* 둥근 모서리 */
+    overflow: hidden;
+    border: 2px solid #444;
+}
+
+.exp-bar {
+    width: 20%; /* 경험치 상태 (예: 70%) */
+    height: 100%;
+    background: linear-gradient(to right, #e4b61b, #8bc34a); /* 색상 그라데이션 */
+    text-align: center;
+    /*color: white;*/
+    font: bold 100%/1 "Lucida Grande", Helvetica, Arial, sans-serif;
+    transition: width 0.5s ease-in-out;
+}
+
+.exp-bar>h4 {
+    font-size: 2em;
+    font-weight: bold;
+    transform: translateY(-50%);
+}
+
+/* ========= 메달 ===========*/
 /*메달 요소 담긴 부모 요소*/
 /*todo: 브라우저 비율 테스트
         접혀있을때 레이아웃 사라지게*/
@@ -278,48 +333,6 @@ input[type="text"], select, textarea {
 }
 .medal:last-child {
     /*background-image: url("");*/
-}
-
-.id {
-    font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
-    color: aliceblue;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    margin-left: 20px;
-}
-
-.LV {
-    /*background: white;*/
-    font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
-    color: aliceblue;
-    margin-top: 10px;
-    margin-bottom: 5px;
-    margin-left: 20px;
-}
-
-
-
-/*==============경험치=============*/
-.exp {
-    margin:20px;
-}
-.exp-bar-container {
-    width: 100%; /* 바의 전체 너비 */
-    height: 20px; /* 바의 높이 */
-    background-color: #ccc; /* 배경색 */
-    border-radius: 10px; /* 둥근 모서리 */
-    overflow: hidden;
-    border: 2px solid #444;
-}
-
-.exp-bar {
-    width: 20%; /* 경험치 상태 (예: 70%) */
-    height: 100%;
-    background: linear-gradient(to right, #e4b61b, #8bc34a); /* 색상 그라데이션 */
-    text-align: center;
-    /*color: white;*/
-    font: bold 100%/1 "Lucida Grande", Helvetica, Arial, sans-serif;
-    transition: width 0.5s ease-in-out;
 }
 
 /*=========유저 정보(아이디, 창호, 레벨)==========*/

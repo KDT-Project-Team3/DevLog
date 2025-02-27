@@ -137,6 +137,20 @@ document.addEventListener("DOMContentLoaded", function () {
         Holiday: '#FF0000'
     };
 
+    // 카테고리 목록 동적 수정
+    document.addEventListener("DOMContentLoaded", function () {
+        const categorySelect = document.getElementById("eventCategory");
+        const categories = Object.keys(categoryColors);
+
+        categories.forEach(category => {
+            const option = document.createElement("option");
+            option.value = category;
+            option.textContent = category;
+            categorySelect.appendChild(option);
+        });
+    });
+    
+
     // 업적 - 카테고리 매핑 객체 정의 { 카테고리, 완료 수, 칭호, 이미지 } // 테스트를 위해 조건을 낮게 수정!!
     const achievementCategoryMap = {
         // Java (기존)
@@ -359,7 +373,7 @@ document.addEventListener("DOMContentLoaded", function () {
         defaultItem.className = 'dropdown-item';
         defaultItem.textContent = '칭호 없음';
         defaultItem.addEventListener('click', () => {
-            selectedTitle.textContent = '칭호 없음';
+            selectedTitle.textContent = '  ';
             selectedTitle.className = 'userTitle text-white fw-bold'; // 특별 클래스 제거
         });
         dropdownMenu.appendChild(defaultItem);
@@ -383,6 +397,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // "지옥에서 온"일 때만 특별 클래스 추가
             if (title === "🔥 지옥에서 온") {
                 selectedTitle.classList.add('title-hell');
+                selectedTitle.style.fontSize = '0.8em';
             }
         });
         dropdownMenu.appendChild(item);
@@ -780,6 +795,4 @@ function loadEventsFromLocalStorage() { // 저장된 이벤트를 캘린더 형�
     return eventList; // 변환된 이벤트 목록 반환
 }
 
-/* TODO : 업적 칸 비율 조절
-         메달 hover 효과 수정
-         드랍다운 메뉴 수정 */
+/* TODO : 업적 칸 비율 조절 */
