@@ -361,11 +361,13 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateMedals() {
         const events = JSON.parse(localStorage.getItem('events') || '{}');
         const completedCounts = {};
+        let totalCompleted = 0; // 모든 카테고리의 완료된 일정 수 합산
 
         for (const date in events) { // 모든 날짜의 이벤트 순회
             events[date].forEach(event => {
                 if (event.completed) {
                     completedCounts[event.category] = (completedCounts[event.category] || 0) + 1; // 완료된 이벤트 카운트
+                    totalCompleted++; // 전체 완료 수 증가
                 }
             });
         }
@@ -386,25 +388,29 @@ document.addEventListener("DOMContentLoaded", function () {
         const achievementItems = document.querySelectorAll('.achievementInner');
         const achievementContainer = document.querySelector('.achievement');
 
+        const achievementStatus = {};
         achievementItems.forEach(item => {
             const title = item.querySelector('h2').textContent.trim();
             const mapping = achievementCategoryMap[title] || { category: "General", requiredCount: 1 };
             const category = mapping.category;
             const requiredCount = mapping.requiredCount;
             const completedCount = completedCounts[category] || 0;
-            const isUnlocked = completedCount >= requiredCount;
+            // const isUnlocked = completedCount >= requiredCount;
+            const isUnlocked = category === "General" ? totalCompleted >= requiredCount : completedCount >= requiredCount;
+
+            achievementStatus[title] = { item, isUnlocked, mapping };
 
             if (isUnlocked) {
                 item.classList.add('unlocked');
                 item.style.opacity = '1';
 
-                // 업적 해금되었고, 아직 맨 아래로 이동하지 않았다면 이동!
+                // 업적 해금되었고, 아직 맨 위로 이동하지 않았다면 이동!
                 if (!item.dataset.movedToBottom) {
-                    achievementContainer.appendChild(item); // 맨 아래로 이동
-                    item.dataset.movedToBottom = 'true'; // 이동 완료 표시
-                    console.log(`업적 이동: ${title} -> 맨 아래로`);
+                    achievementContainer.prepend(item); // 맨 아래로 이동
+                    item.dataset.movedToTop = 'true'; // 이동 완료 표시
+                    console.log(`업적 이동: ${title} -> 맨 위로`);
                 }
-                
+
                 // 업적 해금 시 칭호 추가
                 if (mapping.title && !item.dataset.titleAdded) {
                     const titles = mapping.title.split(',').map(t => t.trim());
@@ -420,6 +426,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 item.style.opacity = '0.7';
             }
         });
+        // achievementCategoryMap의 순서대로 재정렬
+        const unlockedItems = [];
+        const lockedItems = [];
+
+        Object.keys(achievementCategoryMap).forEach(title => {
+            const status = achievementStatus[title];
+            if (status) {
+                if (status.isUnlocked) {
+                    unlockedItems.push(status.item);
+                } else {
+                    lockedItems.push(status.item);
+                }
+            }
+        });
+
+        // 컨테이너 비우고 순서대로 다시 추가
+        achievementContainer.innerHTML = '';
+        unlockedItems.forEach(item => achievementContainer.appendChild(item));
+        lockedItems.forEach(item => achievementContainer.appendChild(item));
     }
 
     // 초기 메달 상태 설정
