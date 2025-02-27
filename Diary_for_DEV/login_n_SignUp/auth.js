@@ -1,6 +1,6 @@
 // DB 관련
 let db; // 데이터베이스 객체
-const DB_NAME = 'sqliteDB'; // IndexedDB 데이터베이스 이름
+// const DB_NAME = 'sqliteDB'; // IndexedDB 데이터베이스 이름
 
 // IndexedDB는 이슈 해결 전까지 사용하지 않음
 // async function initDatabase() {
@@ -132,6 +132,8 @@ async function initDatabase() {
     const SQL = await initSqlJs({
         locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}`
     });
+
+    // 1) sqliteDB 데이터베이스 생성
     db = new SQL.Database();
     db.run(`
         CREATE TABLE IF NOT EXISTS user (
@@ -176,26 +178,33 @@ async function initDatabase() {
             PRIMARY KEY (user_id, ach_id)
         );
     `);
-    loadDBFromLocalStorage();
     console.log("✅ 데이터베이스 초기화 완료!");
-}
 
-// 데이터베이스 localStorage에 저장
-function saveDBToLocalStorage() {
-    const data = db.export();
-    const buffer = new Uint8Array(data);
-    localStorage.setItem('sqliteDB', buffer);
-}
-
-// 데이터베이스 localStorage에서 불러오기
-function loadDBFromLocalStorage() {
-    const buffer = localStorage.getItem('sqliteDB');
-    if (buffer) {
-        db = new SQL.Database(new Uint8Array(buffer));
-        console.log("✅ 데이터베이스 로드 완료!");
+    // 2) localStorage에 저장된 튜플들 불러오기
+    // user 테이블
+    const userData = JSON.parse(localStorage.getItem('user'));
+    if (userData && userData.length > 0) {
+        userData[0].values.forEach(user => {
+            db.run("INSERT INTO user (user_id, username, email, password, lv, xp, img) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                [user[0], user[1], user[2], user[3], user[4], user[5], user[6]]);
+        });
+        console.log("✅ user 테이블 데이터 로드 완료!");
     } else {
-        console.warn("⚠️ 데이터베이스 로드 실패: 데이터 없음");
+        console.warn("⚠️ 로컬 스토리지에 저장된 user 데이터가 없습니다.");
     }
+}
+
+// user 테이블의 데이터 저장
+function saveUserToLocalStorage() {
+    const user = db.exec("SELECT * FROM user");
+    localStorage.setItem('user', JSON.stringify(user));
+    console.log("✅ user 테이블 데이터 저장 완료!");
+}
+
+// localStorage 초기화(콘솔용)
+function clearLocalStorage() {
+    localStorage.clear();
+    console.log("✅ localStorage 초기화 완료!");
 }
 
 // 회원 추가
@@ -258,6 +267,7 @@ function signup() {
         alert('회원가입 실패: 이미 존재하는 이메일입니다.');
         console.error("Signup Error:", error);
     }
+    saveUserToLocalStorage();
 }
 
 // 로그인 함수
@@ -274,7 +284,7 @@ function login() {
     const result = db.exec("SELECT * FROM user WHERE email = ? AND password = ?", [email, password]);
     if (result.length > 0) {
         alert('로그인 성공!');
-        //window.location.href = '../index.html'; // 캘린더 페이지로 이동
+        window.location.href = '../index.html'; // 캘린더 페이지로 이동
     } else {
         alert('이메일 또는 비밀번호가 잘못되었습니다.');
     }
