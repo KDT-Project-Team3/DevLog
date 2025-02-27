@@ -256,6 +256,7 @@ input[type="text"], select, textarea {
 /*==============경험치=============*/
 .exp {
     margin:20px;
+    overflow: hidden;
 }
 .exp-bar-container {
     width: 100%; /* 바의 전체 너비 */
@@ -274,12 +275,6 @@ input[type="text"], select, textarea {
     /*color: white;*/
     font: bold 100%/1 "Lucida Grande", Helvetica, Arial, sans-serif;
     transition: width 0.5s ease-in-out;
-}
-
-.exp-bar>h4 {
-    font-size: 2em;
-    font-weight: bold;
-    transform: translateY(-50%);
 }
 
 /* ========= 메달 ===========*/
