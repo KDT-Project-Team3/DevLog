@@ -188,10 +188,12 @@ function saveUserAchievementToLocalStorage() {
 function updateLevelAndExp() {
     try {
         const requiredXp = currentUser.lv + 1;
-        levelDisplay.textContent = `LV: ${currentUser.lv}`;
-        expBar.textContent = `${currentUser.xp}/${requiredXp}`;
-        const expPercentage = (currentUser.xp / requiredXp) * 100;
-        expBar.style.width = `${expPercentage}%`;
+        if (levelDisplay) levelDisplay.textContent = `LV: ${currentUser.lv}`;
+        if (expBar) {
+            expBar.textContent = `${currentUser.xp}/${requiredXp}`;
+            const expPercentage = (currentUser.xp / requiredXp) * 100;
+            expBar.style.width = `${expPercentage}%`;
+        }
         console.log(`✅ 레벨 및 경험치 UI 업데이트: LV ${currentUser.lv}, XP ${currentUser.xp}/${requiredXp}`);
     } catch (error) {
         console.error('레벨 및 경험치 업데이트 실패:', error);
@@ -302,6 +304,8 @@ const achievementCategoryMap = {
 };
 
 document.addEventListener("DOMContentLoaded", async function () {
+    console.log("✅ DOMContentLoaded 실행됨");
+    console.log("Bootstrap JS 로드 여부:", typeof bootstrap);
     await initDatabase();
 
     profileInner.classList.add("profileInvisible");
@@ -376,36 +380,40 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     const calendarEl = document.getElementById('calendar');
-    calendarInstance = new FullCalendar.Calendar(calendarEl, {
-        height: '700px',
-        locale: 'ko',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-        },
-        initialView: 'dayGridMonth',
-        initialDate: '2025-02-26',
-        selectable: true,
-        dateClick: function(info) {
-            window.open('check_event.html?date=' + info.dateStr, 'eventPopup', 'width=500,height=500');
-        },
-        eventClick: function(info) {
-            window.open('check_event.html?date=' + info.event.startStr, 'eventPopup', 'width=500,height=500');
-        },
-        events: async function(fetchInfo, successCallback) {
-            const localEvents = loadEventsFromLocalStorage();
-            const holidayEvents = await fetchHolidays();
-            successCallback([...localEvents, ...holidayEvents]);
-        },
-        eventDidMount: function(info) {
-            if (info.event.extendedProps.completed) {
-                info.el.querySelector('.fc-event-title').style.textDecoration = 'line-through';
+    if (!calendarEl) {
+        console.error("❌ 캘린더 요소를 찾을 수 없습니다.");
+    } else {
+        calendarInstance = new FullCalendar.Calendar(calendarEl, {
+            height: '700px',
+            locale: 'ko',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+            },
+            initialView: 'dayGridMonth',
+            initialDate: '2025-02-26',
+            selectable: true,
+            dateClick: function(info) {
+                window.open('check_event.html?date=' + info.dateStr, 'eventPopup', 'width=500,height=500');
+            },
+            eventClick: function(info) {
+                window.open('check_event.html?date=' + info.event.startStr, 'eventPopup', 'width=500,height=500');
+            },
+            events: async function(fetchInfo, successCallback) {
+                const localEvents = loadEventsFromLocalStorage();
+                const holidayEvents = await fetchHolidays();
+                successCallback([...localEvents, ...holidayEvents]);
+            },
+            eventDidMount: function(info) {
+                if (info.event.extendedProps.completed) {
+                    info.el.querySelector('.fc-event-title').style.textDecoration = 'line-through';
+                }
             }
-        }
-    });
-    calendarInstance.render();
-    window.calendar = calendarInstance;
+        });
+        calendarInstance.render();
+        window.calendar = calendarInstance;
+    }
 
     async function fetchHolidays() {
         try {
@@ -835,6 +843,25 @@ document.addEventListener("DOMContentLoaded", async function () {
                 }
             });
         }
+    }
+
+    // 모달 이벤트 디버깅
+    const modalEl = document.getElementById('exampleModal');
+    if (modalEl) {
+        modalEl.addEventListener('shown.bs.modal', function () {
+            console.log("✅ 모달이 열림");
+            const iframe = document.getElementById('gameFrame');
+            iframe.onload = function() {
+                console.log("✅ 게임 iframe 로드 완료");
+            };
+            iframe.onerror = function() {
+                console.error("❌ 게임 iframe 로드 실패");
+                iframe.contentDocument.body.innerHTML = "<h1>게임 로드 실패</h1>";
+            };
+        });
+        modalEl.addEventListener('hidden.bs.modal', function () {
+            console.log("✅ 모달이 닫힘");
+        });
     }
 
     initializeTitles();

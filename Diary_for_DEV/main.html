@@ -43,7 +43,7 @@
       <div class="profileInner">
         <div class="profile">
           <div class="level-display" style="color: white">LV: 1</div>
-          <p class="id">예은티비</p>
+          <p class="id">닉네임</p>
           <span id="selectedTitle" class="userTitle text-white fw-bold">칭호 없음</span>
           <div class="dropdown d-inline">
             <button class="btn btn-dark btn-sm dropdown-toggle" type="button" id="titleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -77,7 +77,6 @@
       <div class="medal" id="sql"><i class="devicon-mysql-plain colored"></i></div>
     </div>
     <div class="achievement">
-      <!-- Java -->
       <div class="achievementInner">
         <div class="achivImg"><i class="devicon-java-plain colored"></i></div>
         <div class="content">
@@ -99,7 +98,6 @@
           <p>God of Java</p>
         </div>
       </div>
-      <!-- Python -->
       <div class="achievementInner">
         <div class="achivImg"><i class="devicon-python-plain colored"></i></div>
         <div class="content">
@@ -121,7 +119,6 @@
           <p>God of Python</p>
         </div>
       </div>
-      <!-- General -->
       <div class="achievementInner">
         <div class="achivImg" style="background-image: url('img/정원관리사.png');"></div>
         <div class="content">
@@ -151,6 +148,21 @@
       <button type="submit" id="saveEvent">저장</button>
       <button type="button" id="deleteEvent" style="display:none;">삭제</button>
     </form>
+  </div>
+</div>
+
+<!-- 버그 헌터 모달 -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">버그 헌터 🐛🔍</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <iframe id="gameFrame" src="./game/game.html" style="width: 100%; height: 500px; border: none;"></iframe>
+      </div>
+    </div>
   </div>
 </div>
 </body>
