@@ -283,6 +283,7 @@ function login() {
     // 데이터베이스에서 사용자 확인
     const result = db.exec("SELECT * FROM user WHERE email = ? AND password = ?", [email, password]);
     if (result.length > 0) {
+        localStorage.setItem('current_user', JSON.stringify(result));
         alert('로그인 성공!');
         window.location.href = '../index.html'; // 캘린더 페이지로 이동
     } else {

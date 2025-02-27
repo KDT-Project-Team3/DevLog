@@ -416,6 +416,10 @@ document.addEventListener("DOMContentLoaded", function () {
         title.style.width = "150px";
     });
 
+    // 로그인한 유저 정보 불러오기
+    const currentUser = JSON.parse(localStorage.getItem('current_user'));
+    // currentUser를 바탕으로 프로필 이미지/아이디/칭호 등등을 호출하기
+
     // 캘린더 초기화
     const calendarEl = document.getElementById('calendar');
     const calendar = new FullCalendar.Calendar(calendarEl, {
