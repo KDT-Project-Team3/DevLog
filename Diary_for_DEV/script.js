@@ -1,8 +1,10 @@
-let db; // 데이터베이스 객체 (auth.js에서 정의됨)
-let unlockedTitles = JSON.parse(localStorage.getItem('unlockedTitles')) || [];
+let db;
 
 const banner = document.querySelector(".banner");
-const messages = ["🚀 코드 한 줄이 세상을 바꾼다!", "🐞 버그 없는 코드? 신화일 뿐!"];
+const messages = [
+    "🚀 코드 한 줄이 세상을 바꾼다!", "🐞 버그 없는 코드? 신화일 뿐!",
+    "💡 주석이 없는 코드는 마법이다. 이해할 수 없으니까!", "🔨 '작동하면 건들지 마라' - 개발자의 철학"
+];
 const sidebar = document.querySelector(".sidebar");
 const profileLayout = document.querySelector(".profileLayout");
 const profileInner = document.querySelector(".profileInner");
@@ -29,13 +31,12 @@ const currentUser = {
     lv: 1,
     xp: 0,
     img: 'default_profile.png',
-    highscore: 0,
     xpUp: function (xp) {
         this.xp += xp;
         console.log(`✅ 경험치 ${xp} 획득! (현재 레벨: ${this.lv}, 현재 경험치: ${this.xp}`);
         const requiredXp = this.lv + 1;
-        while (this.xp >= requiredXp) {
-            this.xp -= requiredXp;
+        if (this.xp >= requiredXp) {
+            this.xp = 0;
             this.lv++;
             console.log(`✨ 레벨 업! (현재 레벨: ${this.lv}, 현재 경험치: ${this.xp}`);
         }
@@ -43,7 +44,6 @@ const currentUser = {
             db.exec("UPDATE user SET xp=?, lv=? WHERE user_id=?", [this.xp, this.lv, this.user_id]);
             saveUserToLocalStorage();
             updateLevelAndExp();
-            if (calendarInstance) calendarInstance.render();
             console.log("✅ 데이터베이스에 경험치 및 레벨 업데이트 완료!");
         } catch (error) {
             console.error('XP 업데이트 실패:', error);
@@ -56,7 +56,6 @@ async function initDatabase() {
         const SQL = await initSqlJs({
             locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}`
         });
-
         db = new SQL.Database();
         db.run(`
             CREATE TABLE IF NOT EXISTS user (
@@ -101,7 +100,6 @@ async function initDatabase() {
         `);
         console.log("✅ 데이터베이스 초기화 완료!");
         loadDatabaseFromLocalStorage();
-        console.log("✅ script.js에서 데이터베이스 사용 준비 완료!");
     } catch (error) {
         console.error('데이터베이스 초기화 실패:', error);
     }
@@ -116,8 +114,6 @@ function loadDatabaseFromLocalStorage() {
                     [user[0], user[1], user[2], user[3], user[4], user[5], user[6]]);
             });
             console.log("✅ user 테이블 데이터 로드 완료!");
-        } else {
-            console.warn("⚠️ 로컬 스토리지에 저장된 user 데이터가 없습니다.");
         }
         const diaryEventData = JSON.parse(localStorage.getItem('diary_event'));
         if (diaryEventData && diaryEventData.length > 0) {
@@ -126,8 +122,6 @@ function loadDatabaseFromLocalStorage() {
                     [event[0], event[1], event[2], event[3], event[4], event[5], event[6]]);
             });
             console.log("✅ diary_event 테이블 데이터 로드 완료!");
-        } else {
-            console.warn("⚠️ 로컬 스토리지에 저장된 diary_event 데이터가 없습니다.");
         }
         const achievementData = JSON.parse(localStorage.getItem('achievement'));
         if (achievementData && achievementData.length > 0) {
@@ -136,8 +130,6 @@ function loadDatabaseFromLocalStorage() {
                     [achievement[0], achievement[1], achievement[2], achievement[3], achievement[4]]);
             });
             console.log("✅ achievement 테이블 데이터 로드 완료!");
-        } else {
-            console.warn("⚠️ 로컬 스토리지에 저장된 achievement 데이터가 없습니다.");
         }
         const userAchievementData = JSON.parse(localStorage.getItem('user_achievement'));
         if (userAchievementData && userAchievementData.length > 0) {
@@ -146,8 +138,6 @@ function loadDatabaseFromLocalStorage() {
                     [userAchievement[0], userAchievement[1]]);
             });
             console.log("✅ user_achievement 테이블 데이터 로드 완료!");
-        } else {
-            console.warn("⚠️ 로컬 스토리지에 저장된 user_achievement 데이터가 없습니다.");
         }
     } catch (error) {
         console.error('데이터 로드 실패:', error);
@@ -198,12 +188,10 @@ function saveUserAchievementToLocalStorage() {
 function updateLevelAndExp() {
     try {
         const requiredXp = currentUser.lv + 1;
-        if (levelDisplay) levelDisplay.textContent = `LV: ${currentUser.lv}`;
-        if (expBar) {
-            expBar.textContent = `${currentUser.xp}/${requiredXp}`;
-            const expPercentage = (currentUser.xp / requiredXp) * 100;
-            expBar.style.width = `${expPercentage}%`;
-        }
+        levelDisplay.textContent = `LV: ${currentUser.lv}`;
+        expBar.textContent = `${currentUser.xp}/${requiredXp}`;
+        const expPercentage = (currentUser.xp / requiredXp) * 100;
+        expBar.style.width = `${expPercentage}%`;
         console.log(`✅ 레벨 및 경험치 UI 업데이트: LV ${currentUser.lv}, XP ${currentUser.xp}/${requiredXp}`);
     } catch (error) {
         console.error('레벨 및 경험치 업데이트 실패:', error);
@@ -296,59 +284,6 @@ window.displayUserAchievements = function() {
     }
 };
 
-function loadEventsFromLocalStorage() {
-    try {
-        const events = JSON.parse(localStorage.getItem('events') || '{}');
-        const eventList = [];
-        const categoryColors = {
-            Python: '#3776AB', Java: '#007396', C: '#A8B9CC', Cpp: '#00599C', Csharp: '#68217A',
-            JavaScript: '#F7DF1E', HTML: '#E34F26', R: '#276DC3', Kotlin: '#F18E33', SQL: '#4479A1',
-            Holiday: '#FF0000'
-        };
-        for (const date in events) {
-            events[date].forEach(event => {
-                eventList.push({
-                    title: `${event.title} (${event.category})`,
-                    start: date,
-                    allDay: true,
-                    backgroundColor: categoryColors[event.category],
-                    borderColor: categoryColors[event.category],
-                    extendedProps: { memo: event.memo || '', completed: event.completed || false }
-                });
-            });
-        }
-        return eventList;
-    } catch (error) {
-        console.error('이벤트 로드 실패:', error);
-        return [];
-    }
-}
-
-async function fetchHolidays() {
-    const url = 'https://date.nager.at/api/v3/publicholidays/2025/KR';
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP 오류: ${response.status}`);
-        const holidays = await response.json();
-        return holidays.map(holiday => ({
-            title: holiday.localName,
-            start: holiday.date,
-            allDay: true,
-            backgroundColor: categoryColors['Holiday'],
-            borderColor: categoryColors['Holiday'],
-            extendedProps: {
-                memo: holiday.name || '',
-                category: 'Holiday',
-                isHoliday: true,
-                completed: false
-            }
-        }));
-    } catch (error) {
-        console.error('공휴일 가져오기 오류:', error);
-        return [];
-    }
-}
-
 const categoryColors = {
     Python: '#3776AB', Java: '#007396', C: '#A8B9CC', Cpp: '#00599C', Csharp: '#68217A',
     JavaScript: '#F7DF1E', HTML: '#E34F26', R: '#276DC3', Kotlin: '#F18E33', SQL: '#4479A1',
@@ -362,132 +297,51 @@ const achievementCategoryMap = {
     "Python 첫걸음": { category: "Python", requiredCount: 1, title: "", condition: "Python 일정 1개 완료" },
     "Python 마스터": { category: "Python", requiredCount: 2, title: "", condition: "Python 일정 2개 완료" },
     "Python의 신": { category: "Python", requiredCount: 3, title: "🐍 Python의 신", condition: "Python 일정 3개 완료" },
-    "JS 첫걸음": { category: "JavaScript", requiredCount: 1, title: "", condition: "JavaScript 일정 1개 완료" },
-    "JS DOM의 달인": { category: "JavaScript", requiredCount: 2, title: "", condition: "JavaScript 일정 2개 완료" },
-    "JS 마스터": { category: "JavaScript", requiredCount: 3, title: "🧩 JS 코드 마스터", condition: "JavaScript 일정 3개 완료" },
-    "초보 프론트엔드": { category: "HTML", requiredCount: 1, title: "", condition: "HTML 일정 1개 완료" },
-    "HTML 고수": { category: "HTML", requiredCount: 2, title: "", condition: "HTML 일정 2개 완료" },
-    "HTML의 신": { category: "HTML", requiredCount: 3, title: "📜 HTML의 신, 🎨 CSS의 신", condition: "HTML 일정 3개 완료" },
-    "SQL 첫걸음": { category: "SQL", requiredCount: 1, title: "", condition: "SQL 일정 1개 완료" },
-    "SQL 고수": { category: "SQL", requiredCount: 2, title: "", condition: "SQL 일정 2개 완료" },
-    "SQL의 신": { category: "SQL", requiredCount: 3, title: "🗄️ SQL의 신", condition: "SQL 일정 3개 완료" },
-    "C 첫걸음": { category: "C", requiredCount: 1, title: "", condition: "C 일정 1개 완료" },
-    "C 고수": { category: "C", requiredCount: 2, title: "", condition: "C 일정 2개 완료" },
-    "C의 신": { category: "C", requiredCount: 3, title: "🔧 C의 신", condition: "C 일정 3개 완료" },
-    "C++ 첫걸음": { category: "Cpp", requiredCount: 1, title: "", condition: "C++ 일정 1개 완료" },
-    "C++ 고수": { category: "Cpp", requiredCount: 2, title: "", condition: "C++ 일정 2개 완료" },
-    "C++의 신": { category: "Cpp", requiredCount: 3, title: "⚙️ C++의 신", condition: "C++ 일정 3개 완료" },
-    "C# 첫걸음": { category: "Csharp", requiredCount: 1, title: "", condition: "C# 일정 1개 완료" },
-    "C# 고수": { category: "Csharp", requiredCount: 2, title: "", condition: "C# 일정 2개 완료" },
-    "C#의 신": { category: "Csharp", requiredCount: 3, title: "🎹 C#의 신", condition: "C# 일정 3개 완료" },
-    "R 첫걸음": { category: "R", requiredCount: 1, title: "", condition: "R 일정 1개 완료" },
-    "R 고수": { category: "R", requiredCount: 2, title: "", condition: "R 일정 2개 완료" },
-    "R의 신": { category: "R", requiredCount: 3, title: "📊 R의 신", condition: "R 일정 3개 완료" },
-    "Kotlin 첫걸음": { category: "Kotlin", requiredCount: 1, title: "", condition: "Kotlin 일정 1개 완료" },
-    "Kotlin 고수": { category: "Kotlin", requiredCount: 2, title: "", condition: "Kotlin 일정 2개 완료" },
-    "Kotlin의 신": { category: "Kotlin", requiredCount: 3, title: "🤖 Kotlin의 신", condition: "Kotlin 일정 3개 완료" },
     "정원 관리사": { category: "General", requiredCount: 1, title: "🏡 정원 관리사", condition: "어떤 일정 1개 완료" },
-    "지옥에서 온": { category: "General", requiredCount: 2, title: "🔥 지옥에서 온", condition: "어떤 일정 2개 완료" },
-    "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이", condition: "어떤 일정 1개 완료" },
-    "프로갓생러": { category: "General", requiredCount: 2, title: "🚀 프로 갓생러", condition: "어떤 일정 2개 완료" },
-    "파워J": { category: "General", requiredCount: 3, title: "⚡ 파워 J", condition: "어떤 일정 3개 완료" },
-    "자기계발왕": { category: "General", requiredCount: 4, title: "📚 자기계발 끝판왕", condition: "어떤 일정 4개 완료" },
-    "닥터 스트레인지": { category: "General", requiredCount: 5, title: "⏳ 닥터 스트레인지", condition: "어떤 일정 5개 완료" },
+    "지옥에서 온": { category: "General", requiredCount: 2, title: "🔥 지옥에서 온", condition: "어떤 일정 2개 완료" }
 };
 
 document.addEventListener("DOMContentLoaded", async function () {
     await initDatabase();
 
-    if (!calendarInstance) {
-        const calendarEl = document.getElementById('calendar');
-        if (calendarEl) {
-            calendarInstance = new FullCalendar.Calendar(calendarEl, {
-                height: '700px',
-                locale: 'ko',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-                },
-                initialView: 'dayGridMonth',
-                initialDate: '2025-02-26',
-                selectable: true,
-                dateClick: function(info) {
-                    window.open('check_event.html?date=' + info.dateStr, 'eventPopup', 'width=500,height=500,top=100,left=100,scrollbars=no,resizable=no');
-                },
-                eventClick: function(info) {
-                    window.open('check_event.html?date=' + info.event.startStr, 'eventPopup', 'width=500,height=500,top=100,left=100,scrollbars=no,resizable=no');
-                },
-                events: async function(fetchInfo, successCallback) {
-                    const localEvents = loadEventsFromLocalStorage();
-                    const holidayEvents = await fetchHolidays();
-                    successCallback([...localEvents, ...holidayEvents]);
-                },
-                eventDidMount: function(info) {
-                    if (info.event.extendedProps.completed) {
-                        info.el.querySelector('.fc-event-title').style.textDecoration = 'line-through';
-                    }
-                }
-            });
-            calendarInstance.render();
-            window.calendar = calendarInstance;
-        } else {
-            console.error("Calendar element not found!");
-        }
-    }
-
-    if (profileInner) profileInner.classList.add("profileInvisible");
-    if (expBarContainer) expBarContainer.classList.add("profileInvisible");
-    if (medalBox) medalBox.classList.add("profileInvisible");
-    if (userInfoLayout) userInfoLayout.classList.remove("profileInvisible");
+    profileInner.classList.add("profileInvisible");
+    expBarContainer.classList.add("profileInvisible");
+    medalBox.classList.add("profileInvisible");
+    userInfoLayout.classList.remove("profileInvisible");
 
     function changeBannerText() {
-        if (banner) {
-            const randomIndex = Math.floor(Math.random() * messages.length);
-            banner.textContent = messages[randomIndex];
-        }
+        const randomIndex = Math.floor(Math.random() * messages.length);
+        banner.textContent = messages[randomIndex];
     }
     changeBannerText();
     setInterval(changeBannerText, 3000);
 
-    if (sidebar) {
-        sidebar.addEventListener("mouseenter", function () {
-            if (profileInner) profileInner.classList.remove("profileInvisible");
-            if (expBarContainer) expBarContainer.classList.remove("profileInvisible");
-            if (medalBox) {
-                medalBox.classList.remove("profileInvisible");
-                medalBox.style.height = "30%";
-            }
-            if (userInfoLayout) userInfoLayout.classList.add("profileInvisible");
-            if (profileLayout) {
-                profileLayout.style.marginTop = "0";
-                profileLayout.style.marginBottom = "0";
-            }
-            if (profileImg) {
-                profileImg.style.width = "140px";
-                profileImg.style.height = "140px";
-            }
-            if (profile) profile.style.left = "70%";
-            if (userInfoLayout) userInfoLayout.style.marginTop = "0";
-            achievement_p.forEach(p => p.style.opacity = "1");
-        });
+    sidebar.addEventListener("mouseenter", function () {
+        profileInner.classList.remove("profileInvisible");
+        expBarContainer.classList.remove("profileInvisible");
+        medalBox.classList.remove("profileInvisible");
+        medalBox.style.height = "30%";
+        userInfoLayout.classList.add("profileInvisible");
+        profileLayout.style.marginTop = "0";
+        profileLayout.style.marginBottom = "0";
+        profileImg.style.width = "140px";
+        profileImg.style.height = "140px";
+        profile.style.left = "70%";
+        userInfoLayout.style.marginTop = "0";
+        achievement_p.forEach(p => p.style.opacity = "1");
+    });
 
-        sidebar.addEventListener("mouseleave", function () {
-            if (profileInner) profileInner.classList.add("profileInvisible");
-            if (expBarContainer) expBarContainer.classList.add("profileInvisible");
-            if (medalBox) {
-                medalBox.classList.add("profileInvisible");
-                medalBox.style.height = "0";
-            }
-            if (userInfoLayout) userInfoLayout.classList.remove("profileInvisible");
-            if (profileImg) {
-                profileImg.style.width = "170px";
-                profileImg.style.height = "170px";
-            }
-            if (userInfoLayout) userInfoLayout.style.marginTop = "20%";
-            achievement_p.forEach(p => p.style.opacity = "0");
-        });
-    }
+    sidebar.addEventListener("mouseleave", function () {
+        profileInner.classList.add("profileInvisible");
+        expBarContainer.classList.add("profileInvisible");
+        medalBox.classList.add("profileInvisible");
+        medalBox.style.height = "0";
+        userInfoLayout.classList.remove("profileInvisible");
+        profileImg.style.width = "170px";
+        profileImg.style.height = "170px";
+        userInfoLayout.style.marginTop = "20%";
+        achievement_p.forEach(p => p.style.opacity = "0");
+    });
 
     const categorySelect = document.getElementById("eventCategory");
     if (categorySelect) {
@@ -502,7 +356,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     content_title.forEach(title => {
         title.style.fontSize = "1.6em";
         title.style.marginLeft = "1em";
-        title.style.width = "300px";
+        title.style.width = "150px";
     });
 
     let tmp = JSON.parse(localStorage.getItem('current_user'));
@@ -515,10 +369,62 @@ document.addEventListener("DOMContentLoaded", async function () {
         currentUser.lv = user[4];
         currentUser.xp = user[5];
         currentUser.img = user[6];
-        const idElement = document.querySelector(".id");
-        if (idElement) idElement.textContent = currentUser.username;
+        document.querySelector(".id").textContent = currentUser.username;
+        updateLevelAndExp();
     } else {
         console.warn("⚠️ 로그인된 유저 정보가 없습니다.");
+    }
+
+    const calendarEl = document.getElementById('calendar');
+    calendarInstance = new FullCalendar.Calendar(calendarEl, {
+        height: '700px',
+        locale: 'ko',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        },
+        initialView: 'dayGridMonth',
+        initialDate: '2025-02-26',
+        selectable: true,
+        dateClick: function(info) {
+            window.open('check_event.html?date=' + info.dateStr, 'eventPopup', 'width=500,height=500');
+        },
+        eventClick: function(info) {
+            window.open('check_event.html?date=' + info.event.startStr, 'eventPopup', 'width=500,height=500');
+        },
+        events: async function(fetchInfo, successCallback) {
+            const localEvents = loadEventsFromLocalStorage();
+            const holidayEvents = await fetchHolidays();
+            successCallback([...localEvents, ...holidayEvents]);
+        },
+        eventDidMount: function(info) {
+            if (info.event.extendedProps.completed) {
+                info.el.querySelector('.fc-event-title').style.textDecoration = 'line-through';
+            }
+        }
+    });
+    calendarInstance.render();
+    window.calendar = calendarInstance;
+
+    async function fetchHolidays() {
+        try {
+            const url = 'https://date.nager.at/api/v3/publicholidays/2025/KR';
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP 오류: ${response.status}`);
+            const holidays = await response.json();
+            return holidays.map(holiday => ({
+                title: holiday.localName,
+                start: holiday.date,
+                allDay: true,
+                backgroundColor: categoryColors['Holiday'],
+                borderColor: categoryColors['Holiday'],
+                extendedProps: { memo: holiday.name || '', category: 'Holiday', isHoliday: true, completed: false }
+            }));
+        } catch (error) {
+            console.error('공휴일 가져오기 오류:', error);
+            return [];
+        }
     }
 
     window.addEventToCalendar = function(date, title, category) {
@@ -529,34 +435,27 @@ document.addEventListener("DOMContentLoaded", async function () {
             if (!exists) {
                 events[date].push({ title, category, memo: '', completed: false });
                 localStorage.setItem('events', JSON.stringify(events));
-
-                if (calendarInstance) {
-                    calendarInstance.getEvents().forEach(event => {
-                        if (event.startStr === date && event.title === `${title} (${category})`) {
-                            event.remove();
-                        }
-                    });
-                    calendarInstance.addEvent({
-                        title: `${title} (${category})`,
-                        start: date,
-                        allDay: true,
-                        backgroundColor: categoryColors[category],
-                        borderColor: categoryColors[category],
-                        extendedProps: { memo: '', completed: false }
-                    });
-                }
-
+                calendarInstance.getEvents().forEach(event => {
+                    if (event.startStr === date && event.title === `${title} (${category})`) {
+                        event.remove();
+                    }
+                });
+                calendarInstance.addEvent({
+                    title: `${title} (${category})`,
+                    start: date,
+                    allDay: true,
+                    backgroundColor: categoryColors[category],
+                    borderColor: categoryColors[category],
+                    extendedProps: { memo: '', completed: false }
+                });
                 if (!currentUser.user_id) {
                     console.error("⚠️ 로그인이 필요합니다. user_id가 없습니다.");
                     alert("일정을 추가하려면 로그인이 필요합니다.");
                     return;
                 }
-                const existingEvents = db.exec("SELECT * FROM diary_event WHERE date = ? AND title = ? AND com_lang = ?", [date, title, category]);
-                if (existingEvents.length === 0) {
-                    db.run("INSERT INTO diary_event (user_id, title, com_lang, date, completed) VALUES (?, ?, ?, ?, ?)",
-                        [currentUser.user_id, title, category, date, false]);
-                    saveDiaryEventToLocalStorage();
-                }
+                db.run("INSERT INTO diary_event (user_id, title, com_lang, date) VALUES (?, ?, ?, ?)",
+                    [currentUser.user_id, title, category, date]);
+                saveDiaryEventToLocalStorage();
                 console.log(`✅ 일정 추가 완료: ${date}, ${title}, ${category}`);
             } else {
                 console.log(`이미 존재하는 일정: ${title} (${category})`);
@@ -571,50 +470,38 @@ document.addEventListener("DOMContentLoaded", async function () {
             const events = JSON.parse(localStorage.getItem('events') || '{}');
             if (events[date] && events[date][index]) {
                 const wasCompleted = events[date][index].completed;
-                if (wasCompleted) { // 완료되지 않은 경우만 처리
+                if (!wasCompleted) {
                     events[date][index].completed = true;
                     localStorage.setItem('events', JSON.stringify(events));
                     currentUser.xpUp(1);
-
-                    if (calendarInstance) {
-                        const calendarEvents = calendarInstance.getEvents();
-                        const targetEvent = calendarEvents.find(event =>
-                            event.startStr === date && event.title === `${events[date][index].title} (${events[date][index].category})`
-                        );
-                        if (targetEvent) {
-                            targetEvent.setExtendedProp('completed', true);
-                            const titleElement = targetEvent.el ? targetEvent.el.querySelector('.fc-event-title') : null;
-                            if (titleElement) {
-                                titleElement.style.textDecoration = 'line-through';
-                                console.log(`✅ 라인스루 적용: ${events[date][index].title}`);
-                            } else {
-                                console.warn('타이틀 요소를 찾을 수 없습니다.');
-                                calendarInstance.render();
-                            }
-                        } else {
-                            console.warn('캘린더에서 이벤트를 찾을 수 없습니다.');
-                            calendarInstance.render();
+                    const calendarEvents = calendarInstance.getEvents();
+                    const targetEvent = calendarEvents.find(event =>
+                        event.startStr === date && event.title === `${events[date][index].title} (${events[date][index].category})`
+                    );
+                    if (targetEvent) {
+                        targetEvent.setExtendedProp('completed', true);
+                        const titleElement = targetEvent.el ? targetEvent.el.querySelector('.fc-event-title') : null;
+                        if (titleElement) {
+                            titleElement.style.textDecoration = 'line-through';
+                            console.log(`✅ 라인스루 적용: ${events[date][index].title}`);
                         }
                     }
-
                     const eventIdResult = db.exec("SELECT event_id FROM diary_event WHERE user_id=? AND date=? AND title=? AND com_lang=?",
                         [currentUser.user_id, date, events[date][index].title, events[date][index].category]);
                     if (eventIdResult.length > 0 && eventIdResult[0].values.length > 0) {
                         const eventId = eventIdResult[0].values[0][0];
                         db.run("UPDATE diary_event SET completed=TRUE WHERE event_id=?", [eventId]);
                         saveDiaryEventToLocalStorage();
-                    } else {
-                        console.warn('이벤트 ID를 찾을 수 없습니다.');
                     }
                     updateMedals();
                     console.log(`✅ 일정 완료: ${events[date][index].title}`);
-                    if (calendarInstance) calendarInstance.render();
+                    calendarInstance.render();
                     checkDatabase();
                 }
             }
         } catch (error) {
             console.error('일정 완료 처리 실패:', error);
-            if (calendarInstance) calendarInstance.render();
+            calendarInstance.render();
         }
     };
 
@@ -623,8 +510,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             const events = JSON.parse(localStorage.getItem('events') || '{}');
             const completedCounts = {};
             let totalCompleted = 0;
-
-            // 완료된 일정 수 계산
             for (const date in events) {
                 events[date].forEach(event => {
                     if (event.completed) {
@@ -633,11 +518,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                     }
                 });
             }
-
-            console.log("Completed Counts:", completedCounts);
-            console.log("Total Completed:", totalCompleted);
-
-            // 메달 업데이트
             Object.keys(categoryColors).forEach(category => {
                 const medal = document.getElementById(category.toLowerCase());
                 if (medal) {
@@ -646,9 +526,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                     else medal.classList.remove('unlocked');
                 }
             });
-
-            // 업적 업데이트 (재정렬 제거, 기존 요소 유지)
             const achievementItems = document.querySelectorAll('.achievementInner');
+            const achievementContainer = document.querySelector('.achievement');
+            const unlockedItems = [];
+            const lockedItems = [];
             achievementItems.forEach(item => {
                 const title = item.querySelector('h2').textContent.trim();
                 const mapping = achievementCategoryMap[title] || { category: "General", requiredCount: 1 };
@@ -656,14 +537,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                 const requiredCount = mapping.requiredCount;
                 const completedCount = completedCounts[category] || 0;
                 const isUnlocked = category === "General" ? totalCompleted >= requiredCount : completedCount >= requiredCount;
-
                 const descriptionP = item.querySelector('.content p');
-
                 if (isUnlocked) {
                     item.classList.add('unlocked');
                     descriptionP.textContent = descriptionP.dataset.originalText || descriptionP.textContent;
-
-                    // 업적 해금 시에만 칭호 추가
                     if (mapping.title && !item.dataset.titleAdded) {
                         const titles = mapping.title.split(',').map(t => t.trim());
                         titles.forEach(title => {
@@ -673,36 +550,38 @@ document.addEventListener("DOMContentLoaded", async function () {
                         });
                         item.dataset.titleAdded = 'true';
                     }
+                    unlockedItems.push(item);
                 } else {
                     item.classList.remove('unlocked');
                     if (!descriptionP.dataset.originalText) {
                         descriptionP.dataset.originalText = descriptionP.textContent;
                     }
                     descriptionP.textContent = mapping.condition || "해금 조건 미정";
+                    lockedItems.push(item);
                 }
             });
-
+            achievementContainer.innerHTML = '';
+            unlockedItems.forEach(item => achievementContainer.appendChild(item));
+            lockedItems.forEach(item => achievementContainer.appendChild(item));
             console.log("✅ 메달 및 업적 상태 업데이트 완료");
         } catch (error) {
             console.error('메달 및 업적 업데이트 실패:', error);
         }
     }
 
+    let unlockedTitles = JSON.parse(localStorage.getItem('unlockedTitles')) || [];
     function initializeTitles() {
         if (dropdownMenu) {
             dropdownMenu.innerHTML = '';
             const defaultItem = document.createElement('div');
             defaultItem.className = 'dropdown-item';
-            defaultItem.textContent = ' ';
+            defaultItem.textContent = '칭호 없음';
             defaultItem.addEventListener('click', () => {
-                if (selectedTitle) {
-                    selectedTitle.textContent = ' ';
-                    selectedTitle.className = 'userTitle text-white fw-bold';
-                }
+                selectedTitle.textContent = '칭호 없음';
+                selectedTitle.className = 'userTitle text-white fw-bold';
             });
             dropdownMenu.appendChild(defaultItem);
-
-            // 초기 칭호는 업적 해금 시에만 추가되므로 여기서 추가하지 않음
+            unlockedTitles.forEach(title => addTitleToDropdown(title));
         }
     }
 
@@ -711,20 +590,20 @@ document.addEventListener("DOMContentLoaded", async function () {
             if (!unlockedTitles.includes(title)) {
                 unlockedTitles.push(title);
                 localStorage.setItem('unlockedTitles', JSON.stringify(unlockedTitles));
-                const item = document.createElement('div');
-                item.className = 'dropdown-item';
-                item.textContent = title;
-                item.addEventListener('click', () => {
-                    selectedTitle.textContent = title;
-                    selectedTitle.className = 'userTitle text-white fw-bold';
-                    if (title === "🔥 지옥에서 온") {
-                        selectedTitle.classList.add('title-hell');
-                        selectedTitle.style.fontSize = '0.8em';
-                    }
-                });
-                dropdownMenu.appendChild(item);
-                console.log(`칭호 추가됨: ${title}`);
             }
+            const item = document.createElement('div');
+            item.className = 'dropdown-item';
+            item.textContent = title;
+            item.addEventListener('click', () => {
+                selectedTitle.textContent = title;
+                selectedTitle.className = 'userTitle text-white fw-bold';
+                if (title === "🔥 지옥에서 온") {
+                    selectedTitle.classList.add('title-hell');
+                    selectedTitle.style.fontSize = '0.8em';
+                }
+            });
+            dropdownMenu.appendChild(item);
+            console.log(`칭호 추가됨: ${title}`);
         }
     }
 
@@ -736,7 +615,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         const memoInput = document.getElementById('eventMemo');
         const deleteBtn = document.getElementById('deleteEvent');
         window.selectedDate = date;
-
         if (modal && titleInput && categorySelect && memoInput && deleteBtn) {
             if (event) {
                 selectedEvent = event;
@@ -771,12 +649,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             const category = document.getElementById('eventCategory').value;
             const memo = document.getElementById('eventMemo').value.trim();
             const date = window.selectedDate;
-
             if (!title) {
                 alert('일정을 입력하시오');
                 return;
             }
-
             const events = JSON.parse(localStorage.getItem('events') || '{}');
             if (selectedEvent) {
                 selectedEvent.remove();
@@ -786,21 +662,17 @@ document.addEventListener("DOMContentLoaded", async function () {
             } else {
                 alert('일정이 등록되었습니다!');
             }
-
             if (!events[date]) events[date] = [];
             events[date].push({ title, category, memo, completed: false });
             localStorage.setItem('events', JSON.stringify(events));
-            if (calendarInstance) {
-                calendarInstance.addEvent({
-                    title: `${title} (${category})`,
-                    start: date,
-                    allDay: true,
-                    backgroundColor: categoryColors[category],
-                    borderColor: categoryColors[category],
-                    extendedProps: { memo, completed: false }
-                });
-            }
-
+            calendarInstance.addEvent({
+                title: `${title} (${category})`,
+                start: date,
+                allDay: true,
+                backgroundColor: categoryColors[category],
+                borderColor: categoryColors[category],
+                extendedProps: { memo, completed: false }
+            });
             const modal = document.getElementById('eventModal');
             if (modal) modal.style.display = 'none';
             eventForm.reset();
@@ -833,10 +705,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         const eventList = document.getElementById('event-list');
         const doneList = document.getElementById('done-list');
         if (!eventList || !doneList) return;
-
         eventList.innerHTML = '';
         doneList.innerHTML = '';
-
         if (selectedDate && events[selectedDate] && Array.isArray(events[selectedDate])) {
             events[selectedDate].forEach((event, index) => {
                 const li = document.createElement('li');
@@ -859,7 +729,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 }
             });
         }
-
         if (eventList.children.length === 0) {
             const li = document.createElement('li');
             li.className = 'no-events';
@@ -889,21 +758,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         const eventDateElement = document.getElementById('event-date');
         if (eventDateElement) eventDateElement.textContent = selectedDate ? `📅 ${selectedDate}` : '날짜를 선택하세요';
         window.renderEvents(selectedDate, events);
-
         const addBtn = document.getElementById('add-btn');
         function addEventHandler() {
             const title = document.getElementById('new-title')?.value.trim();
             const category = document.getElementById('new-category')?.value;
-
             if (title && selectedDate) {
                 if (!events[selectedDate]) events[selectedDate] = [];
                 events[selectedDate].push({ title, category, completed: false });
                 localStorage.setItem('events', JSON.stringify(events));
-
                 if (window.opener && window.opener.addEventToCalendar) {
                     window.opener.addEventToCalendar(selectedDate, title, category);
                 }
-
                 window.renderEvents(selectedDate, events);
                 document.getElementById('new-title').value = '';
             }
@@ -911,20 +776,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (addBtn) {
             addBtn.addEventListener('click', addEventHandler);
         }
-
         const eventContainer = document.querySelector('.event');
         if (eventContainer) {
             eventContainer.addEventListener('click', function(e) {
                 const target = e.target;
                 const index = target.dataset.index;
                 if (index === undefined) return;
-
                 if (target.type === 'checkbox') {
                     const wasCompleted = events[selectedDate][index].completed;
                     events[selectedDate][index].completed = target.checked;
                     localStorage.setItem('events', JSON.stringify(events));
                     window.renderEvents(selectedDate, events);
-
                     if (!wasCompleted && target.checked && window.opener && window.opener.completeEvent) {
                         console.log(`체크박스 완료: ${selectedDate}, ${index}`);
                         window.opener.completeEvent(selectedDate, index);
@@ -937,31 +799,25 @@ document.addEventListener("DOMContentLoaded", async function () {
                     const titleInput = document.getElementById('new-title');
                     const categorySelect = document.getElementById('new-category');
                     const addBtn = document.getElementById('add-btn');
-
                     titleInput.value = event.title;
                     categorySelect.value = event.category;
                     addBtn.textContent = '수정 저장';
                     addBtn.dataset.editIndex = index;
-
                     addBtn.removeEventListener('click', addEventHandler);
                     addBtn.addEventListener('click', function editHandler() {
                         const newTitle = titleInput.value.trim();
                         const newCategory = categorySelect.value;
-
                         if (newTitle) {
                             events[selectedDate][index].title = newTitle;
                             events[selectedDate][index].category = newCategory;
                             localStorage.setItem('events', JSON.stringify(events));
-
                             if (window.opener && window.opener.calendar) {
                                 window.opener.calendar.refetchEvents();
                             }
-
                             window.renderEvents(selectedDate, events);
                             titleInput.value = '';
                             addBtn.textContent = '+';
                             delete addBtn.dataset.editIndex;
-
                             addBtn.removeEventListener('click', editHandler);
                             addBtn.addEventListener('click', addEventHandler);
                         }
@@ -972,7 +828,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                         if (events[selectedDate].length === 0) delete events[selectedDate];
                         localStorage.setItem('events', JSON.stringify(events));
                         window.renderEvents(selectedDate, events);
-
                         if (window.opener && window.opener.calendar) {
                             window.opener.calendar.refetchEvents();
                         }
@@ -982,28 +837,31 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    if (dropdownItems) {
-        dropdownItems.forEach(item => {
-            item.addEventListener("click", function () {
-                if (selectedTitle) selectedTitle.textContent = this.textContent;
-            });
-        });
-    }
-
-    window.addEventListener("message", function(event) {
-        if (event.data.action === "closeModal") {
-            var modalElement = document.getElementById('exampleModal');
-            var modalInstance = bootstrap.Modal.getInstance(modalElement);
-
-            if (modalInstance) {
-                modalInstance.hide();
-                console.log("game페이지로부터 메세지를 받아 모달 닫힘");
-            }
-        }
-    });
-
     initializeTitles();
     updateMedals();
     updateLevelAndExp();
     console.log("addEventListener 실행 완료");
 });
+
+function loadEventsFromLocalStorage() {
+    try {
+        const events = JSON.parse(localStorage.getItem('events') || '{}');
+        const eventList = [];
+        for (const date in events) {
+            events[date].forEach(event => {
+                eventList.push({
+                    title: `${event.title} (${event.category})`,
+                    start: date,
+                    allDay: true,
+                    backgroundColor: categoryColors[event.category],
+                    borderColor: categoryColors[event.category],
+                    extendedProps: { memo: event.memo || '', completed: event.completed || false }
+                });
+            });
+        }
+        return eventList;
+    } catch (error) {
+        console.error('이벤트 로드 실패:', error);
+        return [];
+    }
+}

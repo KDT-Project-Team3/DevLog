@@ -4,34 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>개발자 다이어리</title>
-
-  <!-- Bootstrap CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-  <!-- Devicon CDN -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css">
-
-  <!-- 구글폰트: Poppins -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-
-  <!-- Material Symbols 아이콘 -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=menu"/>
-
-  <!-- jQuery 및 FullCalendar -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=menu" />
+  <link rel="stylesheet" href="style.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/locales-all.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.min.js"></script>
-
-  <!-- 커스텀 스타일시트 및 스크립트 -->
-  <link rel="stylesheet" href="style.css">
   <script defer src="script.js"></script>
 </head>
-
 <body>
 <div class="container">
   <div class="main-column">
@@ -40,51 +24,47 @@
       <div id="calendar"></div>
     </div>
   </div>
-
   <aside class="sidebar">
     <button class="menuBtn btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
       <span class="material-symbols-outlined">menu</span>
     </button>
-
-    <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
       <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasRightLabel">MENU</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
-        <a href="#" class="menu-item">메뉴1</a>
+        <p class="menu-item">메뉴1</p>
         <p class="bugHunter" data-bs-toggle="modal" data-bs-target="#exampleModal">버그 헌터 🐛🔍</p>
       </div>
-      <div class="offcanvas-footer">
-        <h5 class="offcanvas-footTitle">대충 간략 소개</h5>
-      </div>
     </div>
-
     <div class="profileLayout">
-      <div class="profileImg">프로필 이미지</div>
+      <div class="profileImg"></div>
       <div class="profileInner">
         <div class="profile">
-          <h4 class="level-display" style="color: white">LV: 1</h4>
-          <p class="id">닉네임</p>
-          <span id="selectedTitle" class="userTitle text-white fw-bold">칭호</span>
+          <div class="level-display" style="color: white">LV: 1</div>
+          <p class="id">예은티비</p>
+          <span id="selectedTitle" class="userTitle text-white fw-bold">칭호 없음</span>
           <div class="dropdown d-inline">
             <button class="btn btn-dark btn-sm dropdown-toggle" type="button" id="titleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              <span id="dropdownText">칭호</span>
+              칭호 선택
             </button>
-            <div class="dropdown-menu"></div>
+            <ul class="dropdown-menu"></ul>
           </div>
         </div>
       </div>
     </div>
-
     <div class="userInfoLayout"></div>
     <div class="exp">
       <div class="exp-bar-container">
         <div class="exp-bar" id="expBar">0/2</div>
       </div>
     </div>
-
     <div class="medalBox">
+      <div class="medal" style="background-color:black"></div>
+      <div class="medal" style="background-color:black"></div>
+      <div class="medal" style="background-color:black"></div>
+      <div class="medal" style="background-color:black"></div>
       <div class="medal" id="python"><i class="devicon-python-plain colored"></i></div>
       <div class="medal" id="java"><i class="devicon-java-plain colored"></i></div>
       <div class="medal" id="c"><i class="devicon-c-plain colored"></i></div>
@@ -96,8 +76,8 @@
       <div class="medal" id="kotlin"><i class="devicon-kotlin-plain colored"></i></div>
       <div class="medal" id="sql"><i class="devicon-mysql-plain colored"></i></div>
     </div>
-
     <div class="achievement">
+      <!-- Java -->
       <div class="achievementInner">
         <div class="achivImg"><i class="devicon-java-plain colored"></i></div>
         <div class="content">
@@ -119,7 +99,43 @@
           <p>God of Java</p>
         </div>
       </div>
-      <!-- 나머지 업적은 생략하고 동일 구조로 유지 -->
+      <!-- Python -->
+      <div class="achievementInner">
+        <div class="achivImg"><i class="devicon-python-plain colored"></i></div>
+        <div class="content">
+          <h2>Python 첫걸음</h2>
+          <p>Python의 기초를 다졌어요!</p>
+        </div>
+      </div>
+      <div class="achievementInner">
+        <div class="achivImg"><i class="devicon-python-plain colored"></i></div>
+        <div class="content">
+          <h2>Python 마스터</h2>
+          <p>Python을 마스터했어요!</p>
+        </div>
+      </div>
+      <div class="achievementInner">
+        <div class="achivImg"><i class="devicon-python-plain colored"></i></div>
+        <div class="content">
+          <h2>Python의 신</h2>
+          <p>God of Python</p>
+        </div>
+      </div>
+      <!-- General -->
+      <div class="achievementInner">
+        <div class="achivImg" style="background-image: url('img/정원관리사.png');"></div>
+        <div class="content">
+          <h2>정원 관리사</h2>
+          <p>정원에 물을 열심히 주었어요</p>
+        </div>
+      </div>
+      <div class="achievementInner">
+        <div class="achivImg" style="background-image: url('img/지옥에서 온.png');"></div>
+        <div class="content">
+          <h2>지옥에서 온</h2>
+          <p>Git 그 자체이군요!</p>
+        </div>
+      </div>
     </div>
   </aside>
 </div>
@@ -135,20 +151,6 @@
       <button type="submit" id="saveEvent">저장</button>
       <button type="button" id="deleteEvent" style="display:none;">삭제</button>
     </form>
-  </div>
-</div>
-
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="bugHunter-modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel" onclick="location.reload();">버그 헌터 🐛🔍</h1>
-        <button type="button" class="btn-close" onclick="location.reload();" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <iframe src="./game/game.html"></iframe>
-      </div>
-    </div>
   </div>
 </div>
 </body>

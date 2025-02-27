@@ -1,5 +1,3 @@
-/*todo : 디자인 개선 시급*/
-/*todo : 버그헌터 팝업창 시간지나면 닫히게 구현*/
 * {
     margin: 0;
     padding: 0;
@@ -29,10 +27,13 @@ body, html {
     margin: 0;
     padding: 0;
     width: 100%;
-    background-color: black;
+    background-color: #000;
 }
 
 .banner {
+    background: linear-gradient(-45deg, #051937, #004d7a, #008793, #00bf72, #a8eb12);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
     color: white;
     padding: 20px;
     text-align: center;
@@ -42,9 +43,12 @@ body, html {
     justify-content: center;
     font-size: 24px;
     font-weight: bold;
-    background: linear-gradient(-45deg, #051937, #004d7a, #008793, #00bf72, #a8eb12);
-    background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 #calendar-container {
@@ -63,52 +67,48 @@ body, html {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/*===========사이드 바================*/
+.fc-daygrid-day-number, .fc-col-header-cell-cushion {
+    text-decoration: none;
+    color: #000 !important;
+}
+
+/* Sidebar */
 .sidebar {
     width: 300px;
-    background: linear-gradient(to right, black, black);
-    padding-left: 10px;
-    padding-top: 10px;
-    padding-bottom: 20px;
+    background: #000;
+    padding: 20px 10px;
     display: flex;
     flex-direction: column;
-    transition-property: width;
-    transition: ease 0.5s;
+    transition: width 0.3s ease;
     overflow: hidden;
     align-content: center;
 }
 
 .sidebar:hover {
     width: 600px;
-    background: linear-gradient(to right, black, #46198e);
+    background: linear-gradient(to right, #000, #46198e);
 }
 
-/* =========== 메뉴 버튼 =========== */
 .menuBtn {
-    margin: 0;
     width: 50px;
     height: 40px;
-    margin-right: 10px;
-    border: 2px solid #c1c1c1;
+    background: #000;
     color: white;
-    align-self: end;
+    border: 2px solid #c1c1c1;
+    align-self: flex-end;
     align-items: center;
     align-content: center;
-    background: linear-gradient(to right, black, black);
+    transition: background 0.3s ease;
 }
 
 .menuBtn:hover {
-    background: linear-gradient(to right, #46198e, black);
+    background: linear-gradient(to right, #46198e, #000);
 }
 
 .material-symbols-outlined {
-    font-variation-settings: 'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 40;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 40;
 }
 
-/* ============= 메뉴 ============== */
 .offcanvas-header {
     padding: 0;
     height: 52px;
@@ -124,20 +124,14 @@ body, html {
     margin-left: 10px;
 }
 
-.btn-close {
-    margin: 0;
-}
-
 .offcanvas-body {
     background: #845EC2;
     color: white;
     padding: 0;
     align-items: flex-start;
-    align-content: start;
 }
 
-.offcanvas-body .menu-item,
-.offcanvas-body .bugHunter {
+.offcanvas-body .menu-item, .offcanvas-body .bugHunter {
     color: white;
     font: bold 20px/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
     height: 60px;
@@ -151,29 +145,13 @@ body, html {
     display: block;
 }
 
-.offcanvas-body .menu-item:hover,
-.offcanvas-body .bugHunter:hover {
+.offcanvas-body .menu-item:hover, .offcanvas-body .bugHunter:hover {
     opacity: 1;
     padding-left: 20px;
     background: linear-gradient(to right, rgba(0, 0, 0, 0.63), rgba(0, 0, 0, 0.14));
 }
 
-.offcanvas-footer {
-    padding: 0;
-    margin: 0;
-    height: 70px;
-    background-color: rgb(255, 255, 255);
-}
-
-.offcanvas-footer h5 {
-    padding: 0;
-    margin-left: 0;
-    margin-right: 20px;
-    height: 50px;
-}
-
-/* ================================= */
-.sidebar > .profileLayout {
+.profileLayout {
     align-items: center;
     width: 100%;
     height: 20%;
@@ -183,16 +161,6 @@ body, html {
     margin-top: 0;
     margin-bottom: 20px;
     transition: ease 0.3s;
-    left: 30%;
-}
-
-.sidebar > .profile {
-    align-items: start;
-    align-content: start;
-}
-
-.profileInvisible {
-    opacity: 0;
 }
 
 .profileInner {
@@ -203,30 +171,23 @@ body, html {
     font-size: 25px;
 }
 
-.exp {
-    transition: ease 0.3s;
+.profileInvisible {
+    opacity: 0;
 }
 
-.medalBox {
-    transition: ease 0.3s;
-}
-
-.sidebar > .profile {
+.profile {
     width: 200px;
     flex-direction: column;
     display: flex;
 }
 
 .profileImg {
-    width: 190px;
-    height: 190px;
+    width: 170px;
+    height: 170px;
     border-radius: 50%;
-    background: white;
+    background: white url('img/ProfileCharacter.jpg') center/cover no-repeat;
     margin-bottom: 10px;
     cursor: pointer;
-    background-image: url("./Image/ProfileCharacter.jpg");
-    background-position: center;
-    background-size: cover;
     transition: ease 0.3s;
 }
 
@@ -235,42 +196,28 @@ body, html {
     font-size: 1.2em;
 }
 
-/* 모달 스타일 */
+/* Modal */
 .modal {
     display: none;
     position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,0.5);
-    --bs-modal-width: -500px;
+    animation: fadeIn 0.3s;
 }
 
-.bugHunter-modal-content {
+.modal-content {
     background-color: white;
-    margin: auto;
+    margin: 15% auto;
     padding: 20px;
-    width: 800px;
-    height: 700px;
-    left: -200px;
-    border-radius: 5%;
-}
-
-.modal-body {
-    align-self: center;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 90%;
-}
-
-.modal-body iframe {
-    width: 100%;
-    height: 100%;
-    border-radius: 5%;
-}
-
-.modal-dialog {
-    pointer-events: auto !important;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    width: 80%;
+    max-width: 500px;
+    animation: slideIn 0.3s;
 }
 
 .close {
@@ -292,15 +239,7 @@ input[type="text"], select, textarea {
     border-radius: 5px;
 }
 
-/*=============프로필 요소들===============*/
-.menu_button {
-    align-self: end;
-    width: 30px;
-    height: 30px;
-    padding: 8px 8px;
-    margin-right: 25px;
-}
-
+/* Profile Elements */
 .userInfoLayout {
     color: white;
     font: bold 1em/1.5em "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -311,143 +250,115 @@ input[type="text"], select, textarea {
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative;
-}
-
-.title-id-closed {
-    align-items: end;
 }
 
 .id {
     font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
     color: aliceblue;
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin: 5px 0;
 }
 
-.LV {
+.level-display {
     font: bold 100%/2 "Lucida Grande", Helvetica, Arial, sans-serif;
     color: aliceblue;
-    margin-top: 10px;
-    margin-bottom: 5px;
+    margin: 10px 0 5px;
 }
 
-/*==============경험치=============*/
+/* Experience Bar */
 .exp {
     margin: 20px 10px;
-    overflow: hidden;
-    width: 90%;
 }
 
 .exp-bar-container {
     width: 100%;
-    height: 25px;
-    background-color: #e0e0e0;
-    border-radius: 12px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 10px;
     overflow: hidden;
-    border: 2px solid #555;
-    position: relative;
+    border: 2px solid #444;
 }
 
 .exp-bar {
+    width: 0%;
     height: 100%;
-    background: linear-gradient(to right, #ffca28, #66bb6a);
+    background: linear-gradient(to right, #e4b61b, #8bc34a);
     text-align: center;
-    color: #fff;
-    font: bold 14px/25px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font: bold 100%/1 "Lucida Grande", Helvetica, Arial, sans-serif;
     transition: width 0.5s ease-in-out;
-    position: absolute;
-    left: 0;
-    top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-/* ========= 메달 ===========*/
+/* Medal Box */
 .medalBox {
-    height: 100px;
-    width: 90%;
+    height: auto;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 10px auto;
-    padding: 0 10px;
+    margin: 5px 0 10px;
     flex-direction: row;
     overflow-x: auto;
     white-space: nowrap;
-    mask-image: linear-gradient(
-            to right,
-            rgba(0,0,0,0) 0%,
-            rgba(0,0,0,1) 15%,
-            rgba(0,0,0,1) 85%,
-            rgba(0,0,0,0) 100%
-    );
 }
 
 .medalBox::-webkit-scrollbar {
-    height: 0;
-    width: 0;
+    height: 6px;
 }
 
 .medal {
     background: white;
     display: flex;
-    width: 60px;
-    height: 60px;
-    margin: 0 8px;
+    width: 80px;
+    height: 80px;
+    margin-left: 10px;
     border-radius: 50%;
     flex-shrink: 0;
     transition: all 0.3s ease;
-    opacity: 0.5;
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
+    opacity: 0;
     justify-content: center;
     align-items: center;
+    position: relative; /* ::after 위치를 위한 기준 */
 }
 
-.medal:hover {
+.medal.unlocked {
     opacity: 1;
+}
+
+.medal.unlocked:hover {
     transform: scale(1.2);
-    margin: 0 12px;
-    box-shadow: 0 0 7px 6px rgba(143, 102, 244, 0.63);
+    margin-left: 20px;
+    margin-right: 10px;
 }
 
-.userTitle {
-    font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
-    color: white;
-    background-color: black;
-    margin-top: 5px;
-    margin-bottom: 5px;
+.medal:not(.unlocked):hover {
+    opacity: 0.6;
 }
 
-.userInfoLayout {
-    height: 0;
+.medal:not(.unlocked):hover::after {
+    content: "미획득";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #888;
+    font-size: 14px; /* 글자 크기 약간 증가 */
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.8); /* 배경 추가로 가독성 향상 */
+    padding: 2px 6px;
+    border-radius: 3px;
 }
 
-.title-hell {
-    font-size: 0.8em;
-    color: #ff4500;
-    background: linear-gradient(90deg, #1a0000, #4d0000);
-    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500;
-    animation: flicker 1.5s infinite alternate;
+.medal i {
+    font-size: 50px;
 }
 
-@keyframes flicker {
-    0% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500; }
-    50% { text-shadow: 0 0 8px #ff0000, 0 0 15px #ff4500, 0 0 20px #ff0000; }
-    100% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500; }
-}
-
-/*===========업적=========*/
+/* Achievement */
 .achievement {
-    width: 95%;
-    height: 70vh;
+    width: 100%;
+    height: 50vh;
     background: #f5f5f5;
     display: flex;
-    position: relative;
     flex-direction: column;
     overflow-y: auto;
-    top: 0.5em;
     border-radius: 5px;
 }
 
@@ -456,10 +367,6 @@ input[type="text"], select, textarea {
 }
 
 .achievementInner {
-    transition: all 0.5s ease;
-}
-
-.achievement div {
     display: inline-flex;
     flex-direction: row;
     border: 3px solid black;
@@ -469,12 +376,12 @@ input[type="text"], select, textarea {
     margin: 10px;
     opacity: 0.5;
     background-color: gray;
-    transition: ease 0.2s;
+    transition: all 0.2s ease;
 }
 
-.achievement div:hover {
+.achievementInner:hover {
     opacity: 1;
-    scale: 102%;
+    transform: scale(1.02);
 }
 
 .achievement .achivImg {
@@ -483,8 +390,9 @@ input[type="text"], select, textarea {
     border-radius: 50%;
     flex-shrink: 0;
     background: white center/cover no-repeat;
-    align-items: center;
-    justify-content: center;
+    display: flex; /* flexbox 적용 */
+    align-items: center; /* 수직 중앙 정렬 */
+    justify-content: center; /* 수평 중앙 정렬 */
     position: relative;
 }
 
@@ -514,21 +422,17 @@ input[type="text"], select, textarea {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
-    align-items: start;
+    padding: 5px;
 }
 
 .achievement h2 {
-    margin: 9px;
-    margin-right: 10px;
-    width: 100%;
+    margin: 0 5px;
     font: bold 1.2em "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 .achievement .content p {
     text-align: start;
-    margin-left: 0.5px;
-    width: 100%;
+    margin-left: 5px;
     color: black;
     transition: ease 0.3s;
     opacity: 0;
@@ -537,18 +441,16 @@ input[type="text"], select, textarea {
 .achievementInner:not(.unlocked) .content p {
     color: #39287a;
     font-size: 0.9em;
-    margin-left: 1.5px;
+    margin-left: 5px;
 }
 
 .achievement div.unlocked {
     opacity: 1;
     background-color: white;
     border-color: #5723ff;
-    transition: all 0.2s ease;
 }
 
 .achievement div.unlocked:hover {
-    scale: 1.02;
     background-color: #e8f5e9;
 }
 
@@ -581,18 +483,12 @@ button {
     background-color: #e53935;
 }
 
-.fc-daygrid-day-number {
-    text-decoration: none;
-    color: black;
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-.fc-col-header-cell-cushion {
-    text-decoration: none;
-    color: black;
-}
-
-@keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
