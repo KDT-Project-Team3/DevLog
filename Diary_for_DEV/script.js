@@ -1,7 +1,6 @@
 // DB 관련
 let db; // 데이터베이스 객체
 const DB_NAME = 'sqliteDB'; // IndexedDB 데이터베이스 이름
-let dbInitialized = false; // 데이터베이스 초기화 여부
 
 // SQLite 환경 초기화
 async function initDatabase() {
@@ -46,17 +45,17 @@ async function initDatabase() {
     `);
     db.run(`
         CREATE TABLE IF NOT EXISTS achievement (
-            ach_id  INTEGER PRIMARY KEY AUTOINCREMENT,-- 칭호 ID
-            title   TEXT NOT NULL,  -- 칭호명
-            flavor  TEXT NOT NULL,  -- 칭호 설명
-            trigger TEXT NOT NULL,  -- 칭호 획득 조건
-            img     TEXT NOT NULL   -- 칭호 이미지
+            ach_id  INTEGER PRIMARY KEY AUTOINCREMENT,-- 업적 ID
+            title   TEXT NOT NULL,  -- 업적명
+            flavor  TEXT NOT NULL,  -- 업적 설명
+            trigger TEXT NOT NULL,  -- 업적 달성 조건
+            img     TEXT NOT NULL   -- 업적 이미지
         );
     `);
     db.run(`
         CREATE TABLE IF NOT EXISTS user_achievement (
             user_id INTEGER NOT NULL,   -- 사용자 ID
-            ach_id  INTEGER NOT NULL,   -- 칭호 ID
+            ach_id  INTEGER NOT NULL,   -- 업적 ID
             
             FOREIGN KEY (user_id) REFERENCES user(user_id),
             FOREIGN KEY (ach_id) REFERENCES achievement(ach_id),
@@ -70,7 +69,6 @@ async function initDatabase() {
 function saveDBToIdxDB() {
     const dbData = db.export();
     const buffer = dbData.buffer; // ArrayBuffer 추출
-    // indexedDB.deleteDatabase(DB_NAME);
     const request = indexedDB.open(DB_NAME, 1);
     request.onsuccess = (event) => {
         const db = event.target.result;
@@ -399,14 +397,8 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedTitle.textContent = this.textContent;
         });
     });
-});
 
-// 페이지가 처음 로드될 때 DB 초기화
-document.addEventListener("DOMContentLoaded", async function() {
-    if (!localStorage.getItem('dbInitialized')) {
-        await initDatabase();
-        localStorage.setItem('dbInitialized', 'true');
-    }
+    console.log("addEventListener 실행 완료");
 });
 
 // 로컬 스토리지에서 이벤트 불러오기
