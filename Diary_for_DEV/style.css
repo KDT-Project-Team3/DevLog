@@ -11,26 +11,21 @@ body, html {
 }
 
 .container {
-    margin: 0;
-    padding: 0;
-    width: 100%;
     display: flex;
-    min-width: 100vw;
+    flex-direction: row;
+    width: 100vw;
     height: 100vh;
     border: 2px solid black;
 }
 
 .main-column {
-    flex: 4;
+    flex: 1;
     display: flex;
     flex-direction: column;
-    margin: 0;
-    padding: 0;
-    width: 100%;
 }
 
 .banner {
-    background: black;
+    background: #2c3e50;
     color: white;
     padding: 20px;
     text-align: center;
@@ -58,19 +53,16 @@ body, html {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/*===========프로필 메뉴================*/
 .sidebar {
-    /* TODO : 프로필 테스트 후 300px로 변경하기 */
     width: 300px;
-    background: black;
+    background: #2c3e50;
     padding: 20px;
-    padding-top: 10px;
     display: flex;
     flex-direction: column;
-    transition-property: width;
-    transition: ease 0.3s;
+    transition: width 0.3s ease;
     overflow: hidden;
-    align-content: center;
+    flex-shrink: 0;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar:hover {
@@ -78,70 +70,22 @@ body, html {
 }
 
 .menuBtn {
-    margin: 0;
     width: 50px;
     height: 40px;
-    background: black;
+    background: #2c3e50;
     color: white;
-    align-self: end;
-    align-items: center;
-    align-content: center;
+    border: none;
+    cursor: pointer;
+    align-self: flex-end;
 }
 
-.material-symbols-outlined {
-    font-variation-settings:
-            'FILL' 0,
-            'wght' 400,
-            'GRAD' 0,
-            'opsz' 40;
-}
-
-.sidebar>.profileLayout {
+.profileLayout {
+    display: flex;
     align-items: center;
     width: 100%;
-    height: 20%;
-    flex-wrap: wrap;
-    display: flex;
-    margin: 47px;
-    margin-top: 0;
-    margin-bottom: 20px;
-    transition: ease 0.3s;
-    left: 30%;
+    margin: 20px 0;
 }
 
-.sidebar>.profile {
-    align-items: start;
-    align-content: start;
-}
-
-/* 사이드바 접혔을 때 프로필 정보 가리는 클래스 (토글) */
-.profileInvisible {
-    opacity: 0;
-}
-
-.profileInner {
-    transition: ease 0.3s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 25px;
-}
-
-.exp {
-    transition: ease 0.3s;
-}
-
-.medalBox {
-    transition: ease 0.3s;
-}
-
-.sidebar>.profile {
-    width: 200px;
-    flex-direction: column;
-    display: flex;
-}
-
-/* TODO : 프로필 이미지 반응형으로 구현 */
 .profileImg {
     width: 170px;
     height: 170px;
@@ -157,70 +101,46 @@ body, html {
     font-size: 1.2em;
 }
 
-/* 모달 스타일 */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
+.exp-bar-container {
     width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    animation: fadeIn 0.3s;
-}
-
-.modal-content {
-    background-color: white;
-    margin: 15% auto;
-    padding: 20px;
+    height: 20px;
+    background-color: #ddd;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    width: 80%;
-    max-width: 500px;
-    animation: slideIn 0.3s;
+    overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    cursor: pointer;
+.exp-bar {
+    height: 100%;
+    background: linear-gradient(to right, #e4b61b, #8bc34a);
+    transition: width 0.5s ease-in-out;
+    border-radius: 10px 0 0 10px;
 }
 
-.close:hover {
-    color: black;
-}
-
-input[type="text"], select, textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
+#xpInput {
+    width: 80px;
+    padding: 5px;
+    margin-right: 5px;
+    border: none;
     border-radius: 5px;
+    background-color: #f0f0f0;
 }
 
-/*=============프로필 요소들===============*/
-.menu_button {
-    align-self: end;
-    width: 30px;
-    height: 30px;
-    padding: 8px 8px;
-    margin-right: 25px;
-}
-
-/* 아이디, 칭호, 레벨 (메뉴 접혔을 때) */
-.userInfoLayout {
+#addXpBtn {
+    padding: 5px 10px;
+    background-color: #4CAF50;
     color: white;
-    font: bold 1em/1.5em "Lucida Grande", Helvetica, Arial, sans-serif;
-    text-align: center;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    transition: 0.3s;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-/* 메달 요소 담긴 부모 요소 */
-/* TODO: 브라우저 비율 테스트, 접혀있을 때 레이아웃 사라지게 */
+#addXpBtn:hover {
+    background-color: #45a049;
+}
+
+/* 메달 박스 스타일 */
 .medalBox {
     height: 2%;
     width: 100%;
@@ -240,6 +160,7 @@ input[type="text"], select, textarea {
     height: 6px;
 }
 
+/* 메달 스타일 */
 .medal {
     background: white;
     display: flex;
@@ -255,20 +176,24 @@ input[type="text"], select, textarea {
     position: relative;
 }
 
+/* 획득한 메달 표시 */
 .medal.unlocked {
     opacity: 1; /* 획득 시 완전히 표시 */
 }
 
+/* 획득한 메달 호버 효과 */
 .medal.unlocked:hover {
     scale: 120%;
     margin-left: 20px;
     margin-right: 10px;
 }
 
+/* 미획득 메달 호버 효과 */
 .medal:not(.unlocked):hover {
     opacity: 0.6; /* 미획득 시 호버하면 조금 더 진하게 */
 }
 
+/* 미획득 메달에 "미획득" 문구 추가 */
 .medal:not(.unlocked):hover::after {
     content: "미획득"; /* 미획득 문구 표시 */
     position: absolute;
@@ -280,103 +205,29 @@ input[type="text"], select, textarea {
     font-weight: bold;
 }
 
+/* 메달 아이콘 크기 */
 .medal i {
     font-size: 50px;
 }
 
-/* 경험치 바 스타일 */
-.exp {
-    margin: 20px;
-}
-
-.exp-bar-container {
-    width: 100%;
-    height: 20px;
-    background-color: #ccc;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 2px solid #444;
-}
-
-.exp-bar {
-    width: 0%; /* 초기 경험치 0% */
-    height: 100%;
-    background: linear-gradient(to right, #e4b61b, #8bc34a);
-    text-align: center;
-    font: bold 100%/1 "Lucida Grande", Helvetica, Arial, sans-serif;
-    transition: width 0.5s ease-in-out;
-}
-
-/* 업적 스타일 */
-/* TODO : height 상대단위 수정 필요(화면별로 비율 달라짐) */
 .achievement {
     width: 100%;
     height: 70vh;
     background: #f5f5f5;
-    display: flex;
-    position: relative;
-    flex-direction: column;
     overflow-y: auto;
-    top: 0.5em;
     border-radius: 5px;
 }
 
-.achievement::-webkit-scrollbar {
-    display: none;
-}
-
 .achievement div {
-    display: inline-flex;
-    flex-direction: row;
-    border: 3px solid black;
-    align-items: center;
-    justify-content: start;
+    border: 3px solid #2c3e50;
     border-radius: 10px;
     margin: 10px;
-    opacity: 0.5;
     transition: ease 0.2s;
 }
 
 .achievement div:hover {
     opacity: 1;
-    scale: 102%;
-}
-
-.achievement .achivImg {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: white;
-    flex-shrink: 0;
-}
-
-.achievement .content {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-}
-
-.achievement h2 {
-    margin: 9px;
-    margin-left: 1em;
-    width: 200px;
-    font: bold 2em "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-/* TODO: 접히면 안 보이게 구현 */
-.achievement .content p {
-    text-align: start;
-    margin: 0;
-    width: 100%;
-    color: black;
-    transition: ease 0.3s;
-    opacity: 0;
-}
-
-textarea {
-    resize: vertical;
+    transform: scale(1.02);
 }
 
 button {
@@ -387,29 +238,10 @@ button {
 }
 
 #saveEvent {
-    background-color: dodgerblue;
+    background-color: #4CAF50;
     color: white;
 }
 
 #saveEvent:hover {
-    background-color: cornflowerblue;
-}
-
-#deleteEvent {
-    background-color: #f44336;
-    color: white;
-}
-
-#deleteEvent:hover {
-    background-color: #e53935;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideIn {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    background-color: #45a049;
 }

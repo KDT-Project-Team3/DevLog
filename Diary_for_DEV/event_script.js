@@ -48,17 +48,9 @@ function renderEvents(selectedDate, events) {
     }
 }
 
-// x 버튼 클릭 시 저장 및 닫기
+// 저장 후 닫기 (단순히 창 닫기만 수행)
 function saveAndClose() {
-    const selectedDate = getQueryParam('date');
-    const events = JSON.parse(localStorage.getItem('events') || '{}');
-    const updatedEvents = events[selectedDate] || [];
-
-    if (window.opener) {
-        window.opener.location.reload();
-    } else {
-        console.warn('Failed to save events');
-    }
+    // refetchEvents 호출 제거, 단순히 창 닫기만 수행
     window.close();
 }
 
@@ -76,18 +68,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const category = document.getElementById('new-category').value;
 
         if (title && selectedDate) {
-            if (!events[selectedDate]) events[selectedDate] = [];
-            events[selectedDate].push({ title, category, completed: false });
-            localStorage.setItem('events', JSON.stringify(events));
-
             if (window.opener && window.opener.addEventToCalendar) {
                 window.opener.addEventToCalendar(selectedDate, title, category);
             }
-
-            renderEvents(selectedDate, events);
+            // 로컬 저장소 갱신 후 UI 업데이트
+            renderEvents(selectedDate, JSON.parse(localStorage.getItem('events') || '{}'));
             document.getElementById('new-title').value = '';
         }
     }
+    // 이벤트 리스너 중복 방지
+    addBtn.removeEventListener('click', addEventHandler);
     addBtn.addEventListener('click', addEventHandler);
 
     document.querySelector('.event').addEventListener('click', function(e) {
@@ -96,11 +86,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (index === undefined) return;
 
         if (target.type === 'checkbox') {
+            const wasCompleted = events[selectedDate][index].completed;
             events[selectedDate][index].completed = target.checked;
             localStorage.setItem('events', JSON.stringify(events));
             renderEvents(selectedDate, events);
-            if (window.opener) {
-                window.opener.location.reload();
+            if (!wasCompleted && target.checked && window.opener && window.opener.completeEvent) {
+                window.opener.completeEvent(selectedDate, index);
             }
         } else if (target.classList.contains('edit-btn')) {
             const event = events[selectedDate][index];
@@ -122,16 +113,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     events[selectedDate][index].title = newTitle;
                     events[selectedDate][index].category = newCategory;
                     localStorage.setItem('events', JSON.stringify(events));
-
-                    if (window.opener) {
-                        window.opener.location.reload();
+                    if (window.opener && window.opener.calendar) {
+                        window.opener.calendar.refetchEvents();
                     }
-
                     renderEvents(selectedDate, events);
                     titleInput.value = '';
                     addBtn.textContent = '+';
                     delete addBtn.dataset.editIndex;
-
                     addBtn.removeEventListener('click', editHandler);
                     addBtn.addEventListener('click', addEventHandler);
                 }
@@ -142,9 +130,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (events[selectedDate].length === 0) delete events[selectedDate];
                 localStorage.setItem('events', JSON.stringify(events));
                 renderEvents(selectedDate, events);
-
-                if (window.opener) {
-                    window.opener.location.reload();
+                if (window.opener && window.opener.calendar) {
+                    window.opener.calendar.refetchEvents();
                 }
             }
         }

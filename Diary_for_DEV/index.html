@@ -30,8 +30,6 @@
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/locales-all.min.js"></script>
 </head>
-<!-- TODO : 업적 height 상대단위 수정 필요(화면별로 비율 달라짐) -->
-
 <body>
 <div class="container">
   <div class="main-column">
@@ -64,7 +62,7 @@
       <div class="profileInner">
         <div class="profile">
           <div class="LV">
-            <h1>LV: </h1>
+            <h1>LV: <span id="levelDisplay">1</span></h1>
           </div>
           <p class="id">아이디</p>
           <span id="selectedTitle" class="userTitle text-white fw-bold">칭호</span>
@@ -86,18 +84,20 @@
       <p class="id_closed">아이디</p>
       <div class="userTitle_closed">칭호</div>
       <div class="LV_closed">
-        <h1>LV: </h1>
+        <h1>LV: <span id="levelDisplayClosed">1</span></h1>
       </div>
     </div>
 
     <div class="exp">
-      <h4 style="color: white">lv.1</h4>
+      <h4 style="color: white">lv.<span id="levelText">1</span></h4>
       <div class="exp-bar-container">
-        <div class="exp-bar">70%</div>
+        <div class="exp-bar" id="expBar">0%</div>
       </div>
+      <!-- XP 입력 필드와 버튼 추가 -->
+      <input type="number" id="xpInput" placeholder="XP 입력" min="1" style="margin-top: 10px;">
+      <button id="addXpBtn">XP 추가</button>
     </div>
 
-    <!-- TODO : 업적처럼 특수효과 추가하기 -->
     <div class="medalBox">
       <!-- 정렬을 위한 추가 요소 (지우면 안됨!!) -->
       <div class="medal" style="background-color:black"></div>
@@ -105,7 +105,7 @@
       <div class="medal" style="background-color:black"></div>
       <div class="medal" style="background-color:black"></div>
 
-      <!-- Devicon 아이콘 적용 -->
+      <!-- Devicon 아이콘을 사용한 메달 -->
       <div class="medal" id="python"><i class="devicon-python-plain colored"></i></div>
       <div class="medal" id="java"><i class="devicon-java-plain colored"></i></div>
       <div class="medal" id="c"><i class="devicon-c-plain colored"></i></div>
