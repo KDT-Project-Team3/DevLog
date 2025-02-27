@@ -137,12 +137,12 @@ document.addEventListener("DOMContentLoaded", function () {
         Holiday: '#FF0000'
     };
 
-    // 업적 - 카테고리 매핑 객체 정의 { 카테고리, 완료 수, 칭호 } // 테스트를 위해 조건을 낮게 수정!!
+    // 업적 - 카테고리 매핑 객체 정의 { 카테고리, 완료 수, 칭호, 이미지 } // 테스트를 위해 조건을 낮게 수정!!
     const achievementCategoryMap = {
         // Java
         "Java 첫걸음": { category: "Java", requiredCount: 1, title: "" },
         "Java 고수": { category: "Java", requiredCount: 2, title: "" },
-        "객체지향의 달인": { category: "Java", requiredCount: 3, title: "" },
+        "객체지향 달인": { category: "Java", requiredCount: 3, title: "" },
         "Java의 신": { category: "Java", requiredCount: 4, title: "☕ Java의 신" },
 
         // Python
@@ -152,13 +152,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // JS
         "JS 첫걸음": { category: "JavaScript", requiredCount: 1, title: "" },
-        "JS DOM 조작의 달인": { category: "JavaScript", requiredCount: 2, title: "" },
-        "JS 코드 마스터": { category: "JavaScript", requiredCount: 3, title: "🧩 JS 코드 마스터" },
+        "JS DOM의 달인": { category: "JavaScript", requiredCount: 2, title: "" },
+        "JS 마스터": { category: "JavaScript", requiredCount: 3, title: "🧩 JS 코드 마스터" },
 
-        // HTML, CSS
-        "프론트엔드 첫걸음": { category: "HTML", requiredCount: 1, title: "" },
-        "반응형 디자인 고수": { category: "HTML", requiredCount: 2, title: "" },
-        "웹 디자인 마스터": { category: "HTML", requiredCount: 3, title: "📜 HTML의 신, 🎨 CSS의 신" },
+        // HTML
+        "초보 프론트엔드": { category: "HTML", requiredCount: 1, title: "" },
+        "HTML 고수": { category: "HTML", requiredCount: 2, title: "" },
+        "HTML의 신": { category: "HTML", requiredCount: 3, title: "📜 HTML의 신, 🎨 CSS의 신" },
 
         // SQL
         "SQL 첫걸음": { category: "SQL", requiredCount: 1, title: "" },
@@ -171,9 +171,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // 일정 등록
         "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이" },
-        "프로 갓생러": { category: "General", requiredCount: 2, title: "🚀 프로 갓생러" },
-        "파워 J": { category: "General", requiredCount: 3, title: "⚡ 파워 J" },
-        "자기계발 끝판왕": { category: "General", requiredCount: 4, title: "📚 자기계발 끝판왕" },
+        "프로갓생러": { category: "General", requiredCount: 2, title: "🚀 프로 갓생러" },
+        "파워J": { category: "General", requiredCount: 3, title: "⚡ 파워 J" },
+        "자기계발왕": { category: "General", requiredCount: 4, title: "📚 자기계발 끝판왕" },
         "닥터 스트레인지": { category: "General", requiredCount: 5, title: "⏳ 닥터 스트레인지" },
 
         // 버그 헌터 관련 업적
@@ -186,9 +186,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 업적 제목 스타일 설정
     content_title.forEach(title => {
-        title.style.fontSize = "1.6em"; // 글꼴 크기
+        title.style.fontSize = "1.3em"; // 글꼴 크기
         title.style.marginLeft = "0.2em"; // 왼쪽 여백
-        title.style.width = "150px"; // 너비 설정
+        title.style.width = "300px"; // 너비 설정
     });
 
     // 레벨 및 경험치 초기화 (전역 변수로 설정)
@@ -384,6 +384,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // 업적 해금 로직 (조건 기반)
         const achievementItems = document.querySelectorAll('.achievementInner');
+        const achievementContainer = document.querySelector('.achievement');
+
         achievementItems.forEach(item => {
             const title = item.querySelector('h2').textContent.trim();
             const mapping = achievementCategoryMap[title] || { category: "General", requiredCount: 1 };
@@ -396,6 +398,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 item.classList.add('unlocked');
                 item.style.opacity = '1';
 
+                // 업적 해금되었고, 아직 맨 아래로 이동하지 않았다면 이동!
+                if (!item.dataset.movedToBottom) {
+                    achievementContainer.appendChild(item); // 맨 아래로 이동
+                    item.dataset.movedToBottom = 'true'; // 이동 완료 표시
+                    console.log(`업적 이동: ${title} -> 맨 아래로`);
+                }
+                
                 // 업적 해금 시 칭호 추가
                 if (mapping.title && !item.dataset.titleAdded) {
                     const titles = mapping.title.split(',').map(t => t.trim());
