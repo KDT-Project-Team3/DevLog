@@ -219,13 +219,13 @@ function displayUsers() {
     console.log(result);
 }
 
-// 회원 정보 수정(현재는 콘솔용)
+// 회원 정보 수정(콘솔용)
 function updateUser(name, email, password, lv, xp, img, id) {
     db.run("UPDATE user SET username=?, email=?, password=?, lv=?, xp=?, img=? WHERE user_id=?", [name, email, password, lv, xp, img, id]);
     displayUsers();
 }
 
-// 회원 삭제(현재는 콘솔용)
+// 회원 삭제(콘솔용)
 function deleteUser(id) {
     db.run("DELETE FROM user WHERE user_id=?", [id]);
     displayUsers();
@@ -305,5 +305,6 @@ function showSignup() {
 // 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', async function() {
     await initDatabase();
+    localStorage.setItem('current_user', JSON.stringify([])); // 현재 사용자 초기화
     console.log("addEventListener 실행 완료");
 });
