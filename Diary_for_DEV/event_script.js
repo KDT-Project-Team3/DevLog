@@ -3,7 +3,6 @@ function getQueryParam(name) {
     return params.get(name);
 }
 
-// 이벤트 목록 렌더링 - 완료된 항목은 항상 "Done" 아래로 이동
 function renderEvents(selectedDate, events) {
     const eventList = document.getElementById('event-list');
     const doneList = document.getElementById('done-list');
@@ -47,7 +46,6 @@ function renderEvents(selectedDate, events) {
     }
 }
 
-// 저장 후 닫기
 function saveAndClose() {
     window.close();
 }
@@ -60,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderEvents(selectedDate, events);
 
     const addBtn = document.getElementById('add-btn');
+
     function addEventHandler() {
         const title = document.getElementById('new-title').value.trim();
         const category = document.getElementById('new-category').value;
@@ -72,83 +71,90 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             if (window.opener && window.opener.addEventToCalendar) {
                 window.opener.addEventToCalendar(selectedDate, title, category);
-                events = JSON.parse(localStorage.getItem('events') || '{}'); // 최신 데이터 가져오기
+                events = JSON.parse(localStorage.getItem('events') || '{}');
                 renderEvents(selectedDate, events);
                 document.getElementById('new-title').value = '';
                 console.log(`✅ 팝업에서 일정 추가 완료: ${title}`);
             }
         } catch (error) {
             console.error('일정 추가 실패:', error);
+            events = JSON.parse(localStorage.getItem('events') || '{}');
+            renderEvents(selectedDate, events);
+            document.getElementById('new-title').value = '';
+            if (window.opener && window.opener.calendar) {
                 window.opener.calendar.refetchEvents();
             }
-            renderEvents(selectedDate, JSON.parse(localStorage.getItem('events') || '{}'));
-            document.getElementById('new-title').value = '';
         }
     }
 
-    // 이벤트 리스너 중복 방지
-    addBtn.removeEventListener('click', addEventHandler);
     addBtn.addEventListener('click', addEventHandler);
 
-    document.querySelector('.event').addEventListener('click', function(e) {
-        const target = e.target;
-        const index = target.dataset.index;
-        if (index === undefined) return;
+    // 이벤트 리스트 컨테이너에 이벤트 위임
+    const eventContainer = document.getElementById('event-list');
+    const doneContainer = document.getElementById('done-list');
 
-        if (target.type === 'checkbox') {
-            const wasCompleted = events[selectedDate][index].completed;
-            events[selectedDate][index].completed = target.checked;
-            localStorage.setItem('events', JSON.stringify(events));
-            renderEvents(selectedDate, events);
-            if (!wasCompleted && target.checked && window.opener && window.opener.completeEvent) {
-                try {
-                    window.opener.completeEvent(selectedDate, index); // 완료 처리 및 메인 페이지 갱신
-                    console.log(`✅ 팝업에서 일정 완료: ${events[selectedDate][index].title}`);
-                } catch (error) {
-                    console.error('완료 처리 실패:', error);
+    [eventContainer, doneContainer].forEach(container => {
+        container.addEventListener('click', function(e) {
+            const target = e.target;
+            const index = target.dataset.index;
+            if (index === undefined) return;
+
+            if (target.type === 'checkbox') {
+                const wasCompleted = events[selectedDate][index].completed;
+                events[selectedDate][index].completed = target.checked;
+                localStorage.setItem('events', JSON.stringify(events));
+                renderEvents(selectedDate, events);
+                if (!wasCompleted && target.checked && window.opener && window.opener.completeEvent) {
+                    try {
+                        window.opener.completeEvent(selectedDate, index);
+                        console.log(`✅ 팝업에서 일정 완료: ${events[selectedDate][index].title}`);
+                    } catch (error) {
+                        console.error('완료 처리 실패:', error);
+                    }
                 }
-            }
-        } else if (target.classList.contains('edit-btn')) {
-            const event = events[selectedDate][index];
-            const titleInput = document.getElementById('new-title');
-            const categorySelect = document.getElementById('new-category');
-            const addBtn = document.getElementById('add-btn');
+            } else if (target.classList.contains('edit-btn')) {
+                const event = events[selectedDate][index];
+                const titleInput = document.getElementById('new-title');
+                const categorySelect = document.getElementById('new-category');
 
-            titleInput.value = event.title;
-            categorySelect.value = event.category;
-            addBtn.textContent = '수정 저장';
-            addBtn.dataset.editIndex = index;
+                titleInput.value = event.title;
+                categorySelect.value = event.category;
+                addBtn.textContent = '수정 저장';
+                addBtn.dataset.editIndex = index;
 
-            addBtn.removeEventListener('click', addEventHandler);
-            addBtn.addEventListener('click', function editHandler() {
-                const newTitle = titleInput.value.trim();
-                const newCategory = categorySelect.value;
+                const editHandler = function() {
+                    const newTitle = titleInput.value.trim();
+                    const newCategory = categorySelect.value;
 
-                if (newTitle) {
-                    events[selectedDate][index].title = newTitle;
-                    events[selectedDate][index].category = newCategory;
+                    if (newTitle) {
+                        events[selectedDate][index].title = newTitle;
+                        events[selectedDate][index].category = newCategory;
+                        localStorage.setItem('events', JSON.stringify(events));
+                        if (window.opener && window.opener.calendar) {
+                            window.opener.calendar.refetchEvents();
+                        }
+                        renderEvents(selectedDate, events);
+                        titleInput.value = '';
+                        addBtn.textContent = '+';
+                        delete addBtn.dataset.editIndex;
+                        addBtn.removeEventListener('click', editHandler);
+                        addBtn.addEventListener('click', addEventHandler);
+                    }
+                };
+
+                addBtn.removeEventListener('click', addEventHandler);
+                addBtn.addEventListener('click', editHandler, { once: true });
+            } else if (target.classList.contains('delete-btn')) {
+                if (confirm('정말 삭제하시겠습니까?')) {
+                    events[selectedDate].splice(index, 1);
+                    if (events[selectedDate].length === 0) delete events[selectedDate];
                     localStorage.setItem('events', JSON.stringify(events));
+                    renderEvents(selectedDate, events);
                     if (window.opener && window.opener.calendar) {
                         window.opener.calendar.refetchEvents();
                     }
-                    renderEvents(selectedDate, events);
-                    titleInput.value = '';
-                    addBtn.textContent = '+';
-                    delete addBtn.dataset.editIndex;
-                    addBtn.removeEventListener('click', editHandler);
-                    addBtn.addEventListener('click', addEventHandler);
-                }
-            }, { once: true });
-        } else if (target.classList.contains('delete-btn')) {
-            if (confirm('정말 삭제하시겠습니까?')) {
-                events[selectedDate].splice(index, 1);
-                if (events[selectedDate].length === 0) delete events[selectedDate];
-                localStorage.setItem('events', JSON.stringify(events));
-                renderEvents(selectedDate, events);
-                if (window.opener && window.opener.calendar) {
-                    window.opener.calendar.refetchEvents();
                 }
             }
-        }
+        });
     });
 });
