@@ -59,7 +59,7 @@
 
             <div class="offcanvas-body">
                 <p class="">메뉴1</p>
-                <p class="" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <p class="bugHunter" data-bs-toggle="modal" data-bs-target="#exampleModal">
                     버그 헌터 🐛🔍
                 </p>
             </div>
@@ -201,8 +201,9 @@
     <div class="modal-dialog">
         <div class="bugHunter-modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">버그 헌터 🐛🔍</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!--                todo : 뭔가 새로고침 타이밍이 일정하지않음-->
+                <h1 class="modal-title fs-5" id="exampleModalLabel"  onclick="location.reload();">버그 헌터 🐛🔍</h1>
+                <button type="button" class="btn-close" onclick="location.reload();" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <iframe src="./game/game.html"></iframe>
@@ -211,6 +212,6 @@
     </div>
 </div>
 
-<script defer src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
