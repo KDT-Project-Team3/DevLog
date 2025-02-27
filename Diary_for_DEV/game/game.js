@@ -152,6 +152,7 @@ document.getElementById('submit-btn').addEventListener('click', function() {
             document.getElementById('message').textContent = '축하합니다! 모든 레벨을 클리어했습니다!';
             document.getElementById('submit-btn').disabled = true;
             setTimeout(() => {
+                window.location.href = '../main.html'; // 모든 레벨 클리어 후 승리 페이지로 이동
                 window.location.href = '../main/main.html'; // 모든 레벨 클리어 후 승리 페이지로 이동
             }, 2000);
         }

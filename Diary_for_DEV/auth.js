@@ -2,6 +2,7 @@
 let db; // 데이터베이스 객체
 
 // 데이터베이스 초기화
+let db;
 async function initDatabase() {
     const SQL = await initSqlJs({
         locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}`
@@ -52,6 +53,7 @@ async function initDatabase() {
             PRIMARY KEY (user_id, ach_id)
         );
     `);
+    console.log("Database initialized successfully.");
     console.log("✅ 데이터베이스 초기화 완료!");
 
     // 2) localStorage에 저장된 튜플들 불러오기
@@ -104,6 +106,7 @@ function deleteUser(id) {
     db.run("DELETE FROM user WHERE user_id=?", [id]);
     displayUsers();
 }
+initDatabase().catch(error => console.error("Database Initialization Error:", error));
 
 // 이메일 유효성 검사
 function validateEmail(email) {
@@ -134,7 +137,6 @@ function signup() {
 
     // 데이터베이스에 사용자 추가
     try {
-        addUser(email.split('@')[0], email, password);
         alert('회원가입 성공! 로그인 해주세요.');
         showLogin();
     } catch (error) {
@@ -159,7 +161,7 @@ function login() {
     if (result.length > 0) {
         localStorage.setItem('current_user', JSON.stringify(result));
         alert('로그인 성공!');
-        window.location.href = 'main/main.html'; // 캘린더 페이지로 이동
+        window.location.href = '../main.html'; // 캘린더 페이지로 이동
     } else {
         alert('이메일 또는 비밀번호가 잘못되었습니다.');
     }

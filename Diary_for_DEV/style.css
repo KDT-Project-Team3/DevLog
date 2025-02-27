@@ -1,0 +1,546 @@
+/*todo : 업적 칸 비율 조절
+         메달 hover 효과 수정
+         드랍다운 메뉴 수정*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 14px;
+    overflow: hidden;
+}
+
+.container {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    min-width: 100vw;
+    height: 100vh;
+    border: 2px solid black;
+}
+
+.main-column {
+    flex: 4;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.banner {
+    background: black;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#calendar-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}
+
+#calendar {
+    width: 90%;
+    max-width: 1200px;
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/*===========프로필 메뉴================*/
+.sidebar {
+    /*todo : 프로필 테스트 후 300px 로 변경하기*/
+    width: 300px;
+    background: black;
+    padding: 20px;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    transition-property: width;
+    transition: ease 0.3s;
+    overflow: hidden;
+    align-content: center;
+}
+
+.sidebar:hover {
+    width: 600px;
+}
+
+
+.menuBtn {
+    margin: 0;
+    width: 50px;
+    height: 40px;
+    background: black;
+    /*border: 2px solid #c1c1c1;*/
+    color: white;
+    align-self: end;
+    align-items: center;
+    align-content: center;
+}
+
+
+ .material-symbols-outlined {
+     font-variation-settings:
+             'FILL' 0,
+             'wght' 400,
+             'GRAD' 0,
+             'opsz' 40;
+ }
+
+
+.sidebar>.profileLayout {
+    align-items: center;
+    width: 100%;
+    height: 20%;
+    flex-wrap: wrap;
+    display: flex;
+    margin: 47px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    transition: ease 0.3s;
+    left: 30%;
+}
+.sidebar>.profile {
+    align-items: start;
+    align-content: start;
+}
+
+/*사이드바 접혔을때 프로필 정보 가리는 클래스 (토글)*/
+.profileInvisible {
+    opacity: 0;
+}
+.profileInner {
+    transition: ease 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 25px;
+}
+.exp {
+    transition: ease 0.3s;
+}
+.medalBox {
+    transition: ease 0.3s;
+}
+
+
+.sidebar>.profile {
+    width: 200px;
+    flex-direction: column;
+    display: flex;
+}
+
+/*todo : 프로필이미지 반응형으로 구현*/
+.profileImg {
+    width: 170px;
+    height: 170px;
+    border-radius: 50%;
+    /*하얀배경은 이미지 넣고 지우기*/
+    background: white;
+    margin-bottom: 10px;
+    cursor: pointer;/* 클릭 가능하도록 커서 변경 */
+    /*background-image: url("");*/
+    transition: ease 0.3s;
+
+}
+
+.sidebar p {
+    color: white;
+    font-size: 1.2em;
+}
+
+/* 모달 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    width: 80%;
+    max-width: 500px;
+    animation: slideIn 0.3s;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}
+
+input[type="text"], select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+/*=============프로필 요소들===============*/
+
+.menu_button {
+    align-self: end;
+    width: 30px;
+    height: 30px;
+    padding: 8px 8px;
+    margin-right: 25px;
+}
+
+/*아이디, 칭호, 레벨 (메뉴 : 접혔을때)*/
+.userInfoLayout {
+    color: white;
+    font: bold 1em/1.5em "Lucida Grande", Helvetica, Arial, sans-serif;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    transition: 0.3s;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.title-id-closed {
+    align-items: end ;
+}
+
+.id {
+    font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: aliceblue;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+}
+
+.LV {
+    /*background: white;*/
+    font: bold 100%/2 "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: aliceblue;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+}
+
+/*==============경험치=============*/
+.exp {
+    margin:20px;
+}
+.exp-bar-container {
+    width: 100%; /* 바의 전체 너비 */
+    height: 20px; /* 바의 높이 */
+    background-color: #ccc; /* 배경색 */
+    border-radius: 10px; /* 둥근 모서리 */
+    overflow: hidden;
+    border: 2px solid #444;
+}
+
+.exp-bar {
+    width: 20%; /* 경험치 상태 (예: 70%) */
+    height: 100%;
+    background: linear-gradient(to right, #e4b61b, #8bc34a); /* 색상 그라데이션 */
+    text-align: center;
+    /*color: white;*/
+    font: bold 100%/1 "Lucida Grande", Helvetica, Arial, sans-serif;
+    transition: width 0.5s ease-in-out;
+}
+
+.exp-bar>h4 {
+    font-size: 2em;
+    font-weight: bold;
+    transform: translateY(-50%);
+}
+
+/* ========= 메달 ===========*/
+/*메달 요소 담긴 부모 요소*/
+/*todo: 브라우저 비율 테스트
+        접혀있을때 레이아웃 사라지게*/
+.medalBox {
+    height: 2%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    position: relative;
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap; /* 한 줄 유지 */
+}
+/*스크롤바 얇게 (크롬)*/
+.medalBox::-webkit-scrollbar {
+    height: 6px;
+}
+
+.medal {
+    background: white;
+    display: flex;
+    width: 80px;
+    height: 80px;
+    margin-left: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: ease 0.3s;
+    opacity: 0.5;
+}
+.medal:hover {
+    opacity: 1;
+    scale: 120%;
+    margin-left: 20px;
+    margin-right: 10px;
+}
+
+
+/*각 메달별 이미지 추가*/
+.medal::first-letter {
+    /*자바*/
+    /*background-image: url("");*/
+}
+.medal:nth-child(2) {
+    /*background-image: url("");*/
+}
+.medal:last-child {
+    /*background-image: url("");*/
+}
+
+/*=========유저 정보(아이디, 창호, 레벨)==========*/
+.userTitle {
+    font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    width: 20px;
+    height: 10px;
+    color: white;
+    background-color: black;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+}
+
+.userInfoLayout {
+    height: 0;
+}
+
+/* "지옥에서 온" 칭호 전용 스타일 */
+.title-hell {
+    font-size: 0.8em;
+    color: #ff4500; /* 불타는 오렌지색 */
+    background: linear-gradient(90deg, #1a0000, #4d0000); /* 어두운 붉은 그라데이션 */
+    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500; /* 불꽃 그림자 효과 */
+    animation: flicker 1.5s infinite alternate; /* 깜빡이는 불꽃 효과 */
+}
+
+/* 깜빡이는 애니메이션 */
+@keyframes flicker {
+    0% {
+        text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500;
+    }
+    50% {
+        text-shadow: 0 0 8px #ff0000, 0 0 15px #ff4500, 0 0 20px #ff0000;
+    }
+    100% {
+        text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500;
+    }
+}
+
+/*===========업적=========*/
+/*todo : height 상대단위 수정 필요(화면별로 비율 달라짐)*/
+.achievement {
+    width: 100%;
+    height: 70vh;
+    background: #f5f5f5;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    overflow-y: auto;
+    top: 0.5em;
+    border-radius: 5px;
+}
+.achievement::-webkit-scrollbar {
+    display: none;
+}
+
+.achievementInner {
+    transition: all 0.5s ease;
+}
+
+.achievement div{
+    /*height: 1500px;*/
+    /*position: relative;*/
+    display: inline-flex;
+    flex-direction: row;
+    border: 3px solid black;
+    align-items: center;
+    justify-content: start;
+    border-radius: 10px;
+    margin: 10px;
+    opacity: 0.5;
+    background-color: gray; /* 해금 전 업적 회색 배경 추가 */
+    transition: ease 0.2s;
+}
+.achievement div:hover{
+    opacity: 1;
+    scale: 102%;
+}
+
+.achievement .achivImg {
+    /*width: 60px;*/
+    /*height: 60px;*/
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    /*background-image: url("");*/
+    background: white center/cover no-repeat;
+    align-items: center;
+    justify-content: center;
+    position: relative; /* 오버레이를 위한 기준점 */
+}
+
+.achievement .achivImg i {
+    font-size: 30px; /* 아이콘 크기 */
+}
+
+/* 해금 전 자물쇠 오버레이 */
+.achievementInner .achivImg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('img/자물쇠.png'); /* 자물쇠 이미지 경로 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    /*opacity: 0.8; !* 자물쇠 투명도 *!*/
+}
+
+/* 해금 시 자물쇠 제거 */
+.achievementInner.unlocked .achivImg::before {
+    display: none;
+}
+
+.achievement .content {
+    display: flex;
+    /*flex-direction: row;*/
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    align-items: start ;
+    /*justify-content: center;*/
+    /*transition: ease s;*/
+}
+
+.achievement h2 {
+    margin: 9px;
+    /*margin-left: 1em;*/
+    margin-right: 10px;
+    width: 100%;
+    font: bold 1.2em "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+/*todo: 접히면 안보이게 구현*/
+.achievement .content p {
+    text-align:start;
+    margin-left: 0.5px;
+    width: 100%;
+    color: black;
+    transition: ease 0.3s;
+    opacity: 0;
+    /*height: 0;*/
+    /*overflow: hidden;*/
+}
+
+/* 해금 전 조건 스타일 */
+.achievementInner:not(.unlocked) .content p {
+    color: #39287a;
+    font-size: 0.9em; /* 조금 작게 */
+    margin-left: 1.5px;
+}
+
+/* 해금된 업적 */
+.achievement div.unlocked {
+    opacity: 1;
+    background-color: white;
+    border-color: #5723ff;
+    transition: all 0.2s ease;
+}
+
+.achievement div.unlocked:hover {
+    scale: 1.02;
+    background-color: #e8f5e9;
+}
+
+
+
+textarea {
+    resize: vertical;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#saveEvent {
+    background-color: dodgerblue;
+    color: white;
+}
+
+#saveEvent:hover {
+    background-color: cornflowerblue;
+}
+
+#deleteEvent {
+    background-color: #f44336;
+    color: white;
+}
+
+#deleteEvent:hover {
+    background-color: #e53935;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
