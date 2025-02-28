@@ -157,7 +157,8 @@ function loadDatabaseFromLocalStorage() {
         const diaryEventData = JSON.parse(localStorage.getItem('diary_event'));
         if (diaryEventData && diaryEventData.length > 0) {
             diaryEventData[0].values.forEach(event => {
-                db.run("INSERT OR IGNORE INTO diary_event (event_id, user_id, title, com_lang, memo, date, completed) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                // 'com_lang' -> 'category'
+                db.run("INSERT OR IGNORE INTO diary_event (event_id, user_id, title, category, memo, date, completed) VALUES (?, ?, ?, ?, ?, ?, ?)",
                     [event[0], event[1], event[2], event[3], event[4], event[5], event[6]]);
             });
             console.log("✅ diary_event 테이블 데이터 로드 완료!");
@@ -653,7 +654,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                     alert("일정을 추가하려면 로그인이 필요합니다.");
                     return;
                 }
-                db.run("INSERT INTO diary_event (user_id, title, com_lang, date) VALUES (?, ?, ?, ?)",
+                // com_lang -> category
+                db.run("INSERT INTO diary_event (user_id, title, category, date) VALUES (?, ?, ?, ?)",
                     [currentUser.user_id, title, category, date]);
                 saveDiaryEventToLocalStorage();
                 console.log(`✅ 일정 추가 완료: ${date}, ${title}, ${category}`);
@@ -686,7 +688,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                             console.log(`✅ 라인스루 적용: ${events[date][index].title}`);
                         }
                     }
-                    const eventIdResult = db.exec("SELECT event_id FROM diary_event WHERE user_id=? AND date=? AND title=? AND com_lang=?",
+                    // com_lang -> category
+                    const eventIdResult = db.exec("SELECT event_id FROM diary_event WHERE user_id=? AND date=? AND title=? AND category=?",
                         [currentUser.user_id, date, events[date][index].title, events[date][index].category]);
                     if (eventIdResult.length > 0 && eventIdResult[0].values.length > 0) {
                         const eventId = eventIdResult[0].values[0][0];
@@ -711,7 +714,14 @@ document.addEventListener("DOMContentLoaded", async function () {
             const completedCounts = {};
             let totalCompleted = 0;
             for (const date in events) {
-                events[date].forEach(event => {
+                // events[date].forEach(event => {
+                //     if (event.completed) {
+                //         completedCounts[event.category] = (completedCounts[event.category] || 0) + 1;
+                //         totalCompleted++;
+                //     }
+                // 수정: events[date]가 배열인지 확인
+                const dateEvents = Array.isArray(events[date]) ? events[date] : [];
+                dateEvents.forEach(event => {
                     if (event.completed) {
                         completedCounts[event.category] = (completedCounts[event.category] || 0) + 1;
                         totalCompleted++;
@@ -1138,17 +1148,30 @@ function loadEventsFromLocalStorage() {
         const events = JSON.parse(localStorage.getItem('events') || '{}');
         const eventList = [];
         for (const date in events) {
-            events[date].forEach(event => {
+            // 수정: events[date]가 배열인지 확인
+            const dateEvents = Array.isArray(events[date]) ? events[date] : [];
+            dateEvents.forEach(event => {
                 eventList.push({
                     title: `${event.title} (${event.category})`,
                     start: date,
                     allDay: true,
-                    backgroundColor: categoryColors[event.category],
-                    borderColor: categoryColors[event.category],
+                    backgroundColor: categoryColors[event.category] || '#000000', // 기본 색상 추가
+                    borderColor: categoryColors[event.category] || '#000000',
                     extendedProps: { memo: event.memo || '', completed: event.completed || false }
                 });
             });
         }
+        //     events[date].forEach(event => {
+        //         eventList.push({
+        //             title: `${event.title} (${event.category})`,
+        //             start: date,
+        //             allDay: true,
+        //             backgroundColor: categoryColors[event.category],
+        //             borderColor: categoryColors[event.category],
+        //             extendedProps: { memo: event.memo || '', completed: event.completed || false }
+        //         });
+        //     });
+        // }
         return eventList;
     } catch (error) {
         console.error('이벤트 로드 실패:', error);
