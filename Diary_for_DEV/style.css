@@ -163,12 +163,23 @@ body, html {
     transition: ease 0.3s;
 }
 
+.sidebar>.profile {
+    align-items: start;
+    align-content: start;
+}
+
 .profileInner {
     transition: ease 0.3s;
     display: flex;
     flex-direction: column;
     align-items: center;
     font-size: 25px;
+}
+.exp {
+    transition: ease 0.3s;
+}
+.medalBox {
+    transition: ease 0.3s;
 }
 
 .profileInvisible {
@@ -272,14 +283,63 @@ input[type="text"], select, textarea {
 .id {
     font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
     color: aliceblue;
-    margin: 5px 0;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 20px;
 }
 
 .level-display {
     font: bold 100%/2 "Lucida Grande", Helvetica, Arial, sans-serif;
     color: aliceblue;
-    margin: 10px 0 5px;
+    margin: 10px 0 5px 20px;
 }
+
+/* title */
+.title-button {
+    display: flex;
+    align-items: center;
+}
+.userTitle {
+    font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: white;
+    background-color: black;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+    white-space: nowrap;
+}
+
+.dropdown {
+    margin-left: 10px;
+}
+
+.userInfoLayout {
+    height: 0;
+}
+
+/*   "지옥에서 온" 칭호 전용 스타일 */
+.title-hell {
+    font-size: 0.8em;
+    color: #ff4500; /* 불타는 오렌지색 */
+    background: linear-gradient(90deg, #1a0000, #4d0000); /* 어두운 붉은 그라데이션 */
+    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500; /* 불꽃 그림자 효과 */
+    animation: flicker 1.5s infinite alternate; /* 깜빡이는 불꽃 효과 */
+}
+
+/* 깜빡이는 애니메이션 */
+@keyframes flicker {
+    0% {
+        text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500;
+    }
+    50% {
+        text-shadow: 0 0 8px #ff0000, 0 0 15px #ff4500, 0 0 20px #ff0000;
+    }
+    100% {
+        text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500;
+    }
+}
+
+
 
 /* Experience Bar */
 .exp {
@@ -377,6 +437,9 @@ input[type="text"], select, textarea {
     flex-direction: column;
     overflow-y: auto;
     border-radius: 5px;
+
+    position: relative;
+    top: 0.5em;
 }
 
 .achievement::-webkit-scrollbar {
@@ -439,11 +502,13 @@ input[type="text"], select, textarea {
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: 100%;
+    align-items: start;
     padding: 5px;
 }
 
 .achievement h2 {
-    margin: 0 5px;
+    margin: 9px 10px 0 0;
     font: bold 1.2em "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -465,6 +530,7 @@ input[type="text"], select, textarea {
     opacity: 1;
     background-color: white;
     border-color: #5723ff;
+    transition: all 0.2s ease;
 }
 
 .achievement div.unlocked:hover {

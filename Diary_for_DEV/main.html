@@ -43,23 +43,38 @@
       <div class="profileInner">
         <div class="profile">
           <div class="level-display" style="color: white">LV: 1</div>
-          <p class="id">닉네임</p>
-          <span id="selectedTitle" class="userTitle text-white fw-bold">칭호 없음</span>
-          <div class="dropdown d-inline">
-            <button class="btn btn-dark btn-sm dropdown-toggle" type="button" id="titleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              칭호 선택
-            </button>
-            <ul class="dropdown-menu"></ul>
+          <div class="title-button d-flex">
+            <span id="selectedTitle" class="userTitle text-white fw-bold me-2">칭호 없음</span>
+            <div class="dropdown d-inline">
+              <button class="btn btn-dark btn-sm dropdown-toggle" type="button"
+                      id="titleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <span id="dropdownText">칭호</span>
+              </button>
+              <ul class="dropdown-menu"></ul>
+            </div>
           </div>
+          <p class="id">닉네임</p>
         </div>
       </div>
     </div>
-    <div class="userInfoLayout"></div>
+
+    <div class="userInfoLayout">
+      <div class="LV_closed">
+        <h1>LV: </h1>
+      </div>
+      <div class="title-id-closed">
+        <div class="userTitle_closed">칭호</div>
+        <p class="id_closed">아이디</p>
+      </div>
+    </div>
+
     <div class="exp">
+      <h4 style="color: white">lv.1</h4>
       <div class="exp-bar-container">
         <div class="exp-bar" id="expBar">0/2</div>
       </div>
     </div>
+
     <div class="medalBox">
       <div class="medal" style="background-color:black"></div>
       <div class="medal" style="background-color:black"></div>

@@ -296,12 +296,69 @@ const achievementCategoryMap = {
     "Java 첫걸음": { category: "Java", requiredCount: 1, title: "", condition: "Java 일정 1개 완료" },
     "Java 고수": { category: "Java", requiredCount: 2, title: "", condition: "Java 일정 2개 완료" },
     "Java의 신": { category: "Java", requiredCount: 3, title: "☕ Java의 신", condition: "Java 일정 3개 완료" },
+
+    // Python (기존)
     "Python 첫걸음": { category: "Python", requiredCount: 1, title: "", condition: "Python 일정 1개 완료" },
     "Python 마스터": { category: "Python", requiredCount: 2, title: "", condition: "Python 일정 2개 완료" },
     "Python의 신": { category: "Python", requiredCount: 3, title: "🐍 Python의 신", condition: "Python 일정 3개 완료" },
+
+    // JavaScript (기존)
+    "JS 첫걸음": { category: "JavaScript", requiredCount: 1, title: "", condition: "JavaScript 일정 1개 완료" },
+    "JS DOM의 달인": { category: "JavaScript", requiredCount: 2, title: "", condition: "JavaScript 일정 2개 완료" },
+    "JS 마스터": { category: "JavaScript", requiredCount: 3, title: "🧩 JS 코드 마스터", condition: "JavaScript 일정 3개 완료" },
+
+    // HTML (기존)
+    "초보 프론트엔드": { category: "HTML", requiredCount: 1, title: "", condition: "HTML 일정 1개 완료" },
+    "HTML 고수": { category: "HTML", requiredCount: 2, title: "", condition: "HTML 일정 2개 완료" },
+    "HTML의 신": { category: "HTML", requiredCount: 3, title: "📜 HTML의 신, 🎨 CSS의 신", condition: "HTML 일정 3개 완료" },
+
+    // SQL (기존)
+    "SQL 첫걸음": { category: "SQL", requiredCount: 1, title: "", condition: "SQL 일정 1개 완료" },
+    "SQL 고수": { category: "SQL", requiredCount: 2, title: "", condition: "SQL 일정 2개 완료" },
+    "SQL의 신": { category: "SQL", requiredCount: 3, title: "🗄️ SQL의 신", condition: "SQL 일정 3개 완료" },
+
+    // C (추가)
+    "C 첫걸음": { category: "C", requiredCount: 1, title: "", condition: "C 일정 1개 완료" },
+    "C 고수": { category: "C", requiredCount: 2, title: "", condition: "C 일정 2개 완료" },
+    "C의 신": { category: "C", requiredCount: 3, title: "🔧 C의 신", condition: "C 일정 3개 완료" },
+
+    // Cpp (C++) (추가)
+    "C++ 첫걸음": { category: "Cpp", requiredCount: 1, title: "", condition: "C++ 일정 1개 완료" },
+    "C++ 고수": { category: "Cpp", requiredCount: 2, title: "", condition: "C++ 일정 2개 완료" },
+    "C++의 신": { category: "Cpp", requiredCount: 3, title: "⚙️ C++의 신", condition: "C++ 일정 3개 완료" },
+
+    // Csharp (C#) (추가)
+    "C# 첫걸음": { category: "Csharp", requiredCount: 1, title: "", condition: "C# 일정 1개 완료" },
+    "C# 고수": { category: "Csharp", requiredCount: 2, title: "", condition: "C# 일정 2개 완료" },
+    "C#의 신": { category: "Csharp", requiredCount: 3, title: "🎹 C#의 신", condition: "C# 일정 3개 완료" },
+
+    // R (추가)
+    "R 첫걸음": { category: "R", requiredCount: 1, title: "", condition: "R 일정 1개 완료" },
+    "R 고수": { category: "R", requiredCount: 2, title: "", condition: "R 일정 2개 완료" },
+    "R의 신": { category: "R", requiredCount: 3, title: "📊 R의 신", condition: "R 일정 3개 완료" },
+
+    // Kotlin (추가)
+    "Kotlin 첫걸음": { category: "Kotlin", requiredCount: 1, title: "", condition: "Kotlin 일정 1개 완료" },
+    "Kotlin 고수": { category: "Kotlin", requiredCount: 2, title: "", condition: "Kotlin 일정 2개 완료" },
+    "Kotlin의 신": { category: "Kotlin", requiredCount: 3, title: "🤖 Kotlin의 신", condition: "Kotlin 일정 3개 완료" },
+
+    // General (기존)
     "정원 관리사": { category: "General", requiredCount: 1, title: "🏡 정원 관리사", condition: "어떤 일정 1개 완료" },
-    "지옥에서 온": { category: "General", requiredCount: 2, title: "🔥 지옥에서 온", condition: "어떤 일정 2개 완료" }
+    "지옥에서 온": { category: "General", requiredCount: 2, title: "🔥 지옥에서 온", condition: "어떤 일정 2개 완료" },
+    "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이", condition: "어떤 일정 1개 완료" },
+    "프로갓생러": { category: "General", requiredCount: 2, title: "🚀 프로 갓생러", condition: "어떤 일정 2개 완료" },
+    "파워J": { category: "General", requiredCount: 3, title: "⚡ 파워 J", condition: "어떤 일정 3개 완료" },
+    "자기계발왕": { category: "General", requiredCount: 4, title: "📚 자기계발 끝판왕", condition: "어떤 일정 4개 완료" },
+    "닥터 스트레인지": { category: "General", requiredCount: 5, title: "⏳ 닥터 스트레인지", condition: "어떤 일정 5개 완료" }
+
+    // 버그 헌터 관련 업적
+    // "새싹 디버거": { category: "Debug", requiredCount: 1, title: "🌱 새싹 디버거" },
+    // "버그 헌터": { category: "Debug", requiredCount: 3, title: "🔍 버그 헌터" },
+    // "디버깅 마스터": { category: "Debug", requiredCount: 5, title: "🛠️ 디버깅 마스터" },
+    // "버그 엑소시스트": { category: "Debug", requiredCount: 10, title: "👻 버그 엑소시스트" },
+    // "와일드 멘탈": { category: "Debug", requiredCount: 15, title: "" }
 };
+
 
 document.addEventListener("DOMContentLoaded", async function () {
     console.log("✅ DOMContentLoaded 실행됨");
@@ -358,9 +415,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     content_title.forEach(title => {
-        title.style.fontSize = "1.6em";
-        title.style.marginLeft = "1em";
-        title.style.width = "150px";
+        title.style.fontSize = "1.3em";
+        title.style.marginLeft = "0.2em";
+        title.style.width = "300px";
     });
 
     let tmp = JSON.parse(localStorage.getItem('current_user'));
@@ -549,6 +606,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 if (isUnlocked) {
                     item.classList.add('unlocked');
                     descriptionP.textContent = descriptionP.dataset.originalText || descriptionP.textContent;
+
                     if (mapping.title && !item.dataset.titleAdded) {
                         const titles = mapping.title.split(',').map(t => t.trim());
                         titles.forEach(title => {
@@ -561,6 +619,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     unlockedItems.push(item);
                 } else {
                     item.classList.remove('unlocked');
+                    item.style.opener = '0.7';
                     if (!descriptionP.dataset.originalText) {
                         descriptionP.dataset.originalText = descriptionP.textContent;
                     }
@@ -583,9 +642,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             dropdownMenu.innerHTML = '';
             const defaultItem = document.createElement('div');
             defaultItem.className = 'dropdown-item';
-            defaultItem.textContent = '칭호 없음';
+            defaultItem.textContent = ' ';
             defaultItem.addEventListener('click', () => {
-                selectedTitle.textContent = '칭호 없음';
+                selectedTitle.textContent = ' ';
                 selectedTitle.className = 'userTitle text-white fw-bold';
             });
             dropdownMenu.appendChild(defaultItem);
