@@ -1,4 +1,13 @@
 let db; // 데이터베이스 객체
+const currentUser = { // 현재 사용자 정보
+    user_id: null,
+    username: null,
+    email: null,
+    password: null,
+    lv: null,
+    xp: null,
+    img: null
+};
 
 // 데이터베이스 초기화
 async function initDatabase() {
@@ -9,46 +18,15 @@ async function initDatabase() {
     // 1) sqliteDB 데이터베이스 생성
     db = new SQL.Database();
     db.run(`
-        CREATE TABLE IF NOT EXISTS user (
+        CREATE TABLE IF NOT EXISTS user ( -- 사용자 테이블
             user_id     INTEGER PRIMARY KEY AUTOINCREMENT,      -- 사용자 ID
             username    TEXT UNIQUE NOT NULL COLLATE NOCASE,    -- 사용자 이름
             email       TEXT UNIQUE NOT NULL,                   -- 이메일
             password    TEXT NOT NULL,                          -- 비밀번호
             lv          INTEGER DEFAULT 1,                      -- 레벨
             xp          INTEGER DEFAULT 0,                      -- 경험치
-            img         TEXT DEFAULT 'default_profile.png'      -- 프로필 이미지
-        );
-    `);
-    db.run(`
-        CREATE TABLE IF NOT EXISTS diary_event (
-            event_id    INTEGER PRIMARY KEY AUTOINCREMENT,  -- 이벤트 ID
-            user_id     INTEGER NOT NULL,                   -- 사용자 ID
-            title       TEXT NOT NULL,                      -- 제목
-            com_lang    TEXT NOT NULL,                      -- 관련 언어
-            memo        TEXT,                               -- 메모
-            date        TEXT NOT NULL,                      -- 날짜
-            completed   BOOLEAN DEFAULT FALSE,              -- 완료 여부
-
-            FOREIGN KEY (user_id) REFERENCES user(user_id)
-        );
-    `);
-    db.run(`
-        CREATE TABLE IF NOT EXISTS achievement (
-            ach_id  INTEGER PRIMARY KEY AUTOINCREMENT,-- 칭호 ID
-            title   TEXT NOT NULL,  -- 칭호명
-            flavor  TEXT NOT NULL,  -- 칭호 설명
-            trigger TEXT NOT NULL,  -- 칭호 획득 조건
-            img     TEXT NOT NULL   -- 칭호 이미지
-        );
-    `);
-    db.run(`
-        CREATE TABLE IF NOT EXISTS user_achievement (
-            user_id INTEGER NOT NULL,   -- 사용자 ID
-            ach_id  INTEGER NOT NULL,   -- 칭호 ID
-
-            FOREIGN KEY (user_id) REFERENCES user(user_id),
-            FOREIGN KEY (ach_id) REFERENCES achievement(ach_id),
-            PRIMARY KEY (user_id, ach_id)
+            img         TEXT DEFAULT 'default_profile.png',     -- 프로필 이미지
+            highscore   INTEGER DEFAULT 0                       -- 게임 최고기록
         );
     `);
     console.log("✅ 데이터베이스 초기화 완료!");
@@ -64,15 +42,6 @@ async function initDatabase() {
         console.log("✅ user 테이블 데이터 로드 완료!");
     } else {
         console.warn("⚠️ 로컬 스토리지에 저장된 user 데이터가 없습니다.");
-    }
-
-    const diaryEventData = JSON.parse(localStorage.getItem('diary_event'));
-    if (diaryEventData && diaryEventData.length > 0) {
-        diaryEventData[0].values.forEach(event => {
-            db.run("INSERT INTO diary_event (event_id, user_id, title, category, memo, date, completed) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                [event[0], event[1], event[2], event[3], event[4], event[5], event[6]]);
-        });
-        console.log("✅ diary_event 테이블 데이터 로드 완료!");
     }
 }
 
@@ -126,8 +95,8 @@ function signup() {
     let password = document.getElementById('signup-password').value;
     let confirmPassword = document.getElementById('signup-password-confirm').value;
 
-    if (!email || !password || !confirmPassword) {
-        alert('이메일과 비밀번호를 입력하세요.');
+    if (!username || !email || !password || !confirmPassword) {
+        alert('비어있는 양식이 있습니다.');
         return;
     }
 
@@ -143,7 +112,7 @@ function signup() {
 
     // 데이터베이스에 사용자 추가
     try {
-        addUser(email.split('@')[0], email, password);
+        addUser(username, email, password);
         alert('회원가입 성공! 로그인 해주세요.');
         showLogin();
     } catch (error) {
