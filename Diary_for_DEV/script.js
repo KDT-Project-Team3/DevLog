@@ -103,40 +103,40 @@ async function initDatabase() {
                 );
         `);
         db.run(`
-        CREATE TABLE IF NOT EXISTS emblem ( -- 엠블럼 테이블
-            emblem_id INTEGER PRIMARY KEY AUTOINCREMENT,-- 엠블럼 ID
-            title     TEXT NOT NULL,                    -- 엠블럼명
-            trigger   TEXT NOT NULL,                    -- 엠블럼 획득 조건
-            img       TEXT NOT NULL                     -- 엠블럼 이미지
-        );
-    `);
+            CREATE TABLE IF NOT EXISTS emblem ( -- 엠블럼 테이블
+                                                  emblem_id INTEGER PRIMARY KEY AUTOINCREMENT,-- 엠블럼 ID
+                                                  title     TEXT NOT NULL,                    -- 엠블럼명
+                                                  trigger   TEXT NOT NULL,                    -- 엠블럼 획득 조건
+                                                  img       TEXT NOT NULL                     -- 엠블럼 이미지
+            );
+        `);
         db.run(`
-        CREATE TABLE IF NOT EXISTS user_emblem ( -- 사용자가 보유한 엠블럼 테이블
-            user_id   INTEGER NOT NULL, -- 사용자 ID
-            emblem_id INTEGER NOT NULL, -- 엠블럼 ID
-        
-            FOREIGN KEY (user_id) REFERENCES user(user_id),
-            FOREIGN KEY (emblem_id) REFERENCES emblem(emblem_id),
-            PRIMARY KEY (user_id, emblem_id)
-        );
-    `);
+            CREATE TABLE IF NOT EXISTS user_emblem ( -- 사용자가 보유한 엠블럼 테이블
+                                                       user_id   INTEGER NOT NULL, -- 사용자 ID
+                                                       emblem_id INTEGER NOT NULL, -- 엠블럼 ID
+
+                                                       FOREIGN KEY (user_id) REFERENCES user(user_id),
+                FOREIGN KEY (emblem_id) REFERENCES emblem(emblem_id),
+                PRIMARY KEY (user_id, emblem_id)
+                );
+        `);
         db.run(`
-        CREATE TABLE IF NOT EXISTS title ( -- 칭호 테이블
-            title_id INTEGER PRIMARY KEY AUTOINCREMENT,-- 칭호 ID
-            title    TEXT NOT NULL,                    -- 칭호명
-            trigger  TEXT NOT NULL                     -- 칭호 획득 조건
-        );
-    `);
+            CREATE TABLE IF NOT EXISTS title ( -- 칭호 테이블
+                                                 title_id INTEGER PRIMARY KEY AUTOINCREMENT,-- 칭호 ID
+                                                 title    TEXT NOT NULL,                    -- 칭호명
+                                                 trigger  TEXT NOT NULL                     -- 칭호 획득 조건
+            );
+        `);
         db.run(`
-        CREATE TABLE IF NOT EXISTS user_title ( -- 사용자가 보유한 칭호 테이블
-            user_id  INTEGER NOT NULL, -- 사용자 ID
-            title_id INTEGER NOT NULL, -- 칭호 ID
-            
-            FOREIGN KEY (user_id) REFERENCES user(user_id),
-            FOREIGN KEY (title_id) REFERENCES title(title_id),
-            PRIMARY KEY (user_id, title_id)
-        );
-    `);
+            CREATE TABLE IF NOT EXISTS user_title ( -- 사용자가 보유한 칭호 테이블
+                                                      user_id  INTEGER NOT NULL, -- 사용자 ID
+                                                      title_id INTEGER NOT NULL, -- 칭호 ID
+
+                                                      FOREIGN KEY (user_id) REFERENCES user(user_id),
+                FOREIGN KEY (title_id) REFERENCES title(title_id),
+                PRIMARY KEY (user_id, title_id)
+                );
+        `);
         console.log("✅ 데이터베이스 초기화 완료!");
         loadDatabaseFromLocalStorage();
     } catch (error) {
@@ -665,69 +665,40 @@ document.addEventListener("DOMContentLoaded", async function () {
             const events = JSON.parse(localStorage.getItem('events') || '{}');
             if (events[date] && events[date][index]) {
                 const wasCompleted = events[date][index].completed;
-                // !wasComplete -> wasComplete
                 if (wasCompleted) {
-                    if (confirm("일정을 완료하시겠습니까?")) { // 사용자 확인
-                        events[date][index].completed = true;
-                        localStorage.setItem('events', JSON.stringify(events));
-                        currentUser.xpUp(1);
+                    events[date][index].completed = true;
+                    localStorage.setItem('events', JSON.stringify(events));
+                    currentUser.xpUp(1); // 경험치 증가
 
-                        // 캘린더 이벤트 업데이트
-                        const calendarEvents = calendarInstance.getEvents();
-                        const targetEvent = calendarEvents.find(event =>
-                            event.startStr === date && event.title === `${events[date][index].title} (${events[date][index].category})`
-                        );
-                        if (targetEvent) {
-                            targetEvent.setExtendedProp('completed', true);
-                            const titleElement = targetEvent.el ? targetEvent.el.querySelector('.fc-event-title') : null;
-                            if (titleElement) {
-                                titleElement.style.textDecoration = 'line-through';
-                                console.log(`✅ 라인스루 적용: ${events[date][index].title}`);
-                            }
+                    // 캘린더 이벤트 업데이트
+                    const calendarEvents = calendarInstance.getEvents();
+                    const targetEvent = calendarEvents.find(event =>
+                        event.startStr === date && event.title === `${events[date][index].title} (${events[date][index].category})`
+                    );
+                    if (targetEvent) {
+                        targetEvent.setExtendedProp('completed', true);
+                        const titleElement = targetEvent.el ? targetEvent.el.querySelector('.fc-event-title') : null;
+                        if (titleElement) {
+                            titleElement.style.textDecoration = 'line-through';
+                            console.log(`✅ 라인스루 적용: ${events[date][index].title}`);
                         }
-
-                        // 데이터베이스 업데이트
-                        const eventIdResult = db.exec("SELECT event_id FROM diary_event WHERE user_id=? AND date=? AND title=? AND category=?",
-                            [currentUser.user_id, date, events[date][index].title, events[date][index].category]);
-                        if (eventIdResult.length > 0 && eventIdResult[0].values.length > 0) {
-                            const eventId = eventIdResult[0].values[0][0];
-                            db.run("UPDATE diary_event SET completed=TRUE WHERE event_id=?", [eventId]);
-                            saveDiaryEventToLocalStorage();
-                        }
-
-                        // 업적 및 칭호 확인
-                        const previousTitles = db.exec("SELECT t.title FROM user_title ut JOIN title t ON ut.title_id = t.title_id WHERE ut.user_id = ?", [currentUser.user_id]);
-                        const previousTitleCount = previousTitles.length > 0 ? previousTitles[0].values.length : 0;
-
-                        updateMedals(); // 업적 업데이트
-                        initializeTitles(); // 칭호 드롭다운 갱신
-
-                        const newTitles = db.exec("SELECT t.title FROM user_title ut JOIN title t ON ut.title_id = t.title_id WHERE ut.user_id = ?", [currentUser.user_id]);
-                        const newTitleCount = newTitles.length > 0 ? newTitles[0].values.length : 0;
-
-                        // 업적 해금 여부 확인
-                        const unlockedAchievements = db.exec("SELECT a.title FROM user_achievement ua JOIN achievement a ON ua.ach_id = a.ach_id WHERE ua.user_id = ?", [currentUser.user_id]);
-                        const hasNewAchievement = unlockedAchievements.length > 0 && unlockedAchievements[0].values.length > 0;
-
-                        if (hasNewAchievement) {
-                            if (newTitleCount > previousTitleCount) {
-                                const newTitleIndex = newTitleCount - 1;
-                                const newTitle = newTitles[0].values[newTitleIndex][0];
-                                console.log("ℹ️ 새로 추가된 칭호: ", newTitle);
-                                alert(`업적이 해금되었습니다! 칭호를 획득합니다: ${newTitle}`);
-                            } else {
-                                console.log("ℹ️ 업적은 해금되었으나 새 칭호 없음");
-                                alert("업적이 해금되었습니다!");
-                            }
-                        } else {
-                            console.log("ℹ️ 새로운 업적이 해금되지 않음");
-                        }
-
-                        console.log(`✅ 일정 완료: ${events[date][index].title}`);
-                        calendarInstance.refetchEvents(); // 캘린더 실시간 갱신
-                        checkDatabase();
-                        location.reload();
                     }
+
+                    // 데이터베이스 업데이트
+                    const eventIdResult = db.exec("SELECT event_id FROM diary_event WHERE user_id=? AND date=? AND title=? AND category=?",
+                        [currentUser.user_id, date, events[date][index].title, events[date][index].category]);
+                    if (eventIdResult.length > 0 && eventIdResult[0].values.length > 0) {
+                        const eventId = eventIdResult[0].values[0][0];
+                        db.run("UPDATE diary_event SET completed=TRUE WHERE event_id=?", [eventId]);
+                        saveDiaryEventToLocalStorage();
+                    }
+
+                    console.log(`✅ 일정 완료: ${events[date][index].title}`);
+                    calendarInstance.refetchEvents(); // 캘린더 실시간 갱신
+                    // checkDatabase();
+                    updateMedals(); // 업적 상태 업데이트 (팝업에서 메시지 처리하므로 여기서는 UI만 갱신)
+                    initializeTitles(); // 칭호 드롭다운 갱신
+                    location.reload(); // 부모 창 새로고침
                 } else {
                     console.log("ℹ️ 이미 완료된 일정입니다.");
                 }
@@ -739,6 +710,85 @@ document.addEventListener("DOMContentLoaded", async function () {
             calendarInstance.render();
         }
     };
+    // window.completeEvent = function(date, index) {
+    //     try {
+    //         const events = JSON.parse(localStorage.getItem('events') || '{}');
+    //         if (events[date] && events[date][index]) {
+    //             const wasCompleted = events[date][index].completed;
+    //             // !wasComplete -> wasComplete
+    //             if (wasCompleted) {
+    //                 if (confirm("일정을 완료하시겠습니까?")) { // 사용자 확인
+    //                     events[date][index].completed = true;
+    //                     localStorage.setItem('events', JSON.stringify(events));
+    //                     currentUser.xpUp(1);
+    //
+    //                     // 캘린더 이벤트 업데이트
+    //                     const calendarEvents = calendarInstance.getEvents();
+    //                     const targetEvent = calendarEvents.find(event =>
+    //                         event.startStr === date && event.title === `${events[date][index].title} (${events[date][index].category})`
+    //                     );
+    //                     if (targetEvent) {
+    //                         targetEvent.setExtendedProp('completed', true);
+    //                         const titleElement = targetEvent.el ? targetEvent.el.querySelector('.fc-event-title') : null;
+    //                         if (titleElement) {
+    //                             titleElement.style.textDecoration = 'line-through';
+    //                             console.log(`✅ 라인스루 적용: ${events[date][index].title}`);
+    //                         }
+    //                     }
+    //
+    //                     // 데이터베이스 업데이트
+    //                     const eventIdResult = db.exec("SELECT event_id FROM diary_event WHERE user_id=? AND date=? AND title=? AND category=?",
+    //                         [currentUser.user_id, date, events[date][index].title, events[date][index].category]);
+    //                     if (eventIdResult.length > 0 && eventIdResult[0].values.length > 0) {
+    //                         const eventId = eventIdResult[0].values[0][0];
+    //                         db.run("UPDATE diary_event SET completed=TRUE WHERE event_id=?", [eventId]);
+    //                         saveDiaryEventToLocalStorage();
+    //                     }
+    //
+    //                     // 업적 및 칭호 확인
+    //                     const previousTitles = db.exec("SELECT t.title FROM user_title ut JOIN title t ON ut.title_id = t.title_id WHERE ut.user_id = ?", [currentUser.user_id]);
+    //                     const previousTitleCount = previousTitles.length > 0 ? previousTitles[0].values.length : 0;
+    //
+    //                     updateMedals(); // 업적 업데이트
+    //                     initializeTitles(); // 칭호 드롭다운 갱신
+    //
+    //                     const newTitles = db.exec("SELECT t.title FROM user_title ut JOIN title t ON ut.title_id = t.title_id WHERE ut.user_id = ?", [currentUser.user_id]);
+    //                     const newTitleCount = newTitles.length > 0 ? newTitles[0].values.length : 0;
+    //
+    //                     // 업적 해금 여부 확인
+    //                     const unlockedAchievements = db.exec("SELECT a.title FROM user_achievement ua JOIN achievement a ON ua.ach_id = a.ach_id WHERE ua.user_id = ?", [currentUser.user_id]);
+    //                     const hasNewAchievement = unlockedAchievements.length > 0 && unlockedAchievements[0].values.length > 0;
+    //
+    //                     if (hasNewAchievement) {
+    //                         if (newTitleCount > previousTitleCount) {
+    //                             const newTitleIndex = newTitleCount - 1;
+    //                             const newTitle = newTitles[0].values[newTitleIndex][0];
+    //                             console.log("ℹ️ 새로 추가된 칭호: ", newTitle);
+    //                             alert(`업적이 해금되었습니다! 칭호를 획득합니다: ${newTitle}`);
+    //                         } else {
+    //                             console.log("ℹ️ 업적은 해금되었으나 새 칭호 없음");
+    //                             alert("업적이 해금되었습니다!");
+    //                         }
+    //                     } else {
+    //                         console.log("ℹ️ 새로운 업적이 해금되지 않음");
+    //                     }
+    //
+    //                     console.log(`✅ 일정 완료: ${events[date][index].title}`);
+    //                     calendarInstance.refetchEvents(); // 캘린더 실시간 갱신
+    //                     checkDatabase();
+    //                     location.reload();
+    //                 }
+    //             } else {
+    //                 console.log("ℹ️ 이미 완료된 일정입니다.");
+    //             }
+    //         } else {
+    //             console.error("❌ 해당 일정을 찾을 수 없습니다.");
+    //         }
+    //     } catch (error) {
+    //         console.error('일정 완료 처리 실패:', error);
+    //         calendarInstance.render();
+    //     }
+    // };
 
     function updateMedals() {
         try {
