@@ -58,46 +58,84 @@ async function initDatabase() {
         });
         db = new SQL.Database();
         db.run(`
-            CREATE TABLE IF NOT EXISTS user (
-                                                user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                                username TEXT UNIQUE NOT NULL COLLATE NOCASE,
-                                                email TEXT UNIQUE NOT NULL,
-                                                password TEXT NOT NULL,
-                                                lv INTEGER DEFAULT 1,
-                                                xp INTEGER DEFAULT 0,
-                                                img TEXT DEFAULT 'default_profile.png'
-            );
-        `);
+        CREATE TABLE IF NOT EXISTS user ( -- 사용자 테이블
+            user_id     INTEGER PRIMARY KEY AUTOINCREMENT,      -- 사용자 ID
+            username    TEXT UNIQUE NOT NULL COLLATE NOCASE,    -- 사용자 이름
+            email       TEXT UNIQUE NOT NULL,                   -- 이메일
+            password    TEXT NOT NULL,                          -- 비밀번호
+            lv          INTEGER DEFAULT 1,                      -- 레벨
+            xp          INTEGER DEFAULT 0,                      -- 경험치
+            img         TEXT DEFAULT 'default_profile.png',     -- 프로필 이미지
+            highscore   INTEGER DEFAULT 0                       -- 게임 최고기록
+        );
+    `);
         db.run(`
-            CREATE TABLE IF NOT EXISTS diary_event (
-                                                       event_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                                       user_id INTEGER NOT NULL,
-                                                       title TEXT NOT NULL,
-                                                       com_lang TEXT NOT NULL,
-                                                       memo TEXT,
-                                                       date TEXT NOT NULL,
-                                                       completed BOOLEAN DEFAULT FALSE,
-                                                       FOREIGN KEY (user_id) REFERENCES user(user_id)
-                );
-        `);
+        CREATE TABLE IF NOT EXISTS diary_event ( -- 일정 테이블
+            event_id    INTEGER PRIMARY KEY AUTOINCREMENT,  -- 이벤트 ID
+            user_id     INTEGER NOT NULL,                   -- 사용자 ID
+            title       TEXT NOT NULL,                      -- 제목
+            category    TEXT NOT NULL,                      -- 분류
+            memo        TEXT,                               -- 메모
+            date        TEXT NOT NULL,                      -- 날짜
+            completed   BOOLEAN DEFAULT FALSE,              -- 완료 여부
+            
+            FOREIGN KEY (user_id) REFERENCES user(user_id)
+        );
+    `);
         db.run(`
-            CREATE TABLE IF NOT EXISTS achievement (
-                                                       ach_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                                       title TEXT NOT NULL,
-                                                       flavor TEXT NOT NULL,
-                                                       trigger TEXT NOT NULL,
-                                                       img TEXT NOT NULL
-            );
-        `);
+        CREATE TABLE IF NOT EXISTS achievement ( -- 칭호 테이블
+            ach_id  INTEGER PRIMARY KEY AUTOINCREMENT,-- 칭호 ID
+            title   TEXT NOT NULL,  -- 칭호명
+            flavor  TEXT NOT NULL,  -- 칭호 설명
+            trigger TEXT NOT NULL,  -- 칭호 획득 조건
+            img     TEXT NOT NULL   -- 칭호 이미지
+        );
+    `);
         db.run(`
-            CREATE TABLE IF NOT EXISTS user_achievement (
-                                                            user_id INTEGER NOT NULL,
-                                                            ach_id INTEGER NOT NULL,
-                                                            FOREIGN KEY (user_id) REFERENCES user(user_id),
-                FOREIGN KEY (ach_id) REFERENCES achievement(ach_id),
-                PRIMARY KEY (user_id, ach_id)
-                );
-        `);
+        CREATE TABLE IF NOT EXISTS user_achievement ( -- 사용자가 보유한 칭호 테이블
+            user_id INTEGER NOT NULL,   -- 사용자 ID
+            ach_id  INTEGER NOT NULL,   -- 칭호 ID
+
+            FOREIGN KEY (user_id) REFERENCES user(user_id),
+            FOREIGN KEY (ach_id) REFERENCES achievement(ach_id),
+            PRIMARY KEY (user_id, ach_id)
+        );
+    `);
+        db.run(`
+        CREATE TABLE IF NOT EXISTS emblem ( -- 엠블럼 테이블
+            emblem_id INTEGER PRIMARY KEY AUTOINCREMENT,-- 엠블럼 ID
+            title     TEXT NOT NULL,                    -- 엠블럼명
+            trigger   TEXT NOT NULL,                    -- 엠블럼 획득 조건
+            img       TEXT NOT NULL                     -- 엠블럼 이미지
+        );
+    `);
+        db.run(`
+        CREATE TABLE IF NOT EXISTS user_emblem ( -- 사용자가 보유한 엠블럼 테이블
+            user_id   INTEGER NOT NULL, -- 사용자 ID
+            emblem_id INTEGER NOT NULL, -- 엠블럼 ID
+        
+            FOREIGN KEY (user_id) REFERENCES user(user_id),
+            FOREIGN KEY (emblem_id) REFERENCES emblem(emblem_id),
+            PRIMARY KEY (user_id, emblem_id)
+        );
+    `);
+        db.run(`
+        CREATE TABLE IF NOT EXISTS title ( -- 칭호 테이블
+            title_id INTEGER PRIMARY KEY AUTOINCREMENT,-- 칭호 ID
+            title    TEXT NOT NULL,                    -- 칭호명
+            trigger  TEXT NOT NULL                     -- 칭호 획득 조건
+        );
+    `);
+        db.run(`
+        CREATE TABLE IF NOT EXISTS user_title ( -- 사용자가 보유한 칭호 테이블
+            user_id  INTEGER NOT NULL, -- 사용자 ID
+            title_id INTEGER NOT NULL, -- 칭호 ID
+            
+            FOREIGN KEY (user_id) REFERENCES user(user_id),
+            FOREIGN KEY (title_id) REFERENCES title(title_id),
+            PRIMARY KEY (user_id, title_id)
+        );
+    `);
         console.log("✅ 데이터베이스 초기화 완료!");
         loadDatabaseFromLocalStorage();
     } catch (error) {
