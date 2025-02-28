@@ -349,16 +349,15 @@ const achievementCategoryMap = {
     "프로갓생러": { category: "General", requiredCount: 2, title: "🚀 프로 갓생러", condition: "어떤 일정 2개 완료" },
     "파워J": { category: "General", requiredCount: 3, title: "⚡ 파워 J", condition: "어떤 일정 3개 완료" },
     "자기계발왕": { category: "General", requiredCount: 4, title: "📚 자기계발 끝판왕", condition: "어떤 일정 4개 완료" },
-    "닥터 스트레인지": { category: "General", requiredCount: 5, title: "⏳ 닥터 스트레인지", condition: "어떤 일정 5개 완료" }
+    "닥터 스트레인지": { category: "General", requiredCount: 5, title: "⏳ 닥터 스트레인지", condition: "어떤 일정 5개 완료" },
 
     // 버그 헌터 관련 업적
     // "새싹 디버거": { category: "Debug", requiredCount: 1, title: "🌱 새싹 디버거" },
-    // "버그 헌터": { category: "Debug", requiredCount: 3, title: "🔍 버그 헌터" },
-    // "디버깅 마스터": { category: "Debug", requiredCount: 5, title: "🛠️ 디버깅 마스터" },
-    // "버그 엑소시스트": { category: "Debug", requiredCount: 10, title: "👻 버그 엑소시스트" },
-    // "와일드 멘탈": { category: "Debug", requiredCount: 15, title: "" }
+    // "버그 헌터": { category: "Debug", requiredCount: 2, title: "🔍 버그 헌터" },
+    // "디버깅 마스터": { category: "Debug", requiredCount: 3, title: "🛠️ 디버깅 마스터" },
+    // "버그 엑소시스트": { category: "Debug", requiredCount: 4, title: "👻 버그 엑소시스트" },
+    // "와일드 멘탈": { category: "Debug", requiredCount: 1, title: "🐆 wild-mental" }
 };
-
 
 document.addEventListener("DOMContentLoaded", async function () {
     console.log("✅ DOMContentLoaded 실행됨");
@@ -717,9 +716,25 @@ document.addEventListener("DOMContentLoaded", async function () {
             item.addEventListener('click', () => {
                 selectedTitle.textContent = title;
                 selectedTitle.className = 'userTitle text-white fw-bold';
-                if (title === "🔥 지옥에서 온") {
-                    selectedTitle.classList.add('title-hell');
-                    selectedTitle.style.fontSize = '0.8em';
+                switch (title) {
+                    case "☕ Java의 신": selectedTitle.classList.add('title-java'); break;
+                    case "🐍 Python의 신": selectedTitle.classList.add('title-python'); break;
+                    case "📜 HTML의 신": selectedTitle.classList.add('title-html'); break;
+                    case "🎨 CSS의 신": selectedTitle.classList.add('title-css'); break;
+                    case "🧩 JS 코드 마스터": selectedTitle.classList.add('title-js'); break;
+                    case "🗄️ SQL의 신": selectedTitle.classList.add('title-sql'); break;
+                    case "🏡 정원 관리사": selectedTitle.classList.add('title-gardener'); break;
+                    case "🔥 지옥에서 온": selectedTitle.classList.add('title-hell'); break;
+                    case "⏳ 닥터 스트레인지": selectedTitle.classList.add('title-strange'); break;
+                    case "👻 버그 엑소시스트": selectedTitle.classList.add('title-exorcist'); break;
+                    case "🐣 코린이": selectedTitle.classList.add('title-newbie'); break;
+                    case "🚀 프로 갓생러": selectedTitle.classList.add('title-pro'); break;
+                    case "⚡ 파워 J": selectedTitle.classList.add('title-power'); break;
+                    case "📚 자기계발 끝판왕": selectedTitle.classList.add('title-self'); break;
+                    case "🌱 새싹 디버거": selectedTitle.classList.add('title-sprout'); break;
+                    case "🔍 버그 헌터": selectedTitle.classList.add('title-hunter'); break;
+                    case "🛠️ 디버깅 마스터": selectedTitle.classList.add('title-debug'); break;
+                    case "🐆 wild-mental": selectedTitle.classList.add('title-wild-mental'); break;
                 }
             });
             dropdownMenu.appendChild(item);
