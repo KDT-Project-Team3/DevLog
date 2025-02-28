@@ -79,7 +79,7 @@ body, html {
     padding: 20px 10px;
     display: flex;
     flex-direction: column;
-    transition: width 0.3s ;
+    transition: width 0.3s ease;
     overflow: hidden;
     align-content: center;
 }
@@ -152,7 +152,6 @@ body, html {
 }
 
 .profileLayout {
-    justify-content: center;
     align-items: center;
     width: 100%;
     height: 20%;
@@ -160,20 +159,27 @@ body, html {
     display: flex;
     margin: 47px;
     margin-top: 0;
-    margin-bottom: 0px;
-    margin-left: 0;
+    margin-bottom: 20px;
     transition: ease 0.3s;
 }
 
+.sidebar>.profile {
+    align-items: start;
+    align-content: start;
+}
+
 .profileInner {
-    width: 50%;
-    /*margin: 10%;*/
     transition: ease 0.3s;
     display: flex;
     flex-direction: column;
-    /*align-items: center;*/
-    justify-content: center;
+    align-items: center;
     font-size: 25px;
+}
+.exp {
+    transition: ease 0.3s;
+}
+.medalBox {
+    transition: ease 0.3s;
 }
 
 .profileInvisible {
@@ -184,15 +190,14 @@ body, html {
     width: 200px;
     flex-direction: column;
     display: flex;
-    margin-left: 10%;
 }
 
 .profileImg {
-    width: 190px;
-    height: 190px;
+    width: 170px;
+    height: 170px;
     border-radius: 50%;
     background: white url('img/ProfileCharacter.jpg') center/cover no-repeat;
-    /*margin-bottom: 15px;*/
+    margin-bottom: 10px;
     cursor: pointer;
     transition: ease 0.3s;
 }
@@ -265,32 +270,120 @@ input[type="text"], select, textarea {
 /* Profile Elements */
 .userInfoLayout {
     color: white;
-    height: 15%;
     font: bold 1em/1.5em "Lucida Grande", Helvetica, Arial, sans-serif;
     text-align: center;
-    margin-top: 25%;
-    /*margin-bottom: 10px;*/
+    margin-top: 20%;
+    margin-bottom: 10px;
     transition: 0.3s;
     display: flex;
-    flex-direction: column;
+    /*flex-direction: column;*/
     align-items: center;
+}
+
+/* 테이블처럼 가로 2칸 구성 */
+.info-table {
+    display: flex;
+    width: 100%;
+    max-width: 300px; /* 원하는 너비로 조정 가능 */
+    justify-content: center;
+}
+
+/* 왼쪽 칸 (레벨) */
+.left-cell {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.LV_closed h1 {
+    font: bold 1.2em "Lucida Grande", Helvetica, Arial, sans-serif;
+    margin: 0;
+}
+
+/* 오른쪽 칸 (칭호 + 아이디) */
+.right-cell {
+    flex: 1;
+    display: flex;
+    flex-direction: column; /* 세로로 나열 */
+    align-items: center;
+    justify-content: center;
+}
+
+.userTitle_closed {
+    font: bold 1em/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: white;
+    white-space: nowrap;
+}
+
+.id_closed {
+    font: bold 1em/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: aliceblue;
+    margin: 5px 0 0 0; /* 칭호와 약간 띄우기 */
 }
 
 .id {
     font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
     color: aliceblue;
-    margin: 5px 0;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 20px;
 }
 
 .level-display {
     font: bold 100%/2 "Lucida Grande", Helvetica, Arial, sans-serif;
     color: aliceblue;
-    margin: 10px 0 5px;
+    margin: 10px 0 5px 20px;
+}
+
+/* title */
+.title-button {
+    display: flex;
+    align-items: center;
+}
+.userTitle {
+    font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: white;
+    background-color: black;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+    white-space: nowrap;
+}
+
+.dropdown {
+    margin-left: 10px;
+}
+
+.userInfoLayout {
+    height: 0;
+}
+
+/*   "지옥에서 온" 칭호 전용 스타일 */
+.title-hell {
+    font-size: 0.8em;
+    color: #ff4500; /* 불타는 오렌지색 */
+    background: linear-gradient(90deg, #1a0000, #4d0000); /* 어두운 붉은 그라데이션 */
+    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500; /* 불꽃 그림자 효과 */
+    animation: flicker 1.5s infinite alternate; /* 깜빡이는 불꽃 효과 */
+}
+
+/* 깜빡이는 애니메이션 */
+@keyframes flicker {
+    0% {
+        text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500;
+    }
+    50% {
+        text-shadow: 0 0 8px #ff0000, 0 0 15px #ff4500, 0 0 20px #ff0000;
+    }
+    100% {
+        text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500;
+    }
 }
 
 /* Experience Bar */
 .exp {
-    transition: width 0.5s ease-in-out;
+    margin: 20px 10px;
 }
 
 .exp-bar-container {
@@ -308,12 +401,13 @@ input[type="text"], select, textarea {
     background: linear-gradient(to right, #e4b61b, #8bc34a);
     text-align: center;
     font: bold 100%/1 "Lucida Grande", Helvetica, Arial, sans-serif;
+    transition: width 0.5s ease-in-out;
 }
 
 /* Medal Box */
 .medalBox {
-    height: 0;
-    width: 110%;
+    height: auto;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -321,8 +415,6 @@ input[type="text"], select, textarea {
     flex-direction: row;
     overflow-x: auto;
     white-space: nowrap;
-    transition: 0.3s ease-out;
-
 }
 
 .medalBox::-webkit-scrollbar {
@@ -338,7 +430,7 @@ input[type="text"], select, textarea {
     border-radius: 50%;
     flex-shrink: 0;
     transition: all 0.3s ease;
-    opacity: 0.5;
+    opacity: 0;
     justify-content: center;
     align-items: center;
     position: relative;
@@ -385,6 +477,9 @@ input[type="text"], select, textarea {
     flex-direction: column;
     overflow-y: auto;
     border-radius: 5px;
+
+    position: relative;
+    top: 0.5em;
 }
 
 .achievement::-webkit-scrollbar {
@@ -419,6 +514,7 @@ input[type="text"], select, textarea {
     align-items: center;
     justify-content: center;
     position: relative;
+    border: gray 5px;
 }
 
 .achievement .achivImg i {
@@ -447,11 +543,13 @@ input[type="text"], select, textarea {
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: 100%;
+    align-items: start;
     padding: 5px;
 }
 
 .achievement h2 {
-    margin: 0 5px;
+    margin: 9px 10px 0 0;
     font: bold 1.2em "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -469,10 +567,23 @@ input[type="text"], select, textarea {
     margin-left: 5px;
 }
 
+/* 닫혀있을 때 p 태그가 공간을 차지하지 않도록 수정 */
+.sidebar p {
+    color: white;
+    font-size: 1.2em;
+    display: none;
+    transition: display 0s;
+}
+
+.sidebar:hover p {
+    display: block;
+}
+
 .achievement div.unlocked {
     opacity: 1;
     background-color: white;
     border-color: #5723ff;
+    transition: all 0.2s ease;
 }
 
 .achievement div.unlocked:hover {
