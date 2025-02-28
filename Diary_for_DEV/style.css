@@ -161,6 +161,7 @@ body, html {
     margin-top: 0;
     margin-bottom: 20px;
     transition: ease 0.3s;
+    left: 30%;
 }
 
 .sidebar>.profile {
@@ -219,7 +220,7 @@ body, html {
 
 .modal-content {
     background-color: white;
-    margin: 15% auto;
+    margin: 5% auto;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -242,7 +243,7 @@ body, html {
 
 .modal-body {
     padding: 0;
-    height: 500px; /* iframe 높이와 일치 */
+    height: 550px; /* iframe 높이와 일치 */
 }
 
 .modal-backdrop {
@@ -276,9 +277,9 @@ input[type="text"], select, textarea {
     margin-top: 20%;
     margin-bottom: 10px;
     transition: 0.3s;
-    display: flex;
+    /*display: flex;*/
     /*flex-direction: column;*/
-    align-items: center;
+    /*align-items: center;*/
 }
 
 /* 테이블처럼 가로 2칸 구성 */
@@ -405,7 +406,7 @@ input[type="text"], select, textarea {
     transition: width 0.5s ease-in-out;
 }
 
-/* Medal Box */
+/* 앰블럼 */
 .medalBox {
     height: 0;
     width: 100%;
@@ -417,6 +418,13 @@ input[type="text"], select, textarea {
     overflow-x: auto;
     white-space: nowrap;
     transition: ease 0.3s;
+    /* 앰블럼 양쪽 투명화 그라데이션 */
+    mask-image: linear-gradient(
+            to right,
+            rgba(0,0,0,0) 0%,
+            rgba(0,0,0,1) 10%,
+            rgba(0,0,0,1) 80%,
+            rgba(0,0,0,0) 100%);
 }
 
 .medalBox::-webkit-scrollbar {
@@ -432,7 +440,7 @@ input[type="text"], select, textarea {
     border-radius: 50%;
     flex-shrink: 0;
     transition: all 0.3s ease;
-    opacity: 0.3;
+    opacity: 0.2;
     justify-content: center;
     align-items: center;
     position: relative;
@@ -446,6 +454,8 @@ input[type="text"], select, textarea {
     transform: scale(1.2);
     margin-left: 20px;
     margin-right: 10px;
+/*  후광 비치는 효과 추가 */
+    box-shadow: 0 0 7px 4px rgb(255, 255, 255);
 }
 
 .medal:not(.unlocked):hover {
