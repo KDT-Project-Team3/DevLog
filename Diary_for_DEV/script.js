@@ -1,9 +1,5 @@
 // 페이지가 로드될 때 실행되는 이벤트 리스너
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("✅ DOMContentLoaded 실행됨");
-    console.log(typeof bootstrap);
-
-
     const banner = document.querySelector(".banner");
     const messages = [
         "🚀 코드 한 줄이 세상을 바꾼다!",
@@ -61,6 +57,8 @@ document.addEventListener("DOMContentLoaded", function () {
         "🔄 '야, 이거 다시 시작해봤어?' -> 개발자 기술지원 1단계",
         "🚀 '아무도 안 건드렸는데 갑자기 안 돼요!' -> 자동으로 고장 난 서버는 없다"
     ];
+
+
     const sidebar = document.querySelector(".sidebar");
     const profileLayout = document.querySelector(".profileLayout");
     const profileInner = document.querySelector(".profileInner");
