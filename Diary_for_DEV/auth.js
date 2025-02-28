@@ -1,4 +1,13 @@
 let db; // 데이터베이스 객체
+const currentUser = { // 현재 사용자 정보
+    user_id: null,
+    username: null,
+    email: null,
+    password: null,
+    lv: null,
+    xp: null,
+    img: null
+};
 
 // 데이터베이스 초기화
 async function initDatabase() {
