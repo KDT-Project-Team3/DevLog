@@ -381,7 +381,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         profileInner.classList.remove("profileInvisible");
         expBarContainer.classList.remove("profileInvisible");
         medalBox.classList.remove("profileInvisible");
-        medalBox.style.height = "30%";
+        medalBox.style.height = "20%";
         userInfoLayout.classList.add("profileInvisible");
         profileLayout.style.marginTop = "0";
         profileLayout.style.marginBottom = "0";
@@ -396,7 +396,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         profileInner.classList.add("profileInvisible");
         expBarContainer.classList.add("profileInvisible");
         medalBox.classList.add("profileInvisible");
-        medalBox.style.height = "0";
+        medalBox.style.height = "0px";
         userInfoLayout.classList.remove("profileInvisible");
         profileImg.style.width = "170px";
         profileImg.style.height = "170px";
