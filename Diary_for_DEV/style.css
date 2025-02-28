@@ -516,7 +516,7 @@ input[type="text"], select, textarea {
     align-items: center;
     justify-content: center;
     position: relative;
-    border: gray 5px;
+    border: black solid 3px;
 }
 
 .achievement .achivImg i {
