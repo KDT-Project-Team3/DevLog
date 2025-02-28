@@ -514,6 +514,7 @@ input[type="text"], select, textarea {
     align-items: center;
     justify-content: center;
     position: relative;
+    border: gray 5px;
 }
 
 .achievement .achivImg i {
@@ -564,6 +565,18 @@ input[type="text"], select, textarea {
     color: #39287a;
     font-size: 0.9em;
     margin-left: 5px;
+}
+
+/* 닫혀있을 때 p 태그가 공간을 차지하지 않도록 수정 */
+.sidebar p {
+    color: white;
+    font-size: 1.2em;
+    display: none;
+    transition: display 0s;
+}
+
+.sidebar:hover p {
+    display: block;
 }
 
 .achievement div.unlocked {
