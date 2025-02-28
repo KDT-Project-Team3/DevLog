@@ -178,6 +178,24 @@ function loadDatabaseFromLocalStorage() {
             });
             console.log("✅ user_achievement 테이블 데이터 로드 완료!");
         }
+        // title 테이블 로드 추가
+        const titleData = JSON.parse(localStorage.getItem('title'));
+        if (titleData && titleData.length > 0) {
+            titleData[0].values.forEach(title => {
+                db.run("INSERT OR IGNORE INTO title (title_id, title, trigger) VALUES (?, ?, ?)",
+                    [title[0], title[1], title[2]]);
+            });
+            console.log("✅ title 테이블 데이터 로드 완료!");
+        }
+        // user_title 테이블 로드 추가
+        const userTitleData = JSON.parse(localStorage.getItem('user_title'));
+        if (userTitleData && userTitleData.length > 0) {
+            userTitleData[0].values.forEach(userTitle => {
+                db.run("INSERT OR IGNORE INTO user_title (user_id, title_id) VALUES (?, ?)",
+                    [userTitle[0], userTitle[1]]);
+            });
+            console.log("✅ user_title 테이블 데이터 로드 완료!");
+        }
     } catch (error) {
         console.error('데이터 로드 실패:', error);
     }
@@ -221,6 +239,28 @@ function saveUserAchievementToLocalStorage() {
         console.log("✅ user_achievement 테이블 데이터 저장 완료!");
     } catch (error) {
         console.error('user_achievement 저장 실패:', error);
+    }
+}
+
+// title 저장 함수 추가
+function saveTitleToLocalStorage() {
+    try {
+        const title = db.exec("SELECT * FROM title");
+        localStorage.setItem('title', JSON.stringify(title));
+        console.log("✅ title 테이블 데이터 저장 완료!");
+    } catch (error) {
+        console.error('title 저장 실패:', error);
+    }
+}
+
+// user_title 저장 함수 추가
+function saveUserTitleToLocalStorage() {
+    try {
+        const user_title = db.exec("SELECT * FROM user_title");
+        localStorage.setItem('user_title', JSON.stringify(user_title));
+        console.log("✅ user_title 테이블 데이터 저장 완료!");
+    } catch (error) {
+        console.error('user_title 저장 실패:', error);
     }
 }
 
@@ -324,6 +364,8 @@ window.displayUserAchievements = function() {
         console.error('user_achievement 확인 실패:', error);
     }
 };
+
+// todo: displayTitle
 
 const categoryColors = {
     Python: '#3776AB', Java: '#007396', C: '#A8B9CC', Cpp: '#00599C', Csharp: '#68217A',
@@ -474,34 +516,56 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.querySelector(".id").textContent = currentUser.username;
         updateLevelAndExp();
 
-        // 수정: currentUser 기반으로 업적 데이터 초기화
+        // 업적 및 칭호 데이터 초기화
         try {
             const existingAchievements = db.exec("SELECT COUNT(*) as count FROM achievement")[0].values[0][0];
             if (existingAchievements === 0) {
-                Object.entries(achievementCategoryMap).forEach(([title, { condition, title: flavor }], index) => {
+                Object.entries(achievementCategoryMap).forEach(([achTitle, { condition, title: titlesStr }], index) => {
+                    // 업적 삽입
                     db.run("INSERT OR IGNORE INTO achievement (title, flavor, trigger, img) VALUES (?, ?, ?, ?)",
-                        [title, flavor || "", condition, `achievement_${index + 1}.png`]);
+                        [achTitle, titlesStr || "", condition, `achievement_${index + 1}.png`]);
+                    const achIdResult = db.exec("SELECT ach_id FROM achievement WHERE title = ?", [achTitle]);
+                    if (achIdResult.length > 0 && achIdResult[0].values.length > 0) {
+                        const achId = achIdResult[0].values[0][0];
+                        if (titlesStr) {
+                            const titles = titlesStr.split(',').map(t => t.trim());
+                            titles.forEach(title => {
+                                // 칭호 삽입
+                                db.run("INSERT OR IGNORE INTO title (title, trigger) VALUES (?, ?)",
+                                    [title, condition]);
+                                const titleIdResult = db.exec("SELECT title_id FROM title WHERE title = ?", [title]);
+                                if (titleIdResult.length > 0 && titleIdResult[0].values.length > 0) {
+                                    const titleId = titleIdResult[0].values[0][0];
+                                    // 업적과 칭호 연결 (achievement_title 테이블이 없으므로 생략, 필요 시 추가)
+                                }
+                            });
+                        }
+                    }
                 });
                 saveAchievementToLocalStorage();
-                console.log("✅ currentUser로 achievement 테이블 초기 데이터 삽입 완료!");
+                saveTitleToLocalStorage();
+                console.log("✅ achievement 및 title 초기 데이터 삽입 완료!");
             }
         } catch (error) {
-            console.error('업적 데이터 초기화 실패:', error);
+            console.error('업적 및 칭호 데이터 초기화 실패:', error);
         }
 
-        // 수정: 데이터베이스에서 해금된 업적 기반 칭호 초기화
+        // 데이터베이스에서 해금된 칭호 초기화
         try {
-            const userAchievements = db.exec("SELECT a.title, a.flavor FROM user_achievement ua JOIN achievement a ON ua.ach_id = a.ach_id WHERE ua.user_id = ?", [currentUser.user_id]);
-            if (userAchievements.length > 0) {
-                userAchievements[0].values.forEach(([title, flavor]) => {
-                    if (flavor && !unlockedTitles.includes(flavor)) {
-                        unlockedTitles.push(flavor);
+            const userTitles = db.exec(
+                "SELECT t.title FROM user_title ut JOIN title t ON ut.title_id = t.title_id WHERE ut.user_id = ?",
+                [currentUser.user_id]
+            );
+            if (userTitles.length > 0) {
+                userTitles[0].values.forEach(([title]) => {
+                    if (!unlockedTitles.includes(title)) {
+                        unlockedTitles.push(title);
                     }
                 });
                 localStorage.setItem('unlockedTitles', JSON.stringify(unlockedTitles));
             }
         } catch (error) {
-            console.error('업적 기반 칭호 초기화 실패:', error);
+            console.error('칭호 초기화 실패:', error);
         }
     } else {
         console.warn("⚠️ 로그인된 유저 정보가 없습니다.");
@@ -655,7 +719,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 });
             }
 
-            // 수정: 데이터베이스에서 현재 사용자의 업적 상태 가져오기
+            // 데이터베이스에서 현재 사용자의 업적 상태 가져오기
             let unlockedAchievements = {};
             const userAchievements = db.exec("SELECT a.title FROM user_achievement ua JOIN achievement a ON ua.ach_id = a.ach_id WHERE ua.user_id = ?", [currentUser.user_id]);
             if (userAchievements.length > 0) {
@@ -676,6 +740,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             const achievementContainer = document.querySelector('.achievement');
             const unlockedItems = [];
             const lockedItems = [];
+
             achievementItems.forEach(item => {
                 const title = item.querySelector('h2').textContent.trim();
                 const mapping = achievementCategoryMap[title] || { category: "General", requiredCount: 1 };
@@ -685,7 +750,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 const isUnlocked = category === "General" ? totalCompleted >= requiredCount : completedCount >= requiredCount;
                 const descriptionP = item.querySelector('.content p');
 
-                // 수정: 업적 해금 시 데이터베이스에 기록
+                // 업적 해금 시 데이터베이스에 기록
                 if (isUnlocked && !unlockedAchievements[title]) {
                     const achIdResult = db.exec("SELECT ach_id FROM achievement WHERE title = ?", [title]);
                     if (achIdResult.length > 0 && achIdResult[0].values.length > 0) {
@@ -694,26 +759,33 @@ document.addEventListener("DOMContentLoaded", async function () {
                         saveUserAchievementToLocalStorage();
                         unlockedAchievements[title] = true;
                         console.log(`✅ 업적 해금: ${title}`);
+
+                        // 칭호 추가
+                        if (mapping.title) {
+                            const titles = mapping.title.split(',').map(t => t.trim());
+                            titles.forEach(titleText => {
+                                db.run("INSERT OR IGNORE INTO title (title, trigger) VALUES (?, ?)",
+                                    [titleText, mapping.condition]);
+                                const titleIdResult = db.exec("SELECT title_id FROM title WHERE title = ?", [titleText]);
+                                if (titleIdResult.length > 0 && titleIdResult[0].values.length > 0) {
+                                    const titleId = titleIdResult[0].values[0][0];
+                                    db.run("INSERT OR IGNORE INTO user_title (user_id, title_id) VALUES (?, ?)",
+                                        [currentUser.user_id, titleId]);
+                                    saveUserTitleToLocalStorage();
+                                    addTitleToDropdown(titleText);
+                                }
+                            });
+                        }
                     }
                 }
 
                 if (isUnlocked) {
                     item.classList.add('unlocked');
                     descriptionP.textContent = descriptionP.dataset.originalText || descriptionP.textContent;
-
-                    if (mapping.title && !item.dataset.titleAdded) {
-                        const titles = mapping.title.split(',').map(t => t.trim());
-                        titles.forEach(title => {
-                            if (title && !unlockedTitles.includes(title)) {
-                                addTitleToDropdown(title);
-                            }
-                        });
-                        item.dataset.titleAdded = 'true';
-                    }
                     unlockedItems.push(item);
                 } else {
                     item.classList.remove('unlocked');
-                    item.style.opener = '0.7';
+                    item.style.opacity = '0.7';
                     if (!descriptionP.dataset.originalText) {
                         descriptionP.dataset.originalText = descriptionP.textContent;
                     }
@@ -721,6 +793,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     lockedItems.push(item);
                 }
             });
+
             achievementContainer.innerHTML = '';
             unlockedItems.forEach(item => achievementContainer.appendChild(item));
             lockedItems.forEach(item => achievementContainer.appendChild(item));
@@ -730,7 +803,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    let unlockedTitles = JSON.parse(localStorage.getItem('unlockedTitles')) || [];
+    // let unlockedTitles = JSON.parse(localStorage.getItem('unlockedTitles')) || [];
     function initializeTitles() {
         if (dropdownMenu) {
             dropdownMenu.innerHTML = '';
@@ -742,16 +815,37 @@ document.addEventListener("DOMContentLoaded", async function () {
                 selectedTitle.className = 'userTitle text-white fw-bold';
             });
             dropdownMenu.appendChild(defaultItem);
-            unlockedTitles.forEach(title => addTitleToDropdown(title));
+
+            // user_title에서 칭호 가져오기
+            const userTitles = db.exec(
+                "SELECT t.title FROM user_title ut JOIN title t ON ut.title_id = t.title_id WHERE ut.user_id = ?",
+                [currentUser.user_id]
+            );
+            if (userTitles.length > 0) {
+                userTitles[0].values.forEach(([title]) => {
+                    addTitleToDropdown(title);
+                });
+            }
+            console.log("✅ 칭호 초기화 완료");
         }
     }
 
     function addTitleToDropdown(title) {
         if (dropdownMenu && selectedTitle) {
-            if (!unlockedTitles.includes(title)) {
-                unlockedTitles.push(title);
-                localStorage.setItem('unlockedTitles', JSON.stringify(unlockedTitles));
+            // 중복 체크를 DB에서 수행하므로 localStorage 제거
+            const exists = db.exec("SELECT COUNT(*) FROM user_title ut JOIN title t ON ut.title_id = t.title_id WHERE ut.user_id = ? AND t.title = ?",
+                [currentUser.user_id, title])[0].values[0][0] > 0;
+            if (!exists) {
+                db.run("INSERT OR IGNORE INTO title (title, trigger) VALUES (?, ?)", [title, "업적 해금"]);
+                const titleIdResult = db.exec("SELECT title_id FROM title WHERE title = ?", [title]);
+                if (titleIdResult.length > 0 && titleIdResult[0].values.length > 0) {
+                    const titleId = titleIdResult[0].values[0][0];
+                    db.run("INSERT OR IGNORE INTO user_title (user_id, title_id) VALUES (?, ?)",
+                        [currentUser.user_id, titleId]);
+                    saveUserTitleToLocalStorage();
+                }
             }
+
             const item = document.createElement('div');
             item.className = 'dropdown-item';
             item.textContent = title;
