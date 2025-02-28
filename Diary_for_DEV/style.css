@@ -4,12 +4,18 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: Arial, sans-serif;
+body, html {
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 14px;
+    overflow: hidden;
 }
 
 .container {
+    margin: 0;
+    padding: 0;
+    width: 100%;
     display: flex;
+    min-width: 100vw;
     height: 100vh;
     border: 2px solid black;
 }
@@ -18,50 +24,180 @@ body {
     flex: 4;
     display: flex;
     flex-direction: column;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: #000;
 }
 
 .banner {
-    background: black;
+    background: linear-gradient(-45deg, #051937, #004d7a, #008793, #00bf72, #a8eb12);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
     color: white;
     padding: 20px;
     text-align: center;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
 }
 
-.banner h1 {
-    margin: 0;
-    font-size: 1.5em;
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
-.calendar {
-    background: #f5f5f5; /* 연한 베이지색 */
+#calendar-container {
     flex: 1;
     display: flex;
     justify-content: center;
-    align-items: center;
+    padding: 10px;
 }
 
-.calendar h2 {
-    margin: 0;
-    font-size: 2em;
-    color: black;
+#calendar {
+    width: 90%;
+    max-width: 1200px;
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+.fc-daygrid-day-number, .fc-col-header-cell-cushion {
+    text-decoration: none;
+    color: #000 !important;
+}
+
+/* Sidebar */
 .sidebar {
-    flex: 1;
-    background: black;
-    padding: 20px;
+    width: 300px;
+    background: #000;
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    align-content: center;
+}
+
+.sidebar:hover {
+    width: 600px;
+    background: linear-gradient(to right, #000, #46198e);
+}
+
+.menuBtn {
+    width: 50px;
+    height: 40px;
+    background: #000;
+    color: white;
+    border: 2px solid #c1c1c1;
+    align-self: flex-end;
+    align-items: center;
+    align-content: center;
+    transition: background 0.3s ease;
+}
+
+.menuBtn:hover {
+    background: linear-gradient(to right, #46198e, #000);
+}
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 40;
+}
+
+.offcanvas-header {
+    padding: 0;
+    height: 52px;
+    background: #845EC2;
+}
+
+.offcanvas-header .btn-close {
+    margin-left: 65%;
+}
+
+.offcanvas-header h5 {
+    font: bold 30px/1.5 "Poppins", sans-serif;
+    margin-left: 10px;
+}
+
+.offcanvas-body {
+    background: #845EC2;
+    color: white;
+    padding: 0;
+    align-items: flex-start;
+}
+
+.offcanvas-body .menu-item, .offcanvas-body .bugHunter {
+    color: white;
+    font: bold 20px/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    height: 60px;
+    margin: 0;
+    padding: 10px;
+    text-decoration: none;
+    align-content: center;
+    transition: ease 0.3s;
+    opacity: 0.7;
+    cursor: pointer;
+    display: block;
+}
+
+.offcanvas-body .menu-item:hover, .offcanvas-body .bugHunter:hover {
+    opacity: 1;
+    padding-left: 20px;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.63), rgba(0, 0, 0, 0.14));
+}
+
+.profileLayout {
+    align-items: center;
+    width: 100%;
+    height: 20%;
+    flex-wrap: wrap;
+    display: flex;
+    margin: 47px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    transition: ease 0.3s;
+}
+
+.sidebar>.profile {
+    align-items: start;
+    align-content: start;
+}
+
+.profileInner {
+    transition: ease 0.3s;
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-size: 25px;
+}
+.exp {
+    transition: ease 0.3s;
 }
 
-.circle {
-    width: 20px;
-    height: 20px;
+
+.profileInvisible {
+    opacity: 0;
+}
+
+.profile {
+    width: 200px;
+    flex-direction: column;
+    display: flex;
+}
+
+.profileImg {
+    width: 170px;
+    height: 170px;
     border-radius: 50%;
-    background: white;
+    background: white url('img/ProfileCharacter.jpg') center/cover no-repeat;
     margin-bottom: 10px;
-    cursor: pointer; /* 클릭 가능하도록 커서 변경 */
+    cursor: pointer;
+    transition: ease 0.3s;
 }
 
 .sidebar p {
@@ -69,3 +205,429 @@ body {
     font-size: 1.2em;
 }
 
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1050; /* Bootstrap 기본값 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    width: 80%;
+    max-width: 500px;
+    animation: slideIn 0.3s;
+}
+
+.modal.fade {
+    background-color: rgba(0, 0, 0, 0.5); /* Bootstrap 모달 배경 */
+}
+
+.modal-dialog {
+    margin: 1.75rem auto;
+}
+
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-body {
+    padding: 0;
+    height: 500px; /* iframe 높이와 일치 */
+}
+
+.modal-backdrop {
+    --bs-backdrop-zindex: 10;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}
+
+input[type="text"], select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Profile Elements */
+.userInfoLayout {
+    color: white;
+    font: bold 1em/1.5em "Lucida Grande", Helvetica, Arial, sans-serif;
+    text-align: center;
+    margin-top: 20%;
+    margin-bottom: 10px;
+    transition: 0.3s;
+    display: flex;
+    /*flex-direction: column;*/
+    align-items: center;
+}
+
+/* 테이블처럼 가로 2칸 구성 */
+.info-table {
+    display: flex;
+    width: 100%;
+    max-width: 300px; /* 원하는 너비로 조정 가능 */
+    justify-content: center;
+}
+
+/* 왼쪽 칸 (레벨) */
+.left-cell {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.LV_closed h1 {
+    font: bold 1.2em "Lucida Grande", Helvetica, Arial, sans-serif;
+    margin: 0;
+}
+
+/* 오른쪽 칸 (칭호 + 아이디) */
+.right-cell {
+    flex: 1;
+    display: flex;
+    flex-direction: column; /* 세로로 나열 */
+    align-items: center;
+    justify-content: center;
+}
+
+.userTitle_closed {
+    font: bold 1em/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: white;
+    white-space: nowrap;
+}
+
+.id_closed {
+    font: bold 1em/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: aliceblue;
+    margin: 5px 0 0 0; /* 칭호와 약간 띄우기 */
+}
+
+.id {
+    font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: aliceblue;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+}
+
+.level-display {
+    font: bold 100%/2 "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: aliceblue;
+    margin: 10px 0 5px 20px;
+}
+
+/* title */
+.title-button {
+    display: flex;
+    align-items: center;
+}
+.userTitle {
+    font: bold 100%/1.3 "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: white;
+    background-color: black;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 20px;
+    white-space: nowrap;
+}
+
+.dropdown {
+    margin-left: 10px;
+}
+
+.userInfoLayout {
+    height: 0;
+}
+
+/*   "지옥에서 온" 칭호 전용 스타일 */
+.title-hell {
+    font-size: 0.8em;
+    color: #ff4500; /* 불타는 오렌지색 */
+    background: linear-gradient(90deg, #1a0000, #4d0000); /* 어두운 붉은 그라데이션 */
+    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500; /* 불꽃 그림자 효과 */
+    animation: flicker 1.5s infinite alternate; /* 깜빡이는 불꽃 효과 */
+}
+
+/* 깜빡이는 애니메이션 */
+@keyframes flicker {
+    0% {
+        text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500;
+    }
+    50% {
+        text-shadow: 0 0 8px #ff0000, 0 0 15px #ff4500, 0 0 20px #ff0000;
+    }
+    100% {
+        text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500;
+    }
+}
+
+/* Experience Bar */
+.exp {
+    margin: 20px 10px;
+}
+
+.exp-bar-container {
+    width: 100%;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #444;
+}
+
+.exp-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(to right, #e4b61b, #8bc34a);
+    text-align: center;
+    font: bold 100%/1 "Lucida Grande", Helvetica, Arial, sans-serif;
+    transition: width 0.5s ease-in-out;
+}
+
+/* Medal Box */
+.medalBox {
+    height: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px 0 10px;
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+    transition: ease 0.3s;
+}
+
+.medalBox::-webkit-scrollbar {
+    height: 6px;
+}
+
+.medal {
+    background: white;
+    display: flex;
+    width: 80px;
+    height: 80px;
+    margin-left: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    opacity: 0.3;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.medal.unlocked {
+    opacity: 1;
+}
+
+.medal.unlocked:hover {
+    transform: scale(1.2);
+    margin-left: 20px;
+    margin-right: 10px;
+}
+
+.medal:not(.unlocked):hover {
+    opacity: 0.6;
+}
+
+.medal:not(.unlocked):hover::after {
+    content: "미획득";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #888;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+.medal i {
+    font-size: 50px;
+}
+
+/* Achievement */
+.achievement {
+    width: 100%;
+    height: 50vh;
+    background: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    border-radius: 5px;
+
+    position: relative;
+    top: 0.5em;
+}
+
+.achievement::-webkit-scrollbar {
+    display: none;
+}
+
+.achievementInner {
+    display: inline-flex;
+    flex-direction: row;
+    border: 3px solid black;
+    align-items: center;
+    justify-content: start;
+    border-radius: 10px;
+    margin: 10px;
+    opacity: 0.5;
+    background-color: gray;
+    transition: all 0.3s ease;
+}
+
+.achievementInner:hover {
+    opacity: 1;
+    transform: scale(1.02);
+}
+
+.achievement .achivImg {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: white center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: gray 5px;
+}
+
+.achievement .achivImg i {
+    font-size: 30px;
+}
+
+.achievementInner .achivImg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('img/자물쇠.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+}
+
+.achievementInner.unlocked .achivImg::before {
+    display: none;
+}
+
+.achievement .content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    align-items: start;
+    padding: 5px;
+}
+
+.achievement h2 {
+    margin: 9px 10px 0 0;
+    font: bold 1.2em "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.achievement .content p {
+    text-align: start;
+    margin-left: 5px;
+    color: black;
+    transition: ease 0.3s;
+    opacity: 0;
+}
+
+.achievementInner:not(.unlocked) .content p {
+    color: #39287a;
+    font-size: 0.9em;
+    margin-left: 5px;
+}
+
+/* 닫혀있을 때 p 태그가 공간을 차지하지 않도록 수정 */
+.sidebar p {
+    color: white;
+    font-size: 1.2em;
+    display: none;
+    transition: display 0s;
+}
+
+.sidebar:hover p {
+    display: block;
+}
+
+.achievement div.unlocked {
+    opacity: 1;
+    background-color: white;
+    border-color: #5723ff;
+    transition: all 0.2s ease;
+}
+
+.achievement div.unlocked:hover {
+    background-color: #e8f5e9;
+}
+
+textarea {
+    resize: vertical;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#saveEvent {
+    background-color: dodgerblue;
+    color: white;
+}
+
+#saveEvent:hover {
+    background-color: cornflowerblue;
+}
+
+#deleteEvent {
+    background-color: #f44336;
+    color: white;
+}
+
+#deleteEvent:hover {
+    background-color: #e53935;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
