@@ -349,6 +349,7 @@ const achievementCategoryMap = {
     "프로갓생러": { category: "General", requiredCount: 2, title: "🚀 프로 갓생러", condition: "어떤 일정 2개 완료" },
     "파워J": { category: "General", requiredCount: 3, title: "⚡ 파워 J", condition: "어떤 일정 3개 완료" },
     "자기계발왕": { category: "General", requiredCount: 4, title: "📚 자기계발 끝판왕", condition: "어떤 일정 4개 완료" },
+
     "닥터 스트레인지": { category: "General", requiredCount: 5, title: "⏳ 닥터 스트레인지", condition: "어떤 일정 5개 완료" },
 
     // 버그 헌터 관련 업적
@@ -357,7 +358,9 @@ const achievementCategoryMap = {
     // "디버깅 마스터": { category: "Debug", requiredCount: 3, title: "🛠️ 디버깅 마스터" },
     // "버그 엑소시스트": { category: "Debug", requiredCount: 4, title: "👻 버그 엑소시스트" },
     // "와일드 멘탈": { category: "Debug", requiredCount: 1, title: "🐆 wild-mental" }
+
 };
+
 
 document.addEventListener("DOMContentLoaded", async function () {
     console.log("✅ DOMContentLoaded 실행됨");
@@ -380,7 +383,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         profileInner.classList.remove("profileInvisible");
         expBarContainer.classList.remove("profileInvisible");
         medalBox.classList.remove("profileInvisible");
-        medalBox.style.height = "30%";
+        medalBox.style.height = "20%";
         userInfoLayout.classList.add("profileInvisible");
         profileLayout.style.marginTop = "0";
         profileLayout.style.marginBottom = "0";
@@ -395,7 +398,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         profileInner.classList.add("profileInvisible");
         expBarContainer.classList.add("profileInvisible");
         medalBox.classList.add("profileInvisible");
-        medalBox.style.height = "0";
+        medalBox.style.height = "0px";
         userInfoLayout.classList.remove("profileInvisible");
         profileImg.style.width = "170px";
         profileImg.style.height = "170px";
