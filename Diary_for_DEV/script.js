@@ -425,14 +425,14 @@ const achievementCategoryMap = {
     "Kotlin의 신": { category: "Kotlin", requiredCount: 3, title: "🤖 Kotlin의 신", condition: "Kotlin 일정 3개 완료" },
 
     // General (기존)
-    "정원 관리사": { category: "General", requiredCount: 1, title: "🏡 정원 관리사", condition: "어떤 일정 1개 완료" },
-    "지옥에서 온": { category: "General", requiredCount: 2, title: "🔥 지옥에서 온", condition: "어떤 일정 2개 완료" },
-    "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이", condition: "어떤 일정 1개 완료" },
-    "프로갓생러": { category: "General", requiredCount: 2, title: "🚀 프로 갓생러", condition: "어떤 일정 2개 완료" },
-    "파워J": { category: "General", requiredCount: 3, title: "⚡ 파워 J", condition: "어떤 일정 3개 완료" },
-    "자기계발왕": { category: "General", requiredCount: 4, title: "📚 자기계발 끝판왕", condition: "어떤 일정 4개 완료" },
+    "정원 관리사": { category: "General", requiredCount: 3, title: "🏡 정원 관리사", condition: "커밋 3개 완료" },
+    "지옥에서 온": { category: "General", requiredCount: 5, title: "🔥 지옥에서 온", condition: "커밋 5개 완료" },
+    "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이", condition: "일정 1개 완료" },
+    "프로갓생러": { category: "General", requiredCount: 3, title: "🚀 프로 갓생러", condition: "일정 3개 완료" },
+    "파워J": { category: "General", requiredCount: 4, title: "⚡ 파워 J", condition: "일정 4개 완료" },
+    "자기계발왕": { category: "General", requiredCount: 5, title: "📚 자기계발 끝판왕", condition: "일정 5개 완료" },
 
-    "닥터 스트레인지": { category: "General", requiredCount: 5, title: "⏳ 닥터 스트레인지", condition: "어떤 일정 5개 완료" },
+    "닥터 스트레인지": { category: "General", requiredCount: 6, title: "⏳ 닥터 스트레인지", condition: "일정 6개 완료" },
 
     // 버그 헌터 관련 업적
     // "새싹 디버거": { category: "Debug", requiredCount: 1, title: "🌱 새싹 디버거" },
