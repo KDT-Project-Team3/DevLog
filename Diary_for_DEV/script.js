@@ -665,39 +665,74 @@ document.addEventListener("DOMContentLoaded", async function () {
             const events = JSON.parse(localStorage.getItem('events') || '{}');
             if (events[date] && events[date][index]) {
                 const wasCompleted = events[date][index].completed;
-                if (!wasCompleted) {
-                    events[date][index].completed = true;
-                    localStorage.setItem('events', JSON.stringify(events));
-                    currentUser.xpUp(1);
-                    const calendarEvents = calendarInstance.getEvents();
-                    const targetEvent = calendarEvents.find(event =>
-                        event.startStr === date && event.title === `${events[date][index].title} (${events[date][index].category})`
-                    );
-                    if (targetEvent) {
-                        targetEvent.setExtendedProp('completed', true);
-                        const titleElement = targetEvent.el ? targetEvent.el.querySelector('.fc-event-title') : null;
-                        if (titleElement) {
-                            titleElement.style.textDecoration = 'line-through';
-                            console.log(`✅ 라인스루 적용: ${events[date][index].title}`);
+                // !wasComplete -> wasComplete
+                if (wasCompleted) {
+                    if (confirm("일정을 완료하시겠습니까?")) { // 사용자 확인
+                        events[date][index].completed = true;
+                        localStorage.setItem('events', JSON.stringify(events));
+                        currentUser.xpUp(1);
+
+                        // 캘린더 이벤트 업데이트
+                        const calendarEvents = calendarInstance.getEvents();
+                        const targetEvent = calendarEvents.find(event =>
+                            event.startStr === date && event.title === `${events[date][index].title} (${events[date][index].category})`
+                        );
+                        if (targetEvent) {
+                            targetEvent.setExtendedProp('completed', true);
+                            const titleElement = targetEvent.el ? targetEvent.el.querySelector('.fc-event-title') : null;
+                            if (titleElement) {
+                                titleElement.style.textDecoration = 'line-through';
+                                console.log(`✅ 라인스루 적용: ${events[date][index].title}`);
+                            }
                         }
-                    }
-                    // com_lang -> category
-                    const eventIdResult = db.exec("SELECT event_id FROM diary_event WHERE user_id=? AND date=? AND title=? AND category=?",
-                        [currentUser.user_id, date, events[date][index].title, events[date][index].category]);
-                    if (eventIdResult.length > 0 && eventIdResult[0].values.length > 0) {
-                        const eventId = eventIdResult[0].values[0][0];
-                        db.run("UPDATE diary_event SET completed=TRUE WHERE event_id=?", [eventId]);
-                        saveDiaryEventToLocalStorage();
-                    }
-                    updateMedals();
 
-                    // 수정: 드롭다운 실시간 갱신
-                    initializeTitles();
+                        // 데이터베이스 업데이트
+                        const eventIdResult = db.exec("SELECT event_id FROM diary_event WHERE user_id=? AND date=? AND title=? AND category=?",
+                            [currentUser.user_id, date, events[date][index].title, events[date][index].category]);
+                        if (eventIdResult.length > 0 && eventIdResult[0].values.length > 0) {
+                            const eventId = eventIdResult[0].values[0][0];
+                            db.run("UPDATE diary_event SET completed=TRUE WHERE event_id=?", [eventId]);
+                            saveDiaryEventToLocalStorage();
+                        }
 
-                    console.log(`✅ 일정 완료: ${events[date][index].title}`);
-                    calendarInstance.refetchEvents(); // 캘린더 실시간 갱신
-                    checkDatabase();
+                        // 업적 및 칭호 확인
+                        const previousTitles = db.exec("SELECT t.title FROM user_title ut JOIN title t ON ut.title_id = t.title_id WHERE ut.user_id = ?", [currentUser.user_id]);
+                        const previousTitleCount = previousTitles.length > 0 ? previousTitles[0].values.length : 0;
+
+                        updateMedals(); // 업적 업데이트
+                        initializeTitles(); // 칭호 드롭다운 갱신
+
+                        const newTitles = db.exec("SELECT t.title FROM user_title ut JOIN title t ON ut.title_id = t.title_id WHERE ut.user_id = ?", [currentUser.user_id]);
+                        const newTitleCount = newTitles.length > 0 ? newTitles[0].values.length : 0;
+
+                        // 업적 해금 여부 확인
+                        const unlockedAchievements = db.exec("SELECT a.title FROM user_achievement ua JOIN achievement a ON ua.ach_id = a.ach_id WHERE ua.user_id = ?", [currentUser.user_id]);
+                        const hasNewAchievement = unlockedAchievements.length > 0 && unlockedAchievements[0].values.length > 0;
+
+                        if (hasNewAchievement) {
+                            if (newTitleCount > previousTitleCount) {
+                                const newTitleIndex = newTitleCount - 1;
+                                const newTitle = newTitles[0].values[newTitleIndex][0];
+                                console.log("ℹ️ 새로 추가된 칭호: ", newTitle);
+                                alert(`업적이 해금되었습니다! 칭호를 획득합니다: ${newTitle}`);
+                            } else {
+                                console.log("ℹ️ 업적은 해금되었으나 새 칭호 없음");
+                                alert("업적이 해금되었습니다!");
+                            }
+                        } else {
+                            console.log("ℹ️ 새로운 업적이 해금되지 않음");
+                        }
+
+                        console.log(`✅ 일정 완료: ${events[date][index].title}`);
+                        calendarInstance.refetchEvents(); // 캘린더 실시간 갱신
+                        checkDatabase();
+                        location.reload();
+                    }
+                } else {
+                    console.log("ℹ️ 이미 완료된 일정입니다.");
                 }
+            } else {
+                console.error("❌ 해당 일정을 찾을 수 없습니다.");
             }
         } catch (error) {
             console.error('일정 완료 처리 실패:', error);
