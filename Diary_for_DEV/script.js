@@ -324,7 +324,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         profileInner.classList.remove("profileInvisible");
         expBarContainer.classList.remove("profileInvisible");
         medalBox.classList.remove("profileInvisible");
-        medalBox.style.height = "30%";
+        medalBox.style.height = "20%";
         userInfoLayout.classList.add("profileInvisible");
         profileLayout.style.marginTop = "0";
         profileLayout.style.marginBottom = "0";

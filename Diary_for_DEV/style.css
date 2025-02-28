@@ -159,7 +159,7 @@ body, html {
     display: flex;
     margin: 47px;
     margin-top: 0;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
     transition: ease 0.3s;
 }
 
@@ -179,6 +179,7 @@ body, html {
     width: 200px;
     flex-direction: column;
     display: flex;
+    margin-left: 30%
 }
 
 .profileImg {
@@ -283,7 +284,8 @@ input[type="text"], select, textarea {
 
 /* Experience Bar */
 .exp {
-    margin: 20px 10px;
+    /*margin: 20px 10px;*/
+    transition: width 0.5s ease-in-out;
 }
 
 .exp-bar-container {
@@ -301,12 +303,11 @@ input[type="text"], select, textarea {
     background: linear-gradient(to right, #e4b61b, #8bc34a);
     text-align: center;
     font: bold 100%/1 "Lucida Grande", Helvetica, Arial, sans-serif;
-    transition: width 0.5s ease-in-out;
 }
 
 /* Medal Box */
 .medalBox {
-    height: auto;
+    height: 0;
     width: 100%;
     display: flex;
     justify-content: center;
