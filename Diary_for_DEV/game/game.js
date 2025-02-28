@@ -130,9 +130,8 @@ function updateTimer() {
         document.getElementById('message').textContent = '시간 초과! 게임 오버!';
         document.getElementById('submit-btn').disabled = true;
         setTimeout(() => {
-            window.location.href = '../main.html'; // 시간 초과 시 게임 오버 페이지로 이동
-            window.location.href = '../main/main.html'; // 시간 초과 시 게임 오버 페이지로 이동
-            window.parent.postMessage({ action: "closeModal" }, "*"); // index.JS 에 모달 닫기 위한 메시지 전송
+            // window.location.href = '../main.html'; // 시간 초과 시 게임 오버 페이지로 이동
+            window.parent.postMessage({ action: "closeModal" }, "*"); // main.JS 에 모달 닫기 위한 메시지 전송
         }, 2000);
     }
 }
@@ -144,9 +143,9 @@ document.getElementById('submit-btn').addEventListener('click', function() {
 
     if (userCode === correctCode) {
         clearInterval(timer);
-        score++;
+        score ++;
         document.getElementById('message').textContent = '정답입니다! 다음 레벨로 이동합니다.';
-        updateHighscore(); // 점수 갱신
+        updateHighscore(); //점수 갱신
         currentLevel++;
         if (currentLevel < levels.length) {
             setTimeout(initGame, 2000); // 2초 후 다음 레벨
@@ -154,10 +153,7 @@ document.getElementById('submit-btn').addEventListener('click', function() {
             document.getElementById('message').textContent = '축하합니다! 모든 레벨을 클리어했습니다!';
             document.getElementById('submit-btn').disabled = true;
             setTimeout(() => {
-                window.location.href = '../main.html'; // 모든 레벨 클리어 후 승리 페이지로 이동
-                window.location.href = '../main.html'; // 모든 레벨 클리어 후 승리 페이지로 이동
-                window.location.href = '../main/main.html'; // 모든 레벨 클리어 후 승리 페이지로 이동
-                // window.location.href = '../index.html'; // 모든 레벨 클리어 후 승리 페이지로 이동
+                // window.location.href = '../main.html'; // 모든 레벨 클리어 후 승리 페이지로 이동
                 window.parent.postMessage({ action: "closeModal" }, "*"); // index.JS 에 모달 닫기 위한 메시지 전송
             }, 2000);
         }
