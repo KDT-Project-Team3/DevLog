@@ -112,3 +112,12 @@ function showSignup() {
     document.getElementById('login-container').style.display = 'none';
     document.getElementById('signup-container').style.display = 'block';
 }
+
+
+
+// 페이지 로드 시 실행 **********************
+document.addEventListener('DOMContentLoaded', async function() {
+    await initDatabase();
+    localStorage.setItem('current_user', JSON.stringify([])); // 현재 사용자 초기화
+    console.log("addEventListener 실행 완료");
+});

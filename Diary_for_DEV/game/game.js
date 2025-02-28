@@ -91,12 +91,14 @@ const levels = [
         }
     ]
 ];
+const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
 // 게임 상태 변수
 let currentLevel = 0;
 let timeLeft = 90; // 초기 시간 (레벨별로 조정)
 let timer;
 let currentProblemIndex;
+let score = 0;
 
 // 게임 초기화
 function initGame() {
@@ -129,7 +131,7 @@ function updateTimer() {
         document.getElementById('submit-btn').disabled = true;
         setTimeout(() => {
             // window.location.href = '../main.html'; // 시간 초과 시 게임 오버 페이지로 이동
-            window.parent.postMessage({ action: "closeModal" }, "*"); // index.JS 에 모달 닫기 위한 메시지 전송
+            window.parent.postMessage({ action: "closeModal" }, "*"); // main.JS 에 모달 닫기 위한 메시지 전송
         }, 2000);
     }
 }
@@ -141,7 +143,9 @@ document.getElementById('submit-btn').addEventListener('click', function() {
 
     if (userCode === correctCode) {
         clearInterval(timer);
+        score ++;
         document.getElementById('message').textContent = '정답입니다! 다음 레벨로 이동합니다.';
+        updateHighscore(); //점수 갱신
         currentLevel++;
         if (currentLevel < levels.length) {
             setTimeout(initGame, 2000); // 2초 후 다음 레벨
@@ -154,9 +158,39 @@ document.getElementById('submit-btn').addEventListener('click', function() {
             }, 2000);
         }
     } else {
+        score = 0;
         document.getElementById('message').textContent = '틀렸습니다! 다시 시도하세요.';
     }
 });
+
+// 점수 갱신 함수
+// 새로운 창으로 넘어가는 방식이 아닌 새로운 창을 여는
+function updateHighscore() {
+    if (currentUser && currentUser.length > 0) {
+        const userId = currentUser[0].values[0][0]; // user_id
+        const highscore = currentUser[0].values[0][7]; // highscore
+
+        if (score > highscore) {
+            // currentUser의 highscore 갱신
+            currentUser[0].values[0][7] = score;
+            localStorage.setItem('current_user', JSON.stringify(currentUser));
+
+            // localStorage에 저장된 user의 highscore 갱신
+            const users = JSON.parse(localStorage.getItem('user'));
+            if (users && users.length > 0) {
+                users[0].values.forEach(user => {
+                    if (user[0] === userId) {
+                        user[7] = score;
+                    }
+                });
+                localStorage.setItem('user', JSON.stringify(users));
+            }
+            console.log('✅ 최고기록 갱신 완료!');
+        }
+    } else {
+        console.warn("⚠️ 로그인중인 사용자 정보를 불러오지 못했습니다.");
+    }
+}
 
 // 게임 시작
 initGame();
