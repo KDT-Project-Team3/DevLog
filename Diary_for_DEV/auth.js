@@ -95,8 +95,8 @@ function signup() {
     let password = document.getElementById('signup-password').value;
     let confirmPassword = document.getElementById('signup-password-confirm').value;
 
-    if (!email || !password || !confirmPassword) {
-        alert('이메일과 비밀번호를 입력하세요.');
+    if (!username || !email || !password || !confirmPassword) {
+        alert('비어있는 양식이 있습니다.');
         return;
     }
 
@@ -112,7 +112,7 @@ function signup() {
 
     // 데이터베이스에 사용자 추가
     try {
-        addUser(email.split('@')[0], email, password);
+        addUser(username, email, password);
         alert('회원가입 성공! 로그인 해주세요.');
         showLogin();
     } catch (error) {
