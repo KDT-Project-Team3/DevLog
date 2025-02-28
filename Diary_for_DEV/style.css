@@ -79,7 +79,7 @@ body, html {
     padding: 20px 10px;
     display: flex;
     flex-direction: column;
-    transition: width 0.3s ease;
+    transition: width 0.3s ;
     overflow: hidden;
     align-content: center;
 }
@@ -152,6 +152,7 @@ body, html {
 }
 
 .profileLayout {
+    justify-content: center;
     align-items: center;
     width: 100%;
     height: 20%;
@@ -160,14 +161,18 @@ body, html {
     margin: 47px;
     margin-top: 0;
     margin-bottom: 0px;
+    margin-left: 0;
     transition: ease 0.3s;
 }
 
 .profileInner {
+    width: 50%;
+    /*margin: 10%;*/
     transition: ease 0.3s;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    /*align-items: center;*/
+    justify-content: center;
     font-size: 25px;
 }
 
@@ -179,15 +184,15 @@ body, html {
     width: 200px;
     flex-direction: column;
     display: flex;
-    margin-left: 30%
+    margin-left: 10%;
 }
 
 .profileImg {
-    width: 170px;
-    height: 170px;
+    width: 190px;
+    height: 190px;
     border-radius: 50%;
     background: white url('img/ProfileCharacter.jpg') center/cover no-repeat;
-    margin-bottom: 10px;
+    /*margin-bottom: 15px;*/
     cursor: pointer;
     transition: ease 0.3s;
 }
@@ -260,10 +265,11 @@ input[type="text"], select, textarea {
 /* Profile Elements */
 .userInfoLayout {
     color: white;
+    height: 15%;
     font: bold 1em/1.5em "Lucida Grande", Helvetica, Arial, sans-serif;
     text-align: center;
-    margin-top: 20%;
-    margin-bottom: 10px;
+    margin-top: 25%;
+    /*margin-bottom: 10px;*/
     transition: 0.3s;
     display: flex;
     flex-direction: column;
@@ -284,7 +290,6 @@ input[type="text"], select, textarea {
 
 /* Experience Bar */
 .exp {
-    /*margin: 20px 10px;*/
     transition: width 0.5s ease-in-out;
 }
 
@@ -308,7 +313,7 @@ input[type="text"], select, textarea {
 /* Medal Box */
 .medalBox {
     height: 0;
-    width: 100%;
+    width: 110%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -316,6 +321,8 @@ input[type="text"], select, textarea {
     flex-direction: row;
     overflow-x: auto;
     white-space: nowrap;
+    transition: 0.3s ease-out;
+
 }
 
 .medalBox::-webkit-scrollbar {
@@ -331,7 +338,7 @@ input[type="text"], select, textarea {
     border-radius: 50%;
     flex-shrink: 0;
     transition: all 0.3s ease;
-    opacity: 0;
+    opacity: 0.5;
     justify-content: center;
     align-items: center;
     position: relative;

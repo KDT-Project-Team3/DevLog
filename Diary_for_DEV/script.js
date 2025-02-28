@@ -326,24 +326,30 @@ document.addEventListener("DOMContentLoaded", async function () {
         medalBox.classList.remove("profileInvisible");
         medalBox.style.height = "20%";
         userInfoLayout.classList.add("profileInvisible");
-        profileLayout.style.marginTop = "0";
-        profileLayout.style.marginBottom = "0";
-        profileImg.style.width = "140px";
-        profileImg.style.height = "140px";
+        profileLayout.style.marginLeft = "5%";
+        profileLayout.style.justifyContent = "start";
+        profileImg.style.width = "160px";
+        profileImg.style.height = "160px";
         profile.style.left = "70%";
+        profile.style.marginLeft = "10%";
         userInfoLayout.style.marginTop = "0";
+        userInfoLayout.style.height = "10%";
         achievement_p.forEach(p => p.style.opacity = "1");
     });
 
     sidebar.addEventListener("mouseleave", function () {
         profileInner.classList.add("profileInvisible");
-        expBarContainer.classList.add("profileInvisible");
+        profileInner.style.width = "0";
+        profile.style.marginLeft = "0%";
         medalBox.classList.add("profileInvisible");
         medalBox.style.height = "0";
         userInfoLayout.classList.remove("profileInvisible");
-        profileImg.style.width = "170px";
-        profileImg.style.height = "170px";
-        userInfoLayout.style.marginTop = "20%";
+        profileLayout.style.marginLeft = "0";
+        profileLayout.style.justifyContent = "center";
+        profileImg.style.width = "190px";
+        profileImg.style.height = "190px";
+        userInfoLayout.style.marginTop = "25%";
+        userInfoLayout.style.height = "15%";
         achievement_p.forEach(p => p.style.opacity = "0");
     });
 
