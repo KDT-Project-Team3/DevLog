@@ -94,8 +94,8 @@ async function initDatabase() {
                                                             user_id INTEGER NOT NULL,
                                                             ach_id INTEGER NOT NULL,
                                                             FOREIGN KEY (user_id) REFERENCES user(user_id),
-                FOREIGN KEY (ach_id) REFERENCES achievement(ach_id),
-                PRIMARY KEY (user_id, ach_id)
+                                                            FOREIGN KEY (ach_id) REFERENCES achievement(ach_id),
+                                                            PRIMARY KEY (user_id, ach_id)
                 );
         `);
         console.log("✅ 데이터베이스 초기화 완료!");
@@ -432,6 +432,36 @@ document.addEventListener("DOMContentLoaded", async function () {
         currentUser.img = user[6];
         document.querySelector(".id").textContent = currentUser.username;
         updateLevelAndExp();
+
+        // 수정: currentUser 기반으로 업적 데이터 초기화
+        try {
+            const existingAchievements = db.exec("SELECT COUNT(*) as count FROM achievement")[0].values[0][0];
+            if (existingAchievements === 0) {
+                Object.entries(achievementCategoryMap).forEach(([title, { condition, title: flavor }], index) => {
+                    db.run("INSERT OR IGNORE INTO achievement (title, flavor, trigger, img) VALUES (?, ?, ?, ?)",
+                        [title, flavor || "", condition, `achievement_${index + 1}.png`]);
+                });
+                saveAchievementToLocalStorage();
+                console.log("✅ currentUser로 achievement 테이블 초기 데이터 삽입 완료!");
+            }
+        } catch (error) {
+            console.error('업적 데이터 초기화 실패:', error);
+        }
+
+        // 수정: 데이터베이스에서 해금된 업적 기반 칭호 초기화
+        try {
+            const userAchievements = db.exec("SELECT a.title, a.flavor FROM user_achievement ua JOIN achievement a ON ua.ach_id = a.ach_id WHERE ua.user_id = ?", [currentUser.user_id]);
+            if (userAchievements.length > 0) {
+                userAchievements[0].values.forEach(([title, flavor]) => {
+                    if (flavor && !unlockedTitles.includes(flavor)) {
+                        unlockedTitles.push(flavor);
+                    }
+                });
+                localStorage.setItem('unlockedTitles', JSON.stringify(unlockedTitles));
+            }
+        } catch (error) {
+            console.error('업적 기반 칭호 초기화 실패:', error);
+        }
     } else {
         console.warn("⚠️ 로그인된 유저 정보가 없습니다.");
     }
@@ -583,6 +613,16 @@ document.addEventListener("DOMContentLoaded", async function () {
                     }
                 });
             }
+
+            // 수정: 데이터베이스에서 현재 사용자의 업적 상태 가져오기
+            let unlockedAchievements = {};
+            const userAchievements = db.exec("SELECT a.title FROM user_achievement ua JOIN achievement a ON ua.ach_id = a.ach_id WHERE ua.user_id = ?", [currentUser.user_id]);
+            if (userAchievements.length > 0) {
+                userAchievements[0].values.forEach(([title]) => {
+                    unlockedAchievements[title] = true;
+                });
+            }
+
             Object.keys(categoryColors).forEach(category => {
                 const medal = document.getElementById(category.toLowerCase());
                 if (medal) {
@@ -603,6 +643,19 @@ document.addEventListener("DOMContentLoaded", async function () {
                 const completedCount = completedCounts[category] || 0;
                 const isUnlocked = category === "General" ? totalCompleted >= requiredCount : completedCount >= requiredCount;
                 const descriptionP = item.querySelector('.content p');
+
+                // 수정: 업적 해금 시 데이터베이스에 기록
+                if (isUnlocked && !unlockedAchievements[title]) {
+                    const achIdResult = db.exec("SELECT ach_id FROM achievement WHERE title = ?", [title]);
+                    if (achIdResult.length > 0 && achIdResult[0].values.length > 0) {
+                        const achId = achIdResult[0].values[0][0];
+                        db.run("INSERT OR IGNORE INTO user_achievement (user_id, ach_id) VALUES (?, ?)", [currentUser.user_id, achId]);
+                        saveUserAchievementToLocalStorage();
+                        unlockedAchievements[title] = true;
+                        console.log(`✅ 업적 해금: ${title}`);
+                    }
+                }
+
                 if (isUnlocked) {
                     item.classList.add('unlocked');
                     descriptionP.textContent = descriptionP.dataset.originalText || descriptionP.textContent;
