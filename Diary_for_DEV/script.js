@@ -552,19 +552,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
         // 데이터베이스에서 해금된 칭호 초기화
+        // 수정: unlockedTitles 제거, 즉시 initializeTitles 호출로 대체
         try {
-            const userTitles = db.exec(
-                "SELECT t.title FROM user_title ut JOIN title t ON ut.title_id = t.title_id WHERE ut.user_id = ?",
-                [currentUser.user_id]
-            );
-            if (userTitles.length > 0) {
-                userTitles[0].values.forEach(([title]) => {
-                    if (!unlockedTitles.includes(title)) {
-                        unlockedTitles.push(title);
-                    }
-                });
-                localStorage.setItem('unlockedTitles', JSON.stringify(unlockedTitles));
-            }
+            initializeTitles(); // 데이터베이스에서 칭호 초기화
         } catch (error) {
             console.error('칭호 초기화 실패:', error);
         }
@@ -659,6 +649,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                     [currentUser.user_id, title, category, date]);
                 saveDiaryEventToLocalStorage();
                 console.log(`✅ 일정 추가 완료: ${date}, ${title}, ${category}`);
+
+                // 수정: 업적 상태 즉시 확인
+                updateMedals();
             } else {
                 console.log(`이미 존재하는 일정: ${title} (${category})`);
             }
@@ -697,8 +690,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                         saveDiaryEventToLocalStorage();
                     }
                     updateMedals();
+
+                    // 수정: 드롭다운 실시간 갱신
+                    initializeTitles();
+
                     console.log(`✅ 일정 완료: ${events[date][index].title}`);
-                    calendarInstance.render();
+                    calendarInstance.refetchEvents(); // 캘린더 실시간 갱신
                     checkDatabase();
                 }
             }
@@ -836,6 +833,33 @@ document.addEventListener("DOMContentLoaded", async function () {
                     addTitleToDropdown(title);
                 });
             }
+
+            // 저장된 칭호 복원
+            const savedTitle = localStorage.getItem('selectedTitle');
+            if (savedTitle && savedTitle !== '') {
+                selectedTitle.textContent = savedTitle;
+                selectedTitle.className = 'userTitle text-white fw-bold';
+                switch (savedTitle) {
+                    case "☕ Java의 신": selectedTitle.classList.add('title-java'); break;
+                    case "🐍 Python의 신": selectedTitle.classList.add('title-python'); break;
+                    case "📜 HTML의 신": selectedTitle.classList.add('title-html'); break;
+                    case "🎨 CSS의 신": selectedTitle.classList.add('title-css'); break;
+                    case "🧩 JS 코드 마스터": selectedTitle.classList.add('title-js'); break;
+                    case "🗄️ SQL의 신": selectedTitle.classList.add('title-sql'); break;
+                    case "🏡 정원 관리사": selectedTitle.classList.add('title-gardener'); break;
+                    case "🔥 지옥에서 온": selectedTitle.classList.add('title-hell'); break;
+                    case "⏳ 닥터 스트레인지": selectedTitle.classList.add('title-strange'); break;
+                    case "👻 버그 엑소시스트": selectedTitle.classList.add('title-exorcist'); break;
+                    case "🐣 코린이": selectedTitle.classList.add('title-newbie'); break;
+                    case "🚀 프로 갓생러": selectedTitle.classList.add('title-pro'); break;
+                    case "⚡ 파워 J": selectedTitle.classList.add('title-power'); break;
+                    case "📚 자기계발 끝판왕": selectedTitle.classList.add('title-self'); break;
+                    case "🌱 새싹 디버거": selectedTitle.classList.add('title-sprout'); break;
+                    case "🔍 버그 헌터": selectedTitle.classList.add('title-hunter'); break;
+                    case "🛠️ 디버깅 마스터": selectedTitle.classList.add('title-debug'); break;
+                    case "🐆 wild-mental": selectedTitle.classList.add('title-wild-mental'); break;
+                }
+            }
             console.log("✅ 칭호 초기화 완료");
         }
     }
@@ -856,35 +880,105 @@ document.addEventListener("DOMContentLoaded", async function () {
                 }
             }
 
-            const item = document.createElement('div');
-            item.className = 'dropdown-item';
-            item.textContent = title;
-            item.addEventListener('click', () => {
-                selectedTitle.textContent = title;
-                selectedTitle.className = 'userTitle text-white fw-bold';
-                switch (title) {
-                    case "☕ Java의 신": selectedTitle.classList.add('title-java'); break;
-                    case "🐍 Python의 신": selectedTitle.classList.add('title-python'); break;
-                    case "📜 HTML의 신": selectedTitle.classList.add('title-html'); break;
-                    case "🎨 CSS의 신": selectedTitle.classList.add('title-css'); break;
-                    case "🧩 JS 코드 마스터": selectedTitle.classList.add('title-js'); break;
-                    case "🗄️ SQL의 신": selectedTitle.classList.add('title-sql'); break;
-                    case "🏡 정원 관리사": selectedTitle.classList.add('title-gardener'); break;
-                    case "🔥 지옥에서 온": selectedTitle.classList.add('title-hell'); break;
-                    case "⏳ 닥터 스트레인지": selectedTitle.classList.add('title-strange'); break;
-                    case "👻 버그 엑소시스트": selectedTitle.classList.add('title-exorcist'); break;
-                    case "🐣 코린이": selectedTitle.classList.add('title-newbie'); break;
-                    case "🚀 프로 갓생러": selectedTitle.classList.add('title-pro'); break;
-                    case "⚡ 파워 J": selectedTitle.classList.add('title-power'); break;
-                    case "📚 자기계발 끝판왕": selectedTitle.classList.add('title-self'); break;
-                    case "🌱 새싹 디버거": selectedTitle.classList.add('title-sprout'); break;
-                    case "🔍 버그 헌터": selectedTitle.classList.add('title-hunter'); break;
-                    case "🛠️ 디버깅 마스터": selectedTitle.classList.add('title-debug'); break;
-                    case "🐆 wild-mental": selectedTitle.classList.add('title-wild-mental'); break;
-                }
-            });
-            dropdownMenu.appendChild(item);
-            console.log(`칭호 추가됨: ${title}`);
+            // const item = document.createElement('div');
+            // item.className = 'dropdown-item';
+            // item.textContent = title;
+            // item.addEventListener('click', () => {
+            //     selectedTitle.textContent = title;
+            //     selectedTitle.className = 'userTitle text-white fw-bold';
+            //     switch (title) {
+            //         case "☕ Java의 신": selectedTitle.classList.add('title-java'); break;
+            //         case "🐍 Python의 신": selectedTitle.classList.add('title-python'); break;
+            //         case "📜 HTML의 신": selectedTitle.classList.add('title-html'); break;
+            //         case "🎨 CSS의 신": selectedTitle.classList.add('title-css'); break;
+            //         case "🧩 JS 코드 마스터": selectedTitle.classList.add('title-js'); break;
+            //         case "🗄️ SQL의 신": selectedTitle.classList.add('title-sql'); break;
+            //         case "🏡 정원 관리사": selectedTitle.classList.add('title-gardener'); break;
+            //         case "🔥 지옥에서 온": selectedTitle.classList.add('title-hell'); break;
+            //         case "⏳ 닥터 스트레인지": selectedTitle.classList.add('title-strange'); break;
+            //         case "👻 버그 엑소시스트": selectedTitle.classList.add('title-exorcist'); break;
+            //         case "🐣 코린이": selectedTitle.classList.add('title-newbie'); break;
+            //         case "🚀 프로 갓생러": selectedTitle.classList.add('title-pro'); break;
+            //         case "⚡ 파워 J": selectedTitle.classList.add('title-power'); break;
+            //         case "📚 자기계발 끝판왕": selectedTitle.classList.add('title-self'); break;
+            //         case "🌱 새싹 디버거": selectedTitle.classList.add('title-sprout'); break;
+            //         case "🔍 버그 헌터": selectedTitle.classList.add('title-hunter'); break;
+            //         case "🛠️ 디버깅 마스터": selectedTitle.classList.add('title-debug'); break;
+            //         case "🐆 wild-mental": selectedTitle.classList.add('title-wild-mental'); break;
+            //     }
+            // });
+            // 수정: 드롭다운에 중복 없이 추가
+            const existingItems = Array.from(dropdownMenu.querySelectorAll('.dropdown-item')).map(item => item.textContent);
+            if (!existingItems.includes(title)) {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.textContent = title;
+                item.addEventListener('click', () => {
+                    selectedTitle.textContent = title;
+                    selectedTitle.className = 'userTitle text-white fw-bold';
+                    switch (title) {
+                        case "☕ Java의 신":
+                            selectedTitle.classList.add('title-java');
+                            break;
+                        case "🐍 Python의 신":
+                            selectedTitle.classList.add('title-python');
+                            break;
+                        case "📜 HTML의 신":
+                            selectedTitle.classList.add('title-html');
+                            break;
+                        case "🎨 CSS의 신":
+                            selectedTitle.classList.add('title-css');
+                            break;
+                        case "🧩 JS 코드 마스터":
+                            selectedTitle.classList.add('title-js');
+                            break;
+                        case "🗄️ SQL의 신":
+                            selectedTitle.classList.add('title-sql');
+                            break;
+                        case "🏡 정원 관리사":
+                            selectedTitle.classList.add('title-gardener');
+                            break;
+                        case "🔥 지옥에서 온":
+                            selectedTitle.classList.add('title-hell');
+                            break;
+                        case "⏳ 닥터 스트레인지":
+                            selectedTitle.classList.add('title-strange');
+                            break;
+                        case "👻 버그 엑소시스트":
+                            selectedTitle.classList.add('title-exorcist');
+                            break;
+                        case "🐣 코린이":
+                            selectedTitle.classList.add('title-newbie');
+                            break;
+                        case "🚀 프로 갓생러":
+                            selectedTitle.classList.add('title-pro');
+                            break;
+                        case "⚡ 파워 J":
+                            selectedTitle.classList.add('title-power');
+                            break;
+                        case "📚 자기계발 끝판왕":
+                            selectedTitle.classList.add('title-self');
+                            break;
+                        case "🌱 새싹 디버거":
+                            selectedTitle.classList.add('title-sprout');
+                            break;
+                        case "🔍 버그 헌터":
+                            selectedTitle.classList.add('title-hunter');
+                            break;
+                        case "🛠️ 디버깅 마스터":
+                            selectedTitle.classList.add('title-debug');
+                            break;
+                        case "🐆 wild-mental":
+                            selectedTitle.classList.add('title-wild-mental');
+                            break;
+                    }
+                    // 선택된 칭호 저장
+                    localStorage.setItem('selectedTitle', title);
+                    console.log(`✅ 칭호 선택: ${title}`);
+                });
+                dropdownMenu.appendChild(item);
+                console.log(`칭호 추가됨: ${title}`);
+            }
         }
     }
 
@@ -1161,17 +1255,6 @@ function loadEventsFromLocalStorage() {
                 });
             });
         }
-        //     events[date].forEach(event => {
-        //         eventList.push({
-        //             title: `${event.title} (${event.category})`,
-        //             start: date,
-        //             allDay: true,
-        //             backgroundColor: categoryColors[event.category],
-        //             borderColor: categoryColors[event.category],
-        //             extendedProps: { memo: event.memo || '', completed: event.completed || false }
-        //         });
-        //     });
-        // }
         return eventList;
     } catch (error) {
         console.error('이벤트 로드 실패:', error);
