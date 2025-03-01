@@ -79,7 +79,7 @@ body, html {
     padding: 20px 10px;
     display: flex;
     flex-direction: column;
-    transition: width 0.3s ease;
+    transition: width 0.4s ;
     overflow: hidden;
     align-content: center;
 }
@@ -160,12 +160,16 @@ body, html {
     margin: 47px;
     margin-top: 0;
     margin-bottom: 20px;
-    transition: ease 0.3s;
+    transition: ease-out 0.3s;
+    left: 30%;
 }
 
 .sidebar>.profile {
     align-items: start;
     align-content: start;
+    /*width: 140px;*/
+    /*flex-direction: column;*/
+    /*display: flex;*/
 }
 
 .profileInner {
@@ -219,7 +223,7 @@ body, html {
 
 .modal-content {
     background-color: white;
-    margin: 15% auto;
+    margin: 5% auto;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -242,7 +246,7 @@ body, html {
 
 .modal-body {
     padding: 0;
-    height: 500px; /* iframe 높이와 일치 */
+    height: 550px; /* iframe 높이와 일치 */
 }
 
 .modal-backdrop {
@@ -271,12 +275,12 @@ input[type="text"], select, textarea {
 /* Profile Elements */
 .userInfoLayout {
     color: white;
-    font: bold 1em/1.5em "Lucida Grande", Helvetica, Arial, sans-serif;
+    font: bold 1.5em/1.5em "Lucida Grande", Helvetica, Arial, sans-serif;
     text-align: center;
     margin-top: 20%;
     margin-bottom: 10px;
     transition: 0.3s;
-    display: flex;
+    /*display: flex;*/
     /*flex-direction: column;*/
     align-items: center;
     justify-content: center;
@@ -286,7 +290,8 @@ input[type="text"], select, textarea {
 .info-table {
     display: flex;
     width: 100%;
-    max-width: 300px; /* 원하는 너비로 조정 가능 */
+    margin-left: 1em;
+    max-width: 250px; /* 원하는 너비로 조정 가능 */
     justify-content: center;
     gap: 10px;
 }
@@ -407,7 +412,7 @@ input[type="text"], select, textarea {
 }
 
 .exp-bar {
-    width: 0%;
+    width: 20%;
     height: 100%;
     background: linear-gradient(to right, #e4b61b, #8bc34a);
     text-align: center;
@@ -415,7 +420,7 @@ input[type="text"], select, textarea {
     transition: width 0.5s ease-in-out;
 }
 
-/* Medal Box */
+/* 앰블럼 */
 .medalBox {
     height: 0;
     width: 100%;
@@ -426,7 +431,14 @@ input[type="text"], select, textarea {
     flex-direction: row;
     overflow-x: auto;
     white-space: nowrap;
-    transition: ease 0.3s;
+    transition: ease 0.2s;
+    /* 앰블럼 양쪽 투명화 그라데이션 */
+    mask-image: linear-gradient(
+            to right,
+            rgba(0,0,0,0) 0%,
+            rgba(0,0,0,1) 10%,
+            rgba(0,0,0,1) 80%,
+            rgba(0,0,0,0) 100%);
 }
 
 .medalBox::-webkit-scrollbar {
@@ -441,8 +453,8 @@ input[type="text"], select, textarea {
     margin-left: 10px;
     border-radius: 50%;
     flex-shrink: 0;
-    transition: all 0.3s ease;
-    opacity: 0.3;
+    transition: 0.2s ease;
+    opacity: 0.2;
     justify-content: center;
     align-items: center;
     position: relative;
@@ -456,6 +468,8 @@ input[type="text"], select, textarea {
     transform: scale(1.2);
     margin-left: 20px;
     margin-right: 10px;
+/*  후광 비치는 효과 추가 */
+    box-shadow: 0 0 7px 4px rgb(255, 255, 255);
 }
 
 .medal:not(.unlocked):hover {
@@ -595,7 +609,7 @@ input[type="text"], select, textarea {
     opacity: 1;
     background-color: white;
     border-color: #5723ff;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .achievement div.unlocked:hover {
