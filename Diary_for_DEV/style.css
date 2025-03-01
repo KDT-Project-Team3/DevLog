@@ -275,10 +275,10 @@ input[type="text"], select, textarea {
 /* Profile Elements */
 .userInfoLayout {
     color: white;
-    font: bold 1.5em/1.5em "Lucida Grande", Helvetica, Arial, sans-serif;
+    font: bold 1.2em/1.5em "Lucida Grande", Helvetica, Arial, sans-serif;
     text-align: center;
     margin-top: 20%;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     transition: 0.3s;
     /*display: flex;*/
     /*flex-direction: column;*/
