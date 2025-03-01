@@ -63,6 +63,7 @@ const profileInner = document.querySelector(".profileInner");
 const profileImg = document.querySelector(".profileImg");
 const expBarContainer = document.querySelector(".exp-bar-container");
 const expBar = document.querySelector(".exp-bar");
+const exp = document.querySelector(".exp");
 const medalBox = document.querySelector(".medalBox");
 const userInfoLayout = document.querySelector(".userInfoLayout");
 const profile = document.querySelector(".profile");
@@ -459,7 +460,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     await initDatabase();
 
     profileInner.classList.add("profileInvisible");
-    expBarContainer.classList.add("profileInvisible");
+    exp.classList.add("profileInvisible"); //경험치 바 초기상태 수정 (expBar -> exp)
     medalBox.classList.add("profileInvisible");
     userInfoLayout.classList.remove("profileInvisible");
 
@@ -473,7 +474,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     // 사이드바 Hover(펼쳐진 상황)이벤트시 레이아웃,디자인 변화
     sidebar.addEventListener("mouseenter", function () {
         profileInner.classList.remove("profileInvisible");
-        expBarContainer.classList.remove("profileInvisible");
+        exp.classList.remove("profileInvisible");
+        // expBarContainer.classList.remove("profileInvisible");
         medalBox.classList.remove("profileInvisible");
         medalBox.style.height = "20%";
         userInfoLayout.classList.add("profileInvisible");
@@ -489,7 +491,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     // 사이드바 Hover(접혀진 상황)이벤트 종료시 레이아웃,디자인 변화
     sidebar.addEventListener("mouseleave", function () {
         profileInner.classList.add("profileInvisible");
-        expBarContainer.classList.add("profileInvisible");
+        exp.classList.add("profileInvisible");
+        // expBarContainer.classList.add("profileInvisible");
         medalBox.classList.add("profileInvisible");
         medalBox.style.height = "0px";
         userInfoLayout.classList.remove("profileInvisible");
