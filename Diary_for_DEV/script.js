@@ -267,8 +267,14 @@ function saveUserTitleToLocalStorage() {
 
 function updateLevelAndExp() {
     try {
+        // profileLayout 레벨 업데이트
         const requiredXp = currentUser.lv + 1;
         if (levelDisplay) levelDisplay.textContent = `LV: ${currentUser.lv}`;
+
+        // userInfoLayout 레벨 업데이트
+        const lvClosed = document.querySelector(".LV_closed h1");
+        if (lvClosed) lvClosed.textContent = `LV: ${currentUser.lv}`;
+
         if (expBar) {
             expBar.textContent = `${currentUser.xp}/${requiredXp}`;
             const expPercentage = (currentUser.xp / requiredXp) * 100;
@@ -515,6 +521,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         currentUser.xp = user[5];
         currentUser.img = user[6];
         document.querySelector(".id").textContent = currentUser.username;
+        document.querySelector(".id_closed").textContent = currentUser.username; // 추가
         updateLevelAndExp();
 
         // 업적 및 칭호 데이터 초기화
@@ -905,6 +912,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             defaultItem.addEventListener('click', () => {
                 selectedTitle.textContent = ' ';
                 selectedTitle.className = 'userTitle text-white fw-bold';
+                document.querySelector(".userTitle_closed").textContent = ' '; // 추가
             });
             dropdownMenu.appendChild(defaultItem);
 
@@ -1000,6 +1008,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 item.textContent = title;
                 item.addEventListener('click', () => {
                     selectedTitle.textContent = title;
+                    document.querySelector(".userTitle_closed").textContent = title; // 추가
                     selectedTitle.className = 'userTitle text-white fw-bold';
                     switch (title) {
                         case "☕ Java의 신":
