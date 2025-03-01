@@ -929,28 +929,86 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             // 저장된 칭호 복원
             const savedTitle = localStorage.getItem('selectedTitle');
+            const userTitleClosed = document.querySelector(".userTitle_closed");
             if (savedTitle && savedTitle !== '') {
                 selectedTitle.textContent = savedTitle;
+                if (userTitleClosed) userTitleClosed.textContent = savedTitle;
                 selectedTitle.className = 'userTitle text-white fw-bold';
+                if (userTitleClosed) userTitleClosed.className = 'userTitle_closed'; // 기본 클래스 초기화
                 switch (savedTitle) {
-                    case "☕ Java의 신": selectedTitle.classList.add('title-java'); break;
-                    case "🐍 Python의 신": selectedTitle.classList.add('title-python'); break;
-                    case "📜 HTML의 신": selectedTitle.classList.add('title-html'); break;
-                    case "🎨 CSS의 신": selectedTitle.classList.add('title-css'); break;
-                    case "🧩 JS 코드 마스터": selectedTitle.classList.add('title-js'); break;
-                    case "🗄️ SQL의 신": selectedTitle.classList.add('title-sql'); break;
-                    case "🏡 정원 관리사": selectedTitle.classList.add('title-gardener'); break;
-                    case "🔥 지옥에서 온": selectedTitle.classList.add('title-hell'); break;
-                    case "⏳ 닥터 스트레인지": selectedTitle.classList.add('title-strange'); break;
-                    case "👻 버그 엑소시스트": selectedTitle.classList.add('title-exorcist'); break;
-                    case "🐣 코린이": selectedTitle.classList.add('title-newbie'); break;
-                    case "🚀 프로 갓생러": selectedTitle.classList.add('title-pro'); break;
-                    case "⚡ 파워 J": selectedTitle.classList.add('title-power'); break;
-                    case "📚 자기계발 끝판왕": selectedTitle.classList.add('title-self'); break;
-                    case "🌱 새싹 디버거": selectedTitle.classList.add('title-sprout'); break;
-                    case "🔍 버그 헌터": selectedTitle.classList.add('title-hunter'); break;
-                    case "🛠️ 디버깅 마스터": selectedTitle.classList.add('title-debug'); break;
-                    case "🐆 wild-mental": selectedTitle.classList.add('title-wild-mental'); break;
+                    case "☕ Java의 신":
+                        selectedTitle.classList.add('title-java');
+                        userTitleClosed.classList.add('title-java');
+                        break;
+                    case "🐍 Python의 신":
+                        selectedTitle.classList.add('title-python');
+                        userTitleClosed.classList.add('title-python');
+                        break;
+                    // 나머지 case들도 동일하게 .userTitle_closed에 추가
+                    case "📜 HTML의 신":
+                        selectedTitle.classList.add('title-html');
+                        userTitleClosed.classList.add('title-html');
+                        break;
+                    case "🎨 CSS의 신":
+                        selectedTitle.classList.add('title-css');
+                        userTitleClosed.classList.add('title-css');
+                        break;
+                    case "🧩 JS 코드 마스터":
+                        selectedTitle.classList.add('title-js');
+                        userTitleClosed.classList.add('title-js');
+                        break;
+                    case "🗄️ SQL의 신":
+                        selectedTitle.classList.add('title-sql');
+                        userTitleClosed.classList.add('title-sql');
+                        break;
+                    case "🏡 정원 관리사":
+                        selectedTitle.classList.add('title-gardener');
+                        userTitleClosed.classList.add('title-gardener');
+                        break;
+                    case "🔥 지옥에서 온":
+                        selectedTitle.classList.add('title-hell');
+                        userTitleClosed.classList.add('title-hell');
+                        break;
+                    case "⏳ 닥터 스트레인지":
+                        selectedTitle.classList.add('title-strange');
+                        userTitleClosed.classList.add('title-strange');
+                        break;
+                    case "👻 버그 엑소시스트":
+                        selectedTitle.classList.add('title-exorcist');
+                        userTitleClosed.classList.add('title-exorcist');
+                        break;
+                    case "🐣 코린이":
+                        selectedTitle.classList.add('title-newbie');
+                        userTitleClosed.classList.add('title-newbie');
+                        break;
+                    case "🚀 프로 갓생러":
+                        selectedTitle.classList.add('title-pro');
+                        userTitleClosed.classList.add('title-pro');
+                        break;
+                    case "⚡ 파워 J":
+                        selectedTitle.classList.add('title-power');
+                        userTitleClosed.classList.add('title-power');
+                        break;
+                    case "📚 자기계발 끝판왕":
+                        selectedTitle.classList.add('title-self');
+                        userTitleClosed.classList.add('title-self');
+                        break;
+                    case "🌱 새싹 디버거":
+                        selectedTitle.classList.add('title-sprout');
+                        userTitleClosed.classList.add('title-sprout');
+                        break;
+                    case "🔍 버그 헌터":
+                        selectedTitle.classList.add('title-hunter');
+                        userTitleClosed.classList.add('title-hunter');
+                        break;
+                    case "🛠️ 디버깅 마스터":
+                        selectedTitle.classList.add('title-debug');
+                        userTitleClosed.classList.add('title-debug');
+                        break;
+                    case "🐆 wild-mental":
+                        selectedTitle.classList.add('title-wild-mental');
+                        userTitleClosed.classList.add('title-wild-mental');
+                        break;
                 }
             }
             console.log("✅ 칭호 초기화 완료");
@@ -1007,63 +1065,84 @@ document.addEventListener("DOMContentLoaded", async function () {
                 item.className = 'dropdown-item';
                 item.textContent = title;
                 item.addEventListener('click', () => {
+                    const userTitleClosed = document.querySelector(".userTitle_closed"); // 닫힌 상태 칭호 요소
                     selectedTitle.textContent = title;
+                    userTitleClosed.textContent = title;
                     document.querySelector(".userTitle_closed").textContent = title; // 추가
                     selectedTitle.className = 'userTitle text-white fw-bold';
+                    userTitleClosed.className = 'userTitle_closed'; // 기본 클래스 초기화
                     switch (title) {
                         case "☕ Java의 신":
                             selectedTitle.classList.add('title-java');
+                            userTitleClosed.classList.add('title-java'); // 추가
                             break;
                         case "🐍 Python의 신":
                             selectedTitle.classList.add('title-python');
+                            userTitleClosed.classList.add('title-python'); // 추가
                             break;
                         case "📜 HTML의 신":
                             selectedTitle.classList.add('title-html');
+                            userTitleClosed.classList.add('title-html'); // 추가
                             break;
                         case "🎨 CSS의 신":
                             selectedTitle.classList.add('title-css');
+                            userTitleClosed.classList.add('title-css'); // 추가
                             break;
                         case "🧩 JS 코드 마스터":
                             selectedTitle.classList.add('title-js');
+                            userTitleClosed.classList.add('title-js'); // 추가
                             break;
                         case "🗄️ SQL의 신":
                             selectedTitle.classList.add('title-sql');
+                            userTitleClosed.classList.add('title-sql'); // 추가
                             break;
                         case "🏡 정원 관리사":
                             selectedTitle.classList.add('title-gardener');
+                            userTitleClosed.classList.add('title-gardener'); // 추가
                             break;
                         case "🔥 지옥에서 온":
                             selectedTitle.classList.add('title-hell');
+                            userTitleClosed.classList.add('title-hell'); // 추가
                             break;
                         case "⏳ 닥터 스트레인지":
                             selectedTitle.classList.add('title-strange');
+                            userTitleClosed.classList.add('title-strange'); // 추가
                             break;
                         case "👻 버그 엑소시스트":
                             selectedTitle.classList.add('title-exorcist');
+                            userTitleClosed.classList.add('title-exorcist'); // 추가
                             break;
                         case "🐣 코린이":
                             selectedTitle.classList.add('title-newbie');
+                            userTitleClosed.classList.add('title-newbie'); // 추가
                             break;
                         case "🚀 프로 갓생러":
                             selectedTitle.classList.add('title-pro');
+                            userTitleClosed.classList.add('title-pro'); // 추가
                             break;
                         case "⚡ 파워 J":
                             selectedTitle.classList.add('title-power');
+                            userTitleClosed.classList.add('title-power'); // 추가
                             break;
                         case "📚 자기계발 끝판왕":
                             selectedTitle.classList.add('title-self');
+                            userTitleClosed.classList.add('title-self'); // 추가
                             break;
                         case "🌱 새싹 디버거":
                             selectedTitle.classList.add('title-sprout');
+                            userTitleClosed.classList.add('title-sprout'); // 추가
                             break;
                         case "🔍 버그 헌터":
                             selectedTitle.classList.add('title-hunter');
+                            userTitleClosed.classList.add('title-hunter'); // 추가
                             break;
                         case "🛠️ 디버깅 마스터":
                             selectedTitle.classList.add('title-debug');
+                            userTitleClosed.classList.add('title-debug'); // 추가
                             break;
                         case "🐆 wild-mental":
                             selectedTitle.classList.add('title-wild-mental');
+                            userTitleClosed.classList.add('title-wild-mental'); // 추가
                             break;
                     }
                     // 선택된 칭호 저장
