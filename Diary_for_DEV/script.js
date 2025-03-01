@@ -156,40 +156,40 @@ async function initDatabase() {
                 );
         `);
         db.run(`
-        CREATE TABLE IF NOT EXISTS emblem ( -- 엠블럼 테이블
-            emblem_id INTEGER PRIMARY KEY AUTOINCREMENT,-- 엠블럼 ID
-            title     TEXT NOT NULL,                    -- 엠블럼명
-            trigger   TEXT NOT NULL,                    -- 엠블럼 획득 조건
-            img       TEXT NOT NULL                     -- 엠블럼 이미지
-        );
-    `);
+            CREATE TABLE IF NOT EXISTS emblem ( -- 엠블럼 테이블
+                                                  emblem_id INTEGER PRIMARY KEY AUTOINCREMENT,-- 엠블럼 ID
+                                                  title     TEXT NOT NULL,                    -- 엠블럼명
+                                                  trigger   TEXT NOT NULL,                    -- 엠블럼 획득 조건
+                                                  img       TEXT NOT NULL                     -- 엠블럼 이미지
+            );
+        `);
         db.run(`
-        CREATE TABLE IF NOT EXISTS user_emblem ( -- 사용자가 보유한 엠블럼 테이블
-            user_id   INTEGER NOT NULL, -- 사용자 ID
-            emblem_id INTEGER NOT NULL, -- 엠블럼 ID
-        
-            FOREIGN KEY (user_id) REFERENCES user(user_id),
-            FOREIGN KEY (emblem_id) REFERENCES emblem(emblem_id),
-            PRIMARY KEY (user_id, emblem_id)
-        );
-    `);
+            CREATE TABLE IF NOT EXISTS user_emblem ( -- 사용자가 보유한 엠블럼 테이블
+                                                       user_id   INTEGER NOT NULL, -- 사용자 ID
+                                                       emblem_id INTEGER NOT NULL, -- 엠블럼 ID
+
+                                                       FOREIGN KEY (user_id) REFERENCES user(user_id),
+                FOREIGN KEY (emblem_id) REFERENCES emblem(emblem_id),
+                PRIMARY KEY (user_id, emblem_id)
+                );
+        `);
         db.run(`
-        CREATE TABLE IF NOT EXISTS title ( -- 칭호 테이블
-            title_id INTEGER PRIMARY KEY AUTOINCREMENT,-- 칭호 ID
-            title    TEXT NOT NULL,                    -- 칭호명
-            trigger  TEXT NOT NULL                     -- 칭호 획득 조건
-        );
-    `);
+            CREATE TABLE IF NOT EXISTS title ( -- 칭호 테이블
+                                                 title_id INTEGER PRIMARY KEY AUTOINCREMENT,-- 칭호 ID
+                                                 title    TEXT NOT NULL,                    -- 칭호명
+                                                 trigger  TEXT NOT NULL                     -- 칭호 획득 조건
+            );
+        `);
         db.run(`
-        CREATE TABLE IF NOT EXISTS user_title ( -- 사용자가 보유한 칭호 테이블
-            user_id  INTEGER NOT NULL, -- 사용자 ID
-            title_id INTEGER NOT NULL, -- 칭호 ID
-            
-            FOREIGN KEY (user_id) REFERENCES user(user_id),
-            FOREIGN KEY (title_id) REFERENCES title(title_id),
-            PRIMARY KEY (user_id, title_id)
-        );
-    `);
+            CREATE TABLE IF NOT EXISTS user_title ( -- 사용자가 보유한 칭호 테이블
+                                                      user_id  INTEGER NOT NULL, -- 사용자 ID
+                                                      title_id INTEGER NOT NULL, -- 칭호 ID
+
+                                                      FOREIGN KEY (user_id) REFERENCES user(user_id),
+                FOREIGN KEY (title_id) REFERENCES title(title_id),
+                PRIMARY KEY (user_id, title_id)
+                );
+        `);
         console.log("✅ 데이터베이스 초기화 완료!");
         loadDatabaseFromLocalStorage();
     } catch (error) {
@@ -210,7 +210,8 @@ function loadDatabaseFromLocalStorage() {
         const diaryEventData = JSON.parse(localStorage.getItem('diary_event'));
         if (diaryEventData && diaryEventData.length > 0) {
             diaryEventData[0].values.forEach(event => {
-                db.run("INSERT OR IGNORE INTO diary_event (event_id, user_id, title, com_lang, memo, date, completed) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                // 'com_lang' -> 'category'
+                db.run("INSERT OR IGNORE INTO diary_event (event_id, user_id, title, category, memo, date, completed) VALUES (?, ?, ?, ?, ?, ?, ?)",
                     [event[0], event[1], event[2], event[3], event[4], event[5], event[6]]);
             });
             console.log("✅ diary_event 테이블 데이터 로드 완료!");
@@ -230,6 +231,24 @@ function loadDatabaseFromLocalStorage() {
                     [userAchievement[0], userAchievement[1]]);
             });
             console.log("✅ user_achievement 테이블 데이터 로드 완료!");
+        }
+        // title 테이블 로드 추가
+        const titleData = JSON.parse(localStorage.getItem('title'));
+        if (titleData && titleData.length > 0) {
+            titleData[0].values.forEach(title => {
+                db.run("INSERT OR IGNORE INTO title (title_id, title, trigger) VALUES (?, ?, ?)",
+                    [title[0], title[1], title[2]]);
+            });
+            console.log("✅ title 테이블 데이터 로드 완료!");
+        }
+        // user_title 테이블 로드 추가
+        const userTitleData = JSON.parse(localStorage.getItem('user_title'));
+        if (userTitleData && userTitleData.length > 0) {
+            userTitleData[0].values.forEach(userTitle => {
+                db.run("INSERT OR IGNORE INTO user_title (user_id, title_id) VALUES (?, ?)",
+                    [userTitle[0], userTitle[1]]);
+            });
+            console.log("✅ user_title 테이블 데이터 로드 완료!");
         }
     } catch (error) {
         console.error('데이터 로드 실패:', error);
@@ -277,10 +296,38 @@ function saveUserAchievementToLocalStorage() {
     }
 }
 
+// title 저장 함수 추가
+function saveTitleToLocalStorage() {
+    try {
+        const title = db.exec("SELECT * FROM title");
+        localStorage.setItem('title', JSON.stringify(title));
+        console.log("✅ title 테이블 데이터 저장 완료!");
+    } catch (error) {
+        console.error('title 저장 실패:', error);
+    }
+}
+
+// user_title 저장 함수 추가
+function saveUserTitleToLocalStorage() {
+    try {
+        const user_title = db.exec("SELECT * FROM user_title");
+        localStorage.setItem('user_title', JSON.stringify(user_title));
+        console.log("✅ user_title 테이블 데이터 저장 완료!");
+    } catch (error) {
+        console.error('user_title 저장 실패:', error);
+    }
+}
+
 function updateLevelAndExp() {
     try {
+        // profileLayout 레벨 업데이트
         const requiredXp = currentUser.lv + 1;
         if (levelDisplay) levelDisplay.textContent = `LV: ${currentUser.lv}`;
+
+        // userInfoLayout 레벨 업데이트
+        const lvClosed = document.querySelector(".LV_closed h1");
+        if (lvClosed) lvClosed.textContent = `LV: ${currentUser.lv}`;
+
         if (expBar) {
             expBar.textContent = `${currentUser.xp}/${requiredXp}`;
             const expPercentage = (currentUser.xp / requiredXp) * 100;
@@ -378,6 +425,8 @@ window.displayUserAchievements = function() {
     }
 };
 
+// todo: displayTitle
+
 const categoryColors = {
     Python: '#3776AB', Java: '#007396', C: '#A8B9CC', Cpp: '#00599C', Csharp: '#68217A',
     JavaScript: '#F7DF1E', HTML: '#E34F26', R: '#276DC3', Kotlin: '#F18E33', SQL: '#4479A1',
@@ -435,14 +484,14 @@ const achievementCategoryMap = {
     "Kotlin의 신": { category: "Kotlin", requiredCount: 3, title: "🤖 Kotlin의 신", condition: "Kotlin 일정 3개 완료" },
 
     // General (기존)
-    "정원 관리사": { category: "General", requiredCount: 1, title: "🏡 정원 관리사", condition: "어떤 일정 1개 완료" },
-    "지옥에서 온": { category: "General", requiredCount: 2, title: "🔥 지옥에서 온", condition: "어떤 일정 2개 완료" },
-    "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이", condition: "어떤 일정 1개 완료" },
-    "프로갓생러": { category: "General", requiredCount: 2, title: "🚀 프로 갓생러", condition: "어떤 일정 2개 완료" },
-    "파워J": { category: "General", requiredCount: 3, title: "⚡ 파워 J", condition: "어떤 일정 3개 완료" },
-    "자기계발왕": { category: "General", requiredCount: 4, title: "📚 자기계발 끝판왕", condition: "어떤 일정 4개 완료" },
+    "정원 관리사": { category: "General", requiredCount: 3, title: "🏡 정원 관리사", condition: "커밋 3개 완료" },
+    "지옥에서 온": { category: "General", requiredCount: 5, title: "🔥 지옥에서 온", condition: "커밋 5개 완료" },
+    "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이", condition: "일정 1개 완료" },
+    "프로갓생러": { category: "General", requiredCount: 3, title: "🚀 프로 갓생러", condition: "일정 3개 완료" },
+    "파워J": { category: "General", requiredCount: 4, title: "⚡ 파워 J", condition: "일정 4개 완료" },
+    "자기계발왕": { category: "General", requiredCount: 5, title: "📚 자기계발 끝판왕", condition: "일정 5개 완료" },
 
-    "닥터 스트레인지": { category: "General", requiredCount: 5, title: "⏳ 닥터 스트레인지", condition: "어떤 일정 5개 완료" },
+    "닥터 스트레인지": { category: "General", requiredCount: 6, title: "⏳ 닥터 스트레인지", condition: "일정 6개 완료" },
 
     // 버그 헌터 관련 업적
     // "새싹 디버거": { category: "Debug", requiredCount: 1, title: "🌱 새싹 디버거" },
@@ -529,36 +578,49 @@ document.addEventListener("DOMContentLoaded", async function () {
         currentUser.xp = user[5];
         currentUser.img = user[6];
         document.querySelector(".id").textContent = currentUser.username;
+        document.querySelector(".id_closed").textContent = currentUser.username; // 추가
         updateLevelAndExp();
 
-        // 수정: currentUser 기반으로 업적 데이터 초기화
+        // 업적 및 칭호 데이터 초기화
         try {
             const existingAchievements = db.exec("SELECT COUNT(*) as count FROM achievement")[0].values[0][0];
             if (existingAchievements === 0) {
-                Object.entries(achievementCategoryMap).forEach(([title, { condition, title: flavor }], index) => {
+                Object.entries(achievementCategoryMap).forEach(([achTitle, { condition, title: titlesStr }], index) => {
+                    // 업적 삽입
                     db.run("INSERT OR IGNORE INTO achievement (title, flavor, trigger, img) VALUES (?, ?, ?, ?)",
-                        [title, flavor || "", condition, `achievement_${index + 1}.png`]);
-                });
-                saveAchievementToLocalStorage();
-                console.log("✅ currentUser로 achievement 테이블 초기 데이터 삽입 완료!");
-            }
-        } catch (error) {
-            console.error('업적 데이터 초기화 실패:', error);
-        }
-
-        // 수정: 데이터베이스에서 해금된 업적 기반 칭호 초기화
-        try {
-            const userAchievements = db.exec("SELECT a.title, a.flavor FROM user_achievement ua JOIN achievement a ON ua.ach_id = a.ach_id WHERE ua.user_id = ?", [currentUser.user_id]);
-            if (userAchievements.length > 0) {
-                userAchievements[0].values.forEach(([title, flavor]) => {
-                    if (flavor && !unlockedTitles.includes(flavor)) {
-                        unlockedTitles.push(flavor);
+                        [achTitle, titlesStr || "", condition, `achievement_${index + 1}.png`]);
+                    const achIdResult = db.exec("SELECT ach_id FROM achievement WHERE title = ?", [achTitle]);
+                    if (achIdResult.length > 0 && achIdResult[0].values.length > 0) {
+                        const achId = achIdResult[0].values[0][0];
+                        if (titlesStr) {
+                            const titles = titlesStr.split(',').map(t => t.trim());
+                            titles.forEach(title => {
+                                // 칭호 삽입
+                                db.run("INSERT OR IGNORE INTO title (title, trigger) VALUES (?, ?)",
+                                    [title, condition]);
+                                const titleIdResult = db.exec("SELECT title_id FROM title WHERE title = ?", [title]);
+                                if (titleIdResult.length > 0 && titleIdResult[0].values.length > 0) {
+                                    const titleId = titleIdResult[0].values[0][0];
+                                    // 업적과 칭호 연결 (achievement_title 테이블이 없으므로 생략, 필요 시 추가)
+                                }
+                            });
+                        }
                     }
                 });
-                localStorage.setItem('unlockedTitles', JSON.stringify(unlockedTitles));
+                saveAchievementToLocalStorage();
+                saveTitleToLocalStorage();
+                console.log("✅ achievement 및 title 초기 데이터 삽입 완료!");
             }
         } catch (error) {
-            console.error('업적 기반 칭호 초기화 실패:', error);
+            console.error('업적 및 칭호 데이터 초기화 실패:', error);
+        }
+
+        // 데이터베이스에서 해금된 칭호 초기화
+        // 수정: unlockedTitles 제거, 즉시 initializeTitles 호출로 대체
+        try {
+            initializeTitles(); // 데이터베이스에서 칭호 초기화
+        } catch (error) {
+            console.error('칭호 초기화 실패:', error);
         }
     } else {
         console.warn("⚠️ 로그인된 유저 정보가 없습니다.");
@@ -646,10 +708,14 @@ document.addEventListener("DOMContentLoaded", async function () {
                     alert("일정을 추가하려면 로그인이 필요합니다.");
                     return;
                 }
-                db.run("INSERT INTO diary_event (user_id, title, com_lang, date) VALUES (?, ?, ?, ?)",
+                // com_lang -> category
+                db.run("INSERT INTO diary_event (user_id, title, category, date) VALUES (?, ?, ?, ?)",
                     [currentUser.user_id, title, category, date]);
                 saveDiaryEventToLocalStorage();
                 console.log(`✅ 일정 추가 완료: ${date}, ${title}, ${category}`);
+
+                // 수정: 업적 상태 즉시 확인
+                updateMedals();
             } else {
                 console.log(`이미 존재하는 일정: ${title} (${category})`);
             }
@@ -663,10 +729,12 @@ document.addEventListener("DOMContentLoaded", async function () {
             const events = JSON.parse(localStorage.getItem('events') || '{}');
             if (events[date] && events[date][index]) {
                 const wasCompleted = events[date][index].completed;
-                if (!wasCompleted) {
+                if (wasCompleted) {
                     events[date][index].completed = true;
                     localStorage.setItem('events', JSON.stringify(events));
-                    currentUser.xpUp(1);
+                    currentUser.xpUp(1); // 경험치 증가
+
+                    // 캘린더 이벤트 업데이트
                     const calendarEvents = calendarInstance.getEvents();
                     const targetEvent = calendarEvents.find(event =>
                         event.startStr === date && event.title === `${events[date][index].title} (${events[date][index].category})`
@@ -679,24 +747,112 @@ document.addEventListener("DOMContentLoaded", async function () {
                             console.log(`✅ 라인스루 적용: ${events[date][index].title}`);
                         }
                     }
-                    const eventIdResult = db.exec("SELECT event_id FROM diary_event WHERE user_id=? AND date=? AND title=? AND com_lang=?",
+
+                    // 데이터베이스 업데이트
+                    const eventIdResult = db.exec("SELECT event_id FROM diary_event WHERE user_id=? AND date=? AND title=? AND category=?",
                         [currentUser.user_id, date, events[date][index].title, events[date][index].category]);
                     if (eventIdResult.length > 0 && eventIdResult[0].values.length > 0) {
                         const eventId = eventIdResult[0].values[0][0];
                         db.run("UPDATE diary_event SET completed=TRUE WHERE event_id=?", [eventId]);
                         saveDiaryEventToLocalStorage();
                     }
-                    updateMedals();
+
                     console.log(`✅ 일정 완료: ${events[date][index].title}`);
-                    calendarInstance.render();
-                    checkDatabase();
+                    calendarInstance.refetchEvents(); // 캘린더 실시간 갱신
+                    // checkDatabase();
+                    updateMedals(); // 업적 상태 업데이트 (팝업에서 메시지 처리하므로 여기서는 UI만 갱신)
+                    initializeTitles(); // 칭호 드롭다운 갱신
+                    location.reload(); // 부모 창 새로고침
+                } else {
+                    console.log("ℹ️ 이미 완료된 일정입니다.");
                 }
+            } else {
+                console.error("❌ 해당 일정을 찾을 수 없습니다.");
             }
         } catch (error) {
             console.error('일정 완료 처리 실패:', error);
             calendarInstance.render();
         }
     };
+    // window.completeEvent = function(date, index) {
+    //     try {
+    //         const events = JSON.parse(localStorage.getItem('events') || '{}');
+    //         if (events[date] && events[date][index]) {
+    //             const wasCompleted = events[date][index].completed;
+    //             // !wasComplete -> wasComplete
+    //             if (wasCompleted) {
+    //                 if (confirm("일정을 완료하시겠습니까?")) { // 사용자 확인
+    //                     events[date][index].completed = true;
+    //                     localStorage.setItem('events', JSON.stringify(events));
+    //                     currentUser.xpUp(1);
+    //
+    //                     // 캘린더 이벤트 업데이트
+    //                     const calendarEvents = calendarInstance.getEvents();
+    //                     const targetEvent = calendarEvents.find(event =>
+    //                         event.startStr === date && event.title === `${events[date][index].title} (${events[date][index].category})`
+    //                     );
+    //                     if (targetEvent) {
+    //                         targetEvent.setExtendedProp('completed', true);
+    //                         const titleElement = targetEvent.el ? targetEvent.el.querySelector('.fc-event-title') : null;
+    //                         if (titleElement) {
+    //                             titleElement.style.textDecoration = 'line-through';
+    //                             console.log(`✅ 라인스루 적용: ${events[date][index].title}`);
+    //                         }
+    //                     }
+    //
+    //                     // 데이터베이스 업데이트
+    //                     const eventIdResult = db.exec("SELECT event_id FROM diary_event WHERE user_id=? AND date=? AND title=? AND category=?",
+    //                         [currentUser.user_id, date, events[date][index].title, events[date][index].category]);
+    //                     if (eventIdResult.length > 0 && eventIdResult[0].values.length > 0) {
+    //                         const eventId = eventIdResult[0].values[0][0];
+    //                         db.run("UPDATE diary_event SET completed=TRUE WHERE event_id=?", [eventId]);
+    //                         saveDiaryEventToLocalStorage();
+    //                     }
+    //
+    //                     // 업적 및 칭호 확인
+    //                     const previousTitles = db.exec("SELECT t.title FROM user_title ut JOIN title t ON ut.title_id = t.title_id WHERE ut.user_id = ?", [currentUser.user_id]);
+    //                     const previousTitleCount = previousTitles.length > 0 ? previousTitles[0].values.length : 0;
+    //
+    //                     updateMedals(); // 업적 업데이트
+    //                     initializeTitles(); // 칭호 드롭다운 갱신
+    //
+    //                     const newTitles = db.exec("SELECT t.title FROM user_title ut JOIN title t ON ut.title_id = t.title_id WHERE ut.user_id = ?", [currentUser.user_id]);
+    //                     const newTitleCount = newTitles.length > 0 ? newTitles[0].values.length : 0;
+    //
+    //                     // 업적 해금 여부 확인
+    //                     const unlockedAchievements = db.exec("SELECT a.title FROM user_achievement ua JOIN achievement a ON ua.ach_id = a.ach_id WHERE ua.user_id = ?", [currentUser.user_id]);
+    //                     const hasNewAchievement = unlockedAchievements.length > 0 && unlockedAchievements[0].values.length > 0;
+    //
+    //                     if (hasNewAchievement) {
+    //                         if (newTitleCount > previousTitleCount) {
+    //                             const newTitleIndex = newTitleCount - 1;
+    //                             const newTitle = newTitles[0].values[newTitleIndex][0];
+    //                             console.log("ℹ️ 새로 추가된 칭호: ", newTitle);
+    //                             alert(`업적이 해금되었습니다! 칭호를 획득합니다: ${newTitle}`);
+    //                         } else {
+    //                             console.log("ℹ️ 업적은 해금되었으나 새 칭호 없음");
+    //                             alert("업적이 해금되었습니다!");
+    //                         }
+    //                     } else {
+    //                         console.log("ℹ️ 새로운 업적이 해금되지 않음");
+    //                     }
+    //
+    //                     console.log(`✅ 일정 완료: ${events[date][index].title}`);
+    //                     calendarInstance.refetchEvents(); // 캘린더 실시간 갱신
+    //                     checkDatabase();
+    //                     location.reload();
+    //                 }
+    //             } else {
+    //                 console.log("ℹ️ 이미 완료된 일정입니다.");
+    //             }
+    //         } else {
+    //             console.error("❌ 해당 일정을 찾을 수 없습니다.");
+    //         }
+    //     } catch (error) {
+    //         console.error('일정 완료 처리 실패:', error);
+    //         calendarInstance.render();
+    //     }
+    // };
 
     function updateMedals() {
         try {
@@ -704,7 +860,14 @@ document.addEventListener("DOMContentLoaded", async function () {
             const completedCounts = {};
             let totalCompleted = 0;
             for (const date in events) {
-                events[date].forEach(event => {
+                // events[date].forEach(event => {
+                //     if (event.completed) {
+                //         completedCounts[event.category] = (completedCounts[event.category] || 0) + 1;
+                //         totalCompleted++;
+                //     }
+                // 수정: events[date]가 배열인지 확인
+                const dateEvents = Array.isArray(events[date]) ? events[date] : [];
+                dateEvents.forEach(event => {
                     if (event.completed) {
                         completedCounts[event.category] = (completedCounts[event.category] || 0) + 1;
                         totalCompleted++;
@@ -712,7 +875,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 });
             }
 
-            // 수정: 데이터베이스에서 현재 사용자의 업적 상태 가져오기
+            // 데이터베이스에서 현재 사용자의 업적 상태 가져오기
             let unlockedAchievements = {};
             const userAchievements = db.exec("SELECT a.title FROM user_achievement ua JOIN achievement a ON ua.ach_id = a.ach_id WHERE ua.user_id = ?", [currentUser.user_id]);
             if (userAchievements.length > 0) {
@@ -733,6 +896,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             const achievementContainer = document.querySelector('.achievement');
             const unlockedItems = [];
             const lockedItems = [];
+
             achievementItems.forEach(item => {
                 const title = item.querySelector('h2').textContent.trim();
                 const mapping = achievementCategoryMap[title] || { category: "General", requiredCount: 1 };
@@ -742,7 +906,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 const isUnlocked = category === "General" ? totalCompleted >= requiredCount : completedCount >= requiredCount;
                 const descriptionP = item.querySelector('.content p');
 
-                // 수정: 업적 해금 시 데이터베이스에 기록
+                // 업적 해금 시 데이터베이스에 기록
                 if (isUnlocked && !unlockedAchievements[title]) {
                     const achIdResult = db.exec("SELECT ach_id FROM achievement WHERE title = ?", [title]);
                     if (achIdResult.length > 0 && achIdResult[0].values.length > 0) {
@@ -751,26 +915,33 @@ document.addEventListener("DOMContentLoaded", async function () {
                         saveUserAchievementToLocalStorage();
                         unlockedAchievements[title] = true;
                         console.log(`✅ 업적 해금: ${title}`);
+
+                        // 칭호 추가
+                        if (mapping.title) {
+                            const titles = mapping.title.split(',').map(t => t.trim());
+                            titles.forEach(titleText => {
+                                db.run("INSERT OR IGNORE INTO title (title, trigger) VALUES (?, ?)",
+                                    [titleText, mapping.condition]);
+                                const titleIdResult = db.exec("SELECT title_id FROM title WHERE title = ?", [titleText]);
+                                if (titleIdResult.length > 0 && titleIdResult[0].values.length > 0) {
+                                    const titleId = titleIdResult[0].values[0][0];
+                                    db.run("INSERT OR IGNORE INTO user_title (user_id, title_id) VALUES (?, ?)",
+                                        [currentUser.user_id, titleId]);
+                                    saveUserTitleToLocalStorage();
+                                    addTitleToDropdown(titleText);
+                                }
+                            });
+                        }
                     }
                 }
 
                 if (isUnlocked) {
                     item.classList.add('unlocked');
                     descriptionP.textContent = descriptionP.dataset.originalText || descriptionP.textContent;
-
-                    if (mapping.title && !item.dataset.titleAdded) {
-                        const titles = mapping.title.split(',').map(t => t.trim());
-                        titles.forEach(title => {
-                            if (title && !unlockedTitles.includes(title)) {
-                                addTitleToDropdown(title);
-                            }
-                        });
-                        item.dataset.titleAdded = 'true';
-                    }
                     unlockedItems.push(item);
                 } else {
                     item.classList.remove('unlocked');
-                    item.style.opener = '0.7';
+                    item.style.opacity = '0.7';
                     if (!descriptionP.dataset.originalText) {
                         descriptionP.dataset.originalText = descriptionP.textContent;
                     }
@@ -778,6 +949,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     lockedItems.push(item);
                 }
             });
+
             achievementContainer.innerHTML = '';
             unlockedItems.forEach(item => achievementContainer.appendChild(item));
             lockedItems.forEach(item => achievementContainer.appendChild(item));
@@ -787,7 +959,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    let unlockedTitles = JSON.parse(localStorage.getItem('unlockedTitles')) || [];
+    // let unlockedTitles = JSON.parse(localStorage.getItem('unlockedTitles')) || [];
     function initializeTitles() {
         if (dropdownMenu) {
             dropdownMenu.innerHTML = '';
@@ -797,47 +969,246 @@ document.addEventListener("DOMContentLoaded", async function () {
             defaultItem.addEventListener('click', () => {
                 selectedTitle.textContent = ' ';
                 selectedTitle.className = 'userTitle text-white fw-bold';
+                document.querySelector(".userTitle_closed").textContent = ' '; // 추가
             });
             dropdownMenu.appendChild(defaultItem);
-            unlockedTitles.forEach(title => addTitleToDropdown(title));
+
+            // user_title에서 칭호 가져오기
+            const userTitles = db.exec(
+                "SELECT t.title FROM user_title ut JOIN title t ON ut.title_id = t.title_id WHERE ut.user_id = ?",
+                [currentUser.user_id]
+            );
+            if (userTitles.length > 0) {
+                userTitles[0].values.forEach(([title]) => {
+                    addTitleToDropdown(title);
+                });
+            }
+
+            // 저장된 칭호 복원
+            const savedTitle = localStorage.getItem('selectedTitle');
+            const userTitleClosed = document.querySelector(".userTitle_closed");
+            if (savedTitle && savedTitle !== '') {
+                selectedTitle.textContent = savedTitle;
+                if (userTitleClosed) userTitleClosed.textContent = savedTitle;
+                selectedTitle.className = 'userTitle text-white fw-bold';
+                if (userTitleClosed) userTitleClosed.className = 'userTitle_closed'; // 기본 클래스 초기화
+                switch (savedTitle) {
+                    case "☕ Java의 신":
+                        selectedTitle.classList.add('title-java');
+                        userTitleClosed.classList.add('title-java');
+                        break;
+                    case "🐍 Python의 신":
+                        selectedTitle.classList.add('title-python');
+                        userTitleClosed.classList.add('title-python');
+                        break;
+                    // 나머지 case들도 동일하게 .userTitle_closed에 추가
+                    case "📜 HTML의 신":
+                        selectedTitle.classList.add('title-html');
+                        userTitleClosed.classList.add('title-html');
+                        break;
+                    case "🎨 CSS의 신":
+                        selectedTitle.classList.add('title-css');
+                        userTitleClosed.classList.add('title-css');
+                        break;
+                    case "🧩 JS 코드 마스터":
+                        selectedTitle.classList.add('title-js');
+                        userTitleClosed.classList.add('title-js');
+                        break;
+                    case "🗄️ SQL의 신":
+                        selectedTitle.classList.add('title-sql');
+                        userTitleClosed.classList.add('title-sql');
+                        break;
+                    case "🏡 정원 관리사":
+                        selectedTitle.classList.add('title-gardener');
+                        userTitleClosed.classList.add('title-gardener');
+                        break;
+                    case "🔥 지옥에서 온":
+                        selectedTitle.classList.add('title-hell');
+                        userTitleClosed.classList.add('title-hell');
+                        break;
+                    case "⏳ 닥터 스트레인지":
+                        selectedTitle.classList.add('title-strange');
+                        userTitleClosed.classList.add('title-strange');
+                        break;
+                    case "👻 버그 엑소시스트":
+                        selectedTitle.classList.add('title-exorcist');
+                        userTitleClosed.classList.add('title-exorcist');
+                        break;
+                    case "🐣 코린이":
+                        selectedTitle.classList.add('title-newbie');
+                        userTitleClosed.classList.add('title-newbie');
+                        break;
+                    case "🚀 프로 갓생러":
+                        selectedTitle.classList.add('title-pro');
+                        userTitleClosed.classList.add('title-pro');
+                        break;
+                    case "⚡ 파워 J":
+                        selectedTitle.classList.add('title-power');
+                        userTitleClosed.classList.add('title-power');
+                        break;
+                    case "📚 자기계발 끝판왕":
+                        selectedTitle.classList.add('title-self');
+                        userTitleClosed.classList.add('title-self');
+                        break;
+                    case "🌱 새싹 디버거":
+                        selectedTitle.classList.add('title-sprout');
+                        userTitleClosed.classList.add('title-sprout');
+                        break;
+                    case "🔍 버그 헌터":
+                        selectedTitle.classList.add('title-hunter');
+                        userTitleClosed.classList.add('title-hunter');
+                        break;
+                    case "🛠️ 디버깅 마스터":
+                        selectedTitle.classList.add('title-debug');
+                        userTitleClosed.classList.add('title-debug');
+                        break;
+                    case "🐆 wild-mental":
+                        selectedTitle.classList.add('title-wild-mental');
+                        userTitleClosed.classList.add('title-wild-mental');
+                        break;
+                }
+            }
+            console.log("✅ 칭호 초기화 완료");
         }
     }
 
     function addTitleToDropdown(title) {
         if (dropdownMenu && selectedTitle) {
-            if (!unlockedTitles.includes(title)) {
-                unlockedTitles.push(title);
-                localStorage.setItem('unlockedTitles', JSON.stringify(unlockedTitles));
-            }
-            const item = document.createElement('div');
-            item.className = 'dropdown-item';
-            item.textContent = title;
-            item.addEventListener('click', () => {
-                selectedTitle.textContent = title;
-                selectedTitle.className = 'userTitle text-white fw-bold';
-                switch (title) {
-                    case "☕ Java의 신": selectedTitle.classList.add('title-java'); break;
-                    case "🐍 Python의 신": selectedTitle.classList.add('title-python'); break;
-                    case "📜 HTML의 신": selectedTitle.classList.add('title-html'); break;
-                    case "🎨 CSS의 신": selectedTitle.classList.add('title-css'); break;
-                    case "🧩 JS 코드 마스터": selectedTitle.classList.add('title-js'); break;
-                    case "🗄️ SQL의 신": selectedTitle.classList.add('title-sql'); break;
-                    case "🏡 정원 관리사": selectedTitle.classList.add('title-gardener'); break;
-                    case "🔥 지옥에서 온": selectedTitle.classList.add('title-hell'); break;
-                    case "⏳ 닥터 스트레인지": selectedTitle.classList.add('title-strange'); break;
-                    case "👻 버그 엑소시스트": selectedTitle.classList.add('title-exorcist'); break;
-                    case "🐣 코린이": selectedTitle.classList.add('title-newbie'); break;
-                    case "🚀 프로 갓생러": selectedTitle.classList.add('title-pro'); break;
-                    case "⚡ 파워 J": selectedTitle.classList.add('title-power'); break;
-                    case "📚 자기계발 끝판왕": selectedTitle.classList.add('title-self'); break;
-                    case "🌱 새싹 디버거": selectedTitle.classList.add('title-sprout'); break;
-                    case "🔍 버그 헌터": selectedTitle.classList.add('title-hunter'); break;
-                    case "🛠️ 디버깅 마스터": selectedTitle.classList.add('title-debug'); break;
-                    case "🐆 wild-mental": selectedTitle.classList.add('title-wild-mental'); break;
+            // 중복 체크를 DB에서 수행하므로 localStorage 제거
+            const exists = db.exec("SELECT COUNT(*) FROM user_title ut JOIN title t ON ut.title_id = t.title_id WHERE ut.user_id = ? AND t.title = ?",
+                [currentUser.user_id, title])[0].values[0][0] > 0;
+            if (!exists) {
+                db.run("INSERT OR IGNORE INTO title (title, trigger) VALUES (?, ?)", [title, "업적 해금"]);
+                const titleIdResult = db.exec("SELECT title_id FROM title WHERE title = ?", [title]);
+                if (titleIdResult.length > 0 && titleIdResult[0].values.length > 0) {
+                    const titleId = titleIdResult[0].values[0][0];
+                    db.run("INSERT OR IGNORE INTO user_title (user_id, title_id) VALUES (?, ?)",
+                        [currentUser.user_id, titleId]);
+                    saveUserTitleToLocalStorage();
                 }
-            });
-            dropdownMenu.appendChild(item);
-            console.log(`칭호 추가됨: ${title}`);
+            }
+
+            // const item = document.createElement('div');
+            // item.className = 'dropdown-item';
+            // item.textContent = title;
+            // item.addEventListener('click', () => {
+            //     selectedTitle.textContent = title;
+            //     selectedTitle.className = 'userTitle text-white fw-bold';
+            //     switch (title) {
+            //         case "☕ Java의 신": selectedTitle.classList.add('title-java'); break;
+            //         case "🐍 Python의 신": selectedTitle.classList.add('title-python'); break;
+            //         case "📜 HTML의 신": selectedTitle.classList.add('title-html'); break;
+            //         case "🎨 CSS의 신": selectedTitle.classList.add('title-css'); break;
+            //         case "🧩 JS 코드 마스터": selectedTitle.classList.add('title-js'); break;
+            //         case "🗄️ SQL의 신": selectedTitle.classList.add('title-sql'); break;
+            //         case "🏡 정원 관리사": selectedTitle.classList.add('title-gardener'); break;
+            //         case "🔥 지옥에서 온": selectedTitle.classList.add('title-hell'); break;
+            //         case "⏳ 닥터 스트레인지": selectedTitle.classList.add('title-strange'); break;
+            //         case "👻 버그 엑소시스트": selectedTitle.classList.add('title-exorcist'); break;
+            //         case "🐣 코린이": selectedTitle.classList.add('title-newbie'); break;
+            //         case "🚀 프로 갓생러": selectedTitle.classList.add('title-pro'); break;
+            //         case "⚡ 파워 J": selectedTitle.classList.add('title-power'); break;
+            //         case "📚 자기계발 끝판왕": selectedTitle.classList.add('title-self'); break;
+            //         case "🌱 새싹 디버거": selectedTitle.classList.add('title-sprout'); break;
+            //         case "🔍 버그 헌터": selectedTitle.classList.add('title-hunter'); break;
+            //         case "🛠️ 디버깅 마스터": selectedTitle.classList.add('title-debug'); break;
+            //         case "🐆 wild-mental": selectedTitle.classList.add('title-wild-mental'); break;
+            //     }
+            // });
+            // 수정: 드롭다운에 중복 없이 추가
+            const existingItems = Array.from(dropdownMenu.querySelectorAll('.dropdown-item')).map(item => item.textContent);
+            if (!existingItems.includes(title)) {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.textContent = title;
+                item.addEventListener('click', () => {
+                    const userTitleClosed = document.querySelector(".userTitle_closed"); // 닫힌 상태 칭호 요소
+                    selectedTitle.textContent = title;
+                    userTitleClosed.textContent = title;
+                    document.querySelector(".userTitle_closed").textContent = title; // 추가
+                    selectedTitle.className = 'userTitle text-white fw-bold';
+                    userTitleClosed.className = 'userTitle_closed'; // 기본 클래스 초기화
+                    switch (title) {
+                        case "☕ Java의 신":
+                            selectedTitle.classList.add('title-java');
+                            userTitleClosed.classList.add('title-java'); // 추가
+                            break;
+                        case "🐍 Python의 신":
+                            selectedTitle.classList.add('title-python');
+                            userTitleClosed.classList.add('title-python'); // 추가
+                            break;
+                        case "📜 HTML의 신":
+                            selectedTitle.classList.add('title-html');
+                            userTitleClosed.classList.add('title-html'); // 추가
+                            break;
+                        case "🎨 CSS의 신":
+                            selectedTitle.classList.add('title-css');
+                            userTitleClosed.classList.add('title-css'); // 추가
+                            break;
+                        case "🧩 JS 코드 마스터":
+                            selectedTitle.classList.add('title-js');
+                            userTitleClosed.classList.add('title-js'); // 추가
+                            break;
+                        case "🗄️ SQL의 신":
+                            selectedTitle.classList.add('title-sql');
+                            userTitleClosed.classList.add('title-sql'); // 추가
+                            break;
+                        case "🏡 정원 관리사":
+                            selectedTitle.classList.add('title-gardener');
+                            userTitleClosed.classList.add('title-gardener'); // 추가
+                            break;
+                        case "🔥 지옥에서 온":
+                            selectedTitle.classList.add('title-hell');
+                            userTitleClosed.classList.add('title-hell'); // 추가
+                            break;
+                        case "⏳ 닥터 스트레인지":
+                            selectedTitle.classList.add('title-strange');
+                            userTitleClosed.classList.add('title-strange'); // 추가
+                            break;
+                        case "👻 버그 엑소시스트":
+                            selectedTitle.classList.add('title-exorcist');
+                            userTitleClosed.classList.add('title-exorcist'); // 추가
+                            break;
+                        case "🐣 코린이":
+                            selectedTitle.classList.add('title-newbie');
+                            userTitleClosed.classList.add('title-newbie'); // 추가
+                            break;
+                        case "🚀 프로 갓생러":
+                            selectedTitle.classList.add('title-pro');
+                            userTitleClosed.classList.add('title-pro'); // 추가
+                            break;
+                        case "⚡ 파워 J":
+                            selectedTitle.classList.add('title-power');
+                            userTitleClosed.classList.add('title-power'); // 추가
+                            break;
+                        case "📚 자기계발 끝판왕":
+                            selectedTitle.classList.add('title-self');
+                            userTitleClosed.classList.add('title-self'); // 추가
+                            break;
+                        case "🌱 새싹 디버거":
+                            selectedTitle.classList.add('title-sprout');
+                            userTitleClosed.classList.add('title-sprout'); // 추가
+                            break;
+                        case "🔍 버그 헌터":
+                            selectedTitle.classList.add('title-hunter');
+                            userTitleClosed.classList.add('title-hunter'); // 추가
+                            break;
+                        case "🛠️ 디버깅 마스터":
+                            selectedTitle.classList.add('title-debug');
+                            userTitleClosed.classList.add('title-debug'); // 추가
+                            break;
+                        case "🐆 wild-mental":
+                            selectedTitle.classList.add('title-wild-mental');
+                            userTitleClosed.classList.add('title-wild-mental'); // 추가
+                            break;
+                    }
+                    // 선택된 칭호 저장
+                    localStorage.setItem('selectedTitle', title);
+                    console.log(`✅ 칭호 선택: ${title}`);
+                });
+                dropdownMenu.appendChild(item);
+                console.log(`칭호 추가됨: ${title}`);
+            }
         }
     }
 
@@ -1121,13 +1492,15 @@ function loadEventsFromLocalStorage() {
         const events = JSON.parse(localStorage.getItem('events') || '{}');
         const eventList = [];
         for (const date in events) {
-            events[date].forEach(event => {
+            // 수정: events[date]가 배열인지 확인
+            const dateEvents = Array.isArray(events[date]) ? events[date] : [];
+            dateEvents.forEach(event => {
                 eventList.push({
                     title: `${event.title} (${event.category})`,
                     start: date,
                     allDay: true,
-                    backgroundColor: categoryColors[event.category],
-                    borderColor: categoryColors[event.category],
+                    backgroundColor: categoryColors[event.category] || '#000000', // 기본 색상 추가
+                    borderColor: categoryColors[event.category] || '#000000',
                     extendedProps: { memo: event.memo || '', completed: event.completed || false }
                 });
             });
