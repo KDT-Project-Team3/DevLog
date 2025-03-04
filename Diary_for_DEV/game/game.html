@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>버그 헌터 (Bug Hunter)</title>
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+<div class="game-container">
+  <h1>버그 헌터 🐛🔍</h1>
+  <p>코드 속 버그를 찾아 수정하세요!</p>
+  <div id="level-info">레벨: <span id="current-level">1</span></div>
+  <div id="timer">남은 시간: <span id="time-left">60</span>초</div>
+  <pre id="buggy-code"></pre>
+  <textarea id="user-input" placeholder="여기에 수정된 코드를 입력하세요"></textarea>
+  <button id="submit-btn">제출</button>
+  <div id="message"></div>
+</div>
+<script src="game.js"></script>
+</body>
+</html>
