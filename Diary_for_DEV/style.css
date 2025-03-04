@@ -104,7 +104,8 @@ body, html {
 }
 
 .menuBtn:hover {
-    background: linear-gradient(to right, #001d3d, #000);
+    background: white;
+    color: #000000;
 }
 
 
@@ -475,7 +476,7 @@ input[type="text"], select, textarea {
     margin-left: 20px;
     margin-right: 10px;
 /*  후광 비치는 효과 추가 */
-    box-shadow: 0 0 7px 4px rgb(255, 255, 255);
+    box-shadow: 0 0 7px 3px rgb(255, 255, 255);
 }
 
 .medal:not(.unlocked):hover {
@@ -532,7 +533,7 @@ input[type="text"], select, textarea {
 
 .achievementInner:hover {
     opacity: 1 !important;
-    background-color: #ffc300;
+    background-color: #b18e1d;
     transform: scale(1.02);
 }
 
@@ -541,7 +542,7 @@ input[type="text"], select, textarea {
     height: 50px;
     border-radius: 50%;
     flex-shrink: 0;
-    background: white center/cover no-repeat;
+    background: #ffffff center/cover no-repeat;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -616,13 +617,14 @@ input[type="text"], select, textarea {
 
 .achievement div.unlocked {
     opacity: 1;
-    background-color: white;
+    background-color: #fdcc50;
     border-color: #5723ff;
     transition: all 0.3s ease;
 }
 
 .achievement div.unlocked:hover {
     background-color: #e8f5e9;
+    box-shadow: 0 0 8px 2px rgb(255, 255, 255);
 }
 
 textarea {
