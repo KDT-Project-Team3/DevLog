@@ -48,9 +48,11 @@ const achievementCategoryMap = {
     "Kotlin 고수": { category: "Kotlin", requiredCount: 2, title: "", condition: "Kotlin 일정 2개 완료" },
     "Kotlin의 신": { category: "Kotlin", requiredCount: 3, title: "🤖 Kotlin의 신", condition: "Kotlin 일정 3개 완료" },
 
-    // General (기존)
-    "정원 관리사": { category: "General", requiredCount: 3, title: "🏡 정원 관리사", condition: "커밋 3개 완료" },
-    "지옥에서 온": { category: "General", requiredCount: 5, title: "🔥 지옥에서 온", condition: "커밋 5개 완료" },
+    // Commit
+    "정원 관리사": { category: "Commit", requiredCount: 3, title: "🏡 정원 관리사", condition: "커밋 3개 완료" },
+    "지옥에서 온": { category: "Commit", requiredCount: 5, title: "🔥 지옥에서 온", condition: "커밋 5개 완료" },
+
+    // General
     "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이", condition: "일정 1개 완료" },
     "프로갓생러": { category: "General", requiredCount: 3, title: "🚀 프로 갓생러", condition: "일정 3개 완료" },
     "파워J": { category: "General", requiredCount: 4, title: "⚡ 파워 J", condition: "일정 4개 완료" },
@@ -67,6 +69,20 @@ const achievementCategoryMap = {
 
 };
 
+// 수정: currentUser 객체를 전역적으로 정의 (메인 코드와 동일)
+const currentUser = {
+    user_id: null
+};
+
+// currentUser.user_id를 부모 창에서 가져오기 위한 함수
+function initCurrentUser() {
+    const currentUserData = JSON.parse(localStorage.getItem('current_user') || '[]');
+    if (currentUserData.length > 0 && currentUserData[0].values.length > 0) {
+        currentUser.user_id = currentUserData[0].values[0][0]; // user_id는 첫 번째 열
+    } else {
+        console.warn("⚠️ 사용자 ID를 찾을 수 없습니다. 로그인이 필요합니다.");
+    }
+}
 
 function getQueryParam(name) {
     const params = new URLSearchParams(window.location.search);
@@ -117,12 +133,23 @@ function renderEvents(selectedDate, events) {
 }
 
 function saveAndClose() {
+    // 부모 창의 캘린더를 새로고침
+    if (window.opener && window.opener.calendar) {
+        window.opener.calendar.refetchEvents();
+    }
     window.close();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // currentUser.user_id 초기화
+    initCurrentUser();
+    if (!currentUser.user_id) {
+        console.warn("⚠️ 사용자 ID가 없습니다. 로그인이 필요합니다.");
+        return;
+    }
+
     const selectedDate = getQueryParam('date');
-    let events = JSON.parse(localStorage.getItem('events') || '{}');
+    let events = JSON.parse(localStorage.getItem(`events_${currentUser.user_id}`) || '{}');
 
     document.getElementById('event-date').textContent = selectedDate ? `📅 ${selectedDate}` : '날짜를 선택하세요';
     renderEvents(selectedDate, events);
@@ -141,14 +168,14 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             if (window.opener && window.opener.addEventToCalendar) {
                 window.opener.addEventToCalendar(selectedDate, title, category);
-                events = JSON.parse(localStorage.getItem('events') || '{}');
+                events = JSON.parse(localStorage.getItem(`events_${currentUser.user_id}`) || '{}');
                 renderEvents(selectedDate, events);
                 document.getElementById('new-title').value = '';
                 console.log(`✅ 팝업에서 일정 추가 완료: ${title}`);
             }
         } catch (error) {
             console.error('일정 추가 실패:', error);
-            events = JSON.parse(localStorage.getItem('events') || '{}');
+            events = JSON.parse(localStorage.getItem(`events_${currentUser.user_id}`) || '{}');
             renderEvents(selectedDate, events);
             document.getElementById('new-title').value = '';
             if (window.opener && window.opener.calendar) {
@@ -174,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!wasCompleted && target.checked) {
                     if (window.confirm("일정을 완료하시겠습니까?")) {
                         events[selectedDate][index].completed = true;
-                        localStorage.setItem('events', JSON.stringify(events));
+                        localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(events));
                         renderEvents(selectedDate, events);
 
                         if (window.opener && window.opener.completeEvent) {
@@ -244,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (newTitle) {
                         events[selectedDate][index].title = newTitle;
                         events[selectedDate][index].category = newCategory;
-                        localStorage.setItem('events', JSON.stringify(events));
+                        localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(events));
                         if (window.opener && window.opener.calendar) {
                             window.opener.calendar.refetchEvents();
                         }
@@ -263,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (confirm('정말 삭제하시겠습니까?')) {
                     events[selectedDate].splice(index, 1);
                     if (events[selectedDate].length === 0) delete events[selectedDate];
-                    localStorage.setItem('events', JSON.stringify(events));
+                    localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(events));
                     renderEvents(selectedDate, events);
                     if (window.opener && window.opener.calendar) {
                         window.opener.calendar.refetchEvents();

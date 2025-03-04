@@ -425,12 +425,11 @@ window.displayUserAchievements = function() {
     }
 };
 
-// todo: displayTitle
 
 const categoryColors = {
     Python: '#3776AB', Java: '#007396', C: '#A8B9CC', Cpp: '#00599C', Csharp: '#68217A',
     JavaScript: '#F7DF1E', HTML: '#E34F26', R: '#276DC3', Kotlin: '#F18E33', SQL: '#4479A1',
-    Holiday: '#FF0000'
+    Holiday: '#FF0000', Commit: '#4e8000'
 };
 
 const achievementCategoryMap = {
@@ -484,14 +483,15 @@ const achievementCategoryMap = {
     "Kotlin의 신": { category: "Kotlin", requiredCount: 3, title: "🤖 Kotlin의 신", condition: "Kotlin 일정 3개 완료" },
 
     // General (기존)
-    "정원 관리사": { category: "General", requiredCount: 3, title: "🏡 정원 관리사", condition: "커밋 3개 완료" },
-    "지옥에서 온": { category: "General", requiredCount: 5, title: "🔥 지옥에서 온", condition: "커밋 5개 완료" },
-    "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이", condition: "일정 1개 완료" },
-    "프로갓생러": { category: "General", requiredCount: 3, title: "🚀 프로 갓생러", condition: "일정 3개 완료" },
-    "파워J": { category: "General", requiredCount: 4, title: "⚡ 파워 J", condition: "일정 4개 완료" },
-    "자기계발왕": { category: "General", requiredCount: 5, title: "📚 자기계발 끝판왕", condition: "일정 5개 완료" },
+    "정원 관리사": { category: "Commit", requiredCount: 3, title: "🏡 정원 관리사", condition: "커밋 3개 완료" },
+    "지옥에서 온": { category: "Commit", requiredCount: 5, title: "🔥 지옥에서 온", condition: "커밋 5개 완료" },
 
-    "닥터 스트레인지": { category: "General", requiredCount: 6, title: "⏳ 닥터 스트레인지", condition: "일정 6개 완료" },
+    "코린이": { category: "General", requiredCount: 1, title: "🐣 코린이", condition: "일정 1개 완료" },
+    "프로갓생러": { category: "General", requiredCount: 5, title: "🚀 프로 갓생러", condition: "일정 5개 완료" },
+    "파워J": { category: "General", requiredCount: 10, title: "⚡ 파워 J", condition: "일정 10개 완료" },
+    "자기계발왕": { category: "General", requiredCount: 15, title: "📚 자기계발 끝판왕", condition: "일정 15개 완료" },
+
+    "닥터 스트레인지": { category: "General", requiredCount: 20, title: "⏳ 닥터 스트레인지", condition: "일정 20개 완료" },
 
     // 버그 헌터 관련 업적
     // "새싹 디버거": { category: "Debug", requiredCount: 1, title: "🌱 새싹 디버거" },
@@ -580,13 +580,23 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.querySelector(".id").textContent = currentUser.username;
         document.querySelector(".id_closed").textContent = currentUser.username; // 추가
         updateLevelAndExp();
+        // 수정: 기존 'events' 데이터를 사용자별 키로 마이그레이션 (최초 실행 시)
+        const oldEvents = JSON.parse(localStorage.getItem('events') || '{}');
+        if (Object.keys(oldEvents).length > 0 && !localStorage.getItem(`events_${currentUser.user_id}`)) {
+            localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(oldEvents));
+            localStorage.removeItem('events'); // 기존 키 삭제
+            console.log(`✅ 사용자 ${currentUser.user_id}로 기존 events 데이터 마이그레이션 완료`);
+        }
 
-        // 업적 및 칭호 데이터 초기화
+        // 캘린더 새로고침으로 사용자별 데이터 로드 보장
+        if (calendarInstance) {
+            calendarInstance.refetchEvents();
+        }
+        // 업적 및 칭호 초기화 로직을 if 블록 내로 이동
         try {
             const existingAchievements = db.exec("SELECT COUNT(*) as count FROM achievement")[0].values[0][0];
             if (existingAchievements === 0) {
                 Object.entries(achievementCategoryMap).forEach(([achTitle, { condition, title: titlesStr }], index) => {
-                    // 업적 삽입
                     db.run("INSERT OR IGNORE INTO achievement (title, flavor, trigger, img) VALUES (?, ?, ?, ?)",
                         [achTitle, titlesStr || "", condition, `achievement_${index + 1}.png`]);
                     const achIdResult = db.exec("SELECT ach_id FROM achievement WHERE title = ?", [achTitle]);
@@ -595,13 +605,11 @@ document.addEventListener("DOMContentLoaded", async function () {
                         if (titlesStr) {
                             const titles = titlesStr.split(',').map(t => t.trim());
                             titles.forEach(title => {
-                                // 칭호 삽입
                                 db.run("INSERT OR IGNORE INTO title (title, trigger) VALUES (?, ?)",
                                     [title, condition]);
                                 const titleIdResult = db.exec("SELECT title_id FROM title WHERE title = ?", [title]);
                                 if (titleIdResult.length > 0 && titleIdResult[0].values.length > 0) {
                                     const titleId = titleIdResult[0].values[0][0];
-                                    // 업적과 칭호 연결 (achievement_title 테이블이 없으므로 생략, 필요 시 추가)
                                 }
                             });
                         }
@@ -615,10 +623,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             console.error('업적 및 칭호 데이터 초기화 실패:', error);
         }
 
-        // 데이터베이스에서 해금된 칭호 초기화
-        // 수정: unlockedTitles 제거, 즉시 initializeTitles 호출로 대체
+        // 수정: 칭호 초기화를 if 블록 내에서 호출
         try {
-            initializeTitles(); // 데이터베이스에서 칭호 초기화
+            initializeTitles();
         } catch (error) {
             console.error('칭호 초기화 실패:', error);
         }
@@ -684,12 +691,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     window.addEventToCalendar = function(date, title, category) {
         try {
-            const events = JSON.parse(localStorage.getItem('events') || '{}');
+            const events = JSON.parse(localStorage.getItem(`events_${currentUser.user_id}`) || '{}');
             if (!events[date]) events[date] = [];
             const exists = events[date].some(event => event.title === title && event.category === category);
             if (!exists) {
                 events[date].push({ title, category, memo: '', completed: false });
-                localStorage.setItem('events', JSON.stringify(events));
+                localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(events));
                 calendarInstance.getEvents().forEach(event => {
                     if (event.startStr === date && event.title === `${title} (${category})`) {
                         event.remove();
@@ -726,12 +733,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     window.completeEvent = function(date, index) {
         try {
-            const events = JSON.parse(localStorage.getItem('events') || '{}');
+            const events = JSON.parse(localStorage.getItem(`events_${currentUser.user_id}`) || '{}');
             if (events[date] && events[date][index]) {
                 const wasCompleted = events[date][index].completed;
                 if (wasCompleted) {
                     events[date][index].completed = true;
-                    localStorage.setItem('events', JSON.stringify(events));
+                    localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(events));
                     currentUser.xpUp(1); // 경험치 증가
 
                     // 캘린더 이벤트 업데이트
@@ -856,7 +863,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     function updateMedals() {
         try {
-            const events = JSON.parse(localStorage.getItem('events') || '{}');
+            const events = JSON.parse(localStorage.getItem(`events_${currentUser.user_id}`) || '{}');
             const completedCounts = {};
             let totalCompleted = 0;
             for (const date in events) {
@@ -1258,7 +1265,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 alert('일정을 입력하시오');
                 return;
             }
-            const events = JSON.parse(localStorage.getItem('events') || '{}');
+            const events = JSON.parse(localStorage.getItem(`events_${currentUser.user_id}`) || '{}');
             if (selectedEvent) {
                 selectedEvent.remove();
                 if (!events[date]) events[date] = [];
@@ -1269,7 +1276,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
             if (!events[date]) events[date] = [];
             events[date].push({ title, category, memo, completed: false });
-            localStorage.setItem('events', JSON.stringify(events));
+            localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(events));
             calendarInstance.addEvent({
                 title: `${title} (${category})`,
                 start: date,
@@ -1289,10 +1296,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         deleteEventBtn.onclick = function() {
             if (selectedEvent && !selectedEvent.extendedProps.isHoliday && confirm('일정을 정말 삭제하시겠습니까?')) {
                 const date = window.selectedDate;
-                const events = JSON.parse(localStorage.getItem('events') || '{}');
+                const events = JSON.parse(localStorage.getItem(`events_${currentUser.user_id}`) || '{}');
                 events[date] = events[date].filter(ev => ev.title !== selectedEvent.title.split(' (')[0]);
                 if (events[date].length === 0) delete events[date];
-                localStorage.setItem('events', JSON.stringify(events));
+                localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(events));
                 selectedEvent.remove();
                 const modal = document.getElementById('eventModal');
                 if (modal) modal.style.display = 'none';
@@ -1350,7 +1357,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     window.saveAndClose = function() {
         const selectedDate = window.getQueryParam('date');
-        const events = JSON.parse(localStorage.getItem('events') || '{}');
+        const events = JSON.parse(localStorage.getItem(`events_${currentUser.user_id}`) || '{}');
         if (window.opener && window.opener.calendar) {
             window.opener.calendar.refetchEvents();
         }
@@ -1359,7 +1366,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     if (document.querySelector('.event')) {
         const selectedDate = window.getQueryParam('date');
-        const events = JSON.parse(localStorage.getItem('events') || '{}');
+        const events = JSON.parse(localStorage.getItem(`events_${currentUser.user_id}`) || '{}');
         const eventDateElement = document.getElementById('event-date');
         if (eventDateElement) eventDateElement.textContent = selectedDate ? `📅 ${selectedDate}` : '날짜를 선택하세요';
         window.renderEvents(selectedDate, events);
@@ -1370,7 +1377,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             if (title && selectedDate) {
                 if (!events[selectedDate]) events[selectedDate] = [];
                 events[selectedDate].push({ title, category, completed: false });
-                localStorage.setItem('events', JSON.stringify(events));
+                localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(events));
                 if (window.opener && window.opener.addEventToCalendar) {
                     window.opener.addEventToCalendar(selectedDate, title, category);
                 }
@@ -1390,7 +1397,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 if (target.type === 'checkbox') {
                     const wasCompleted = events[selectedDate][index].completed;
                     events[selectedDate][index].completed = target.checked;
-                    localStorage.setItem('events', JSON.stringify(events));
+                    localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(events));
                     window.renderEvents(selectedDate, events);
                     if (!wasCompleted && target.checked && window.opener && window.opener.completeEvent) {
                         console.log(`체크박스 완료: ${selectedDate}, ${index}`);
@@ -1415,7 +1422,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                         if (newTitle) {
                             events[selectedDate][index].title = newTitle;
                             events[selectedDate][index].category = newCategory;
-                            localStorage.setItem('events', JSON.stringify(events));
+                            localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(events));
                             if (window.opener && window.opener.calendar) {
                                 window.opener.calendar.refetchEvents();
                             }
@@ -1431,7 +1438,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     if (confirm('정말 삭제하시겠습니까?')) {
                         events[selectedDate].splice(index, 1);
                         if (events[selectedDate].length === 0) delete events[selectedDate];
-                        localStorage.setItem('events', JSON.stringify(events));
+                        localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(events));
                         window.renderEvents(selectedDate, events);
                         if (window.opener && window.opener.calendar) {
                             window.opener.calendar.refetchEvents();
@@ -1489,7 +1496,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 function loadEventsFromLocalStorage() {
     try {
-        const events = JSON.parse(localStorage.getItem('events') || '{}');
+        const events = JSON.parse(localStorage.getItem(`events_${currentUser.user_id}`) || '{}');
         const eventList = [];
         for (const date in events) {
             // 수정: events[date]가 배열인지 확인
@@ -1505,6 +1512,7 @@ function loadEventsFromLocalStorage() {
                 });
             });
         }
+        console.log(`✅ 사용자 ${currentUser.user_id}의 이벤트 로드 완료`);
         return eventList;
     } catch (error) {
         console.error('이벤트 로드 실패:', error);
