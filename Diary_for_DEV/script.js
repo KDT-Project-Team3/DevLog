@@ -256,9 +256,17 @@ function loadDatabaseFromLocalStorage() {
 }
 
 function saveUserToLocalStorage() {
+    // try {
+    //     const user = db.exec("SELECT * FROM user");
+    //     localStorage.setItem('user', JSON.stringify(user));
+    //     localStorage.setItem('current_user', JSON.stringify(user));
+    //     console.log("✅ user 테이블 데이터 저장 완료!");
+    // } catch (error) {
+    //     console.error('user 저장 실패:', error);
+    // }
     try {
-        const user = db.exec("SELECT * FROM user");
-        localStorage.setItem('user', JSON.stringify(user));
+        const user = db.exec("SELECT * FROM user WHERE user_id = ?", [currentUser.user_id]);
+        localStorage.setItem('user', JSON.stringify(db.exec("SELECT * FROM user")));
         localStorage.setItem('current_user', JSON.stringify(user));
         console.log("✅ user 테이블 데이터 저장 완료!");
     } catch (error) {
@@ -567,6 +575,42 @@ document.addEventListener("DOMContentLoaded", async function () {
         title.style.width = "300px";
     });
 
+    // 수정: active_user_id 확인 후 사용자 로드
+    // active_user_id 확인 후 사용자 로드
+    const activeUserId = localStorage.getItem('active_user_id');
+    if (activeUserId) {
+        const userResult = db.exec("SELECT * FROM user WHERE user_id = ?", [activeUserId]);
+        if (userResult.length > 0 && userResult[0].values.length > 0) {
+            const user = userResult[0].values[0];
+            currentUser.user_id = user[0];
+            currentUser.username = user[1];
+            currentUser.email = user[2];
+            currentUser.password = user[3];
+            currentUser.lv = user[4];
+            currentUser.xp = user[5];
+            currentUser.img = user[6];
+            localStorage.setItem('current_user', JSON.stringify(userResult));
+
+            // UI 초기화 (기존 main.html 코드에서 가져옴)
+            document.querySelector(".id").textContent = currentUser.username;
+            document.querySelector(".id_closed").textContent = currentUser.username;
+            updateLevelAndExp();
+            if (calendarInstance) {
+                calendarInstance.refetchEvents();
+            }
+            initializeTitles();
+            updateMedals();
+        } else {
+            console.warn("⚠️ 활성 사용자 ID에 해당하는 데이터가 없습니다:", activeUserId);
+            localStorage.removeItem('active_user_id');
+            localStorage.setItem('current_user', JSON.stringify([]));
+            window.location.href = 'index.html'; // 로그인 페이지로 리다이렉트
+        }
+    } else {
+        console.warn("⚠️ 로그인된 유저 정보가 없습니다.");
+        window.location.href = 'index.html'; // 로그인 페이지로 리다이렉트
+    }
+
     let tmp = JSON.parse(localStorage.getItem('current_user'));
     if (tmp && tmp.length > 0) {
         const user = tmp[0].values[0];
@@ -766,7 +810,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                     console.log(`✅ 일정 완료: ${events[date][index].title}`);
                     calendarInstance.refetchEvents(); // 캘린더 실시간 갱신
-                    // checkDatabase();
                     updateMedals(); // 업적 상태 업데이트 (팝업에서 메시지 처리하므로 여기서는 UI만 갱신)
                     initializeTitles(); // 칭호 드롭다운 갱신
                     location.reload(); // 부모 창 새로고침
@@ -1519,3 +1562,4 @@ function loadEventsFromLocalStorage() {
         return [];
     }
 }
+

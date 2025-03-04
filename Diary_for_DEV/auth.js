@@ -144,6 +144,7 @@ function login() {
         currentUser.xp = user[5];
         currentUser.img = user[6];
         localStorage.setItem('current_user', JSON.stringify(result));
+        localStorage.setItem('active_user_id', currentUser.user_id); // 추가: 활성 사용자 ID 저장
         alert('로그인 성공!');
         window.location.href = 'main.html'; // 캘린더 페이지로 이동
     } else {
@@ -165,6 +166,35 @@ function showSignup() {
 // 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', async function() {
     await initDatabase();
-    localStorage.setItem('current_user', JSON.stringify([])); // 현재 사용자 초기화
+    // 항상 회원가입 창 표시
+    localStorage.setItem('current_user', JSON.stringify([]));
+    document.getElementById('login-container').style.display = 'none';
+    document.getElementById('signup-container').style.display = 'block';
+
+    // active_user_id가 있어도 리다이렉트하지 않음
+    const activeUserId = localStorage.getItem('active_user_id');
+    if (activeUserId) {
+        console.log("ℹ️ 기존 로그인 상태 감지:", activeUserId);
+        // currentUser 초기화만 하고 이동은 로그인 버튼에서 처리
+        const userResult = db.exec("SELECT * FROM user WHERE user_id = ?", [activeUserId]);
+        if (userResult.length > 0 && userResult[0].values.length > 0) {
+            const user = userResult[0].values[0];
+            currentUser.user_id = user[0];
+            currentUser.username = user[1];
+            currentUser.email = user[2];
+            currentUser.password = user[3];
+            currentUser.lv = user[4];
+            currentUser.xp = user[5];
+            currentUser.img = user[6];
+            localStorage.setItem('current_user', JSON.stringify(userResult));
+        } else {
+            console.warn("⚠️ 활성 사용자 ID에 해당하는 데이터가 없습니다:", activeUserId);
+            localStorage.removeItem('active_user_id');
+        }
+    }
+
     console.log("addEventListener 실행 완료");
 });
+//     localStorage.setItem('current_user', JSON.stringify([])); // 현재 사용자 초기화
+//     console.log("addEventListener 실행 완료");
+// });
