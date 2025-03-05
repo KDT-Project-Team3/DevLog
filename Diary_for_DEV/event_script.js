@@ -134,9 +134,9 @@ function renderEvents(selectedDate, events) {
 
 function saveAndClose() {
     // 부모 창의 캘린더를 새로고침
-    if (window.opener && window.opener.calendar) {
-        window.opener.calendar.refetchEvents();
-    }
+    // if (window.opener && window.opener.calendar) {
+    //     window.opener.calendar.refetchEvents();
+    // }
     window.close();
 }
 
@@ -272,15 +272,42 @@ document.addEventListener('DOMContentLoaded', function() {
                         events[selectedDate][index].title = newTitle;
                         events[selectedDate][index].category = newCategory;
                         localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(events));
+
+                //         if (window.opener && window.opener.calendar) {
+                //             window.opener.calendar.refetchEvents();
+                //         }
+                //         renderEvents(selectedDate, events);
+                //         titleInput.value = '';
+                //         addBtn.textContent = '+';
+                //         delete addBtn.dataset.editIndex;
+                //         addBtn.removeEventListener('click', editHandler);
+                //         addBtn.addEventListener('click', addEventHandler);
+                //     }
+                // };
+                        // 부모 창의 캘린더에서 이벤트 직접 수정
                         if (window.opener && window.opener.calendar) {
-                            window.opener.calendar.refetchEvents();
+                            const calendarEvents = window.opener.calendar.getEvents();
+                            const eventToUpdate = calendarEvents.find(event =>
+                                event.startStr === selectedDate &&
+                                event.title === `${events[selectedDate][index].title} (${events[selectedDate][index].category})`
+                            );
+                            if (eventToUpdate) {
+                                // 이벤트 속성 업데이트
+                                eventToUpdate.setProp('title', `${newTitle} (${newCategory})`);
+                                eventToUpdate.setProp('backgroundColor', window.opener.categoryColors[newCategory]);
+                                eventToUpdate.setProp('borderColor', window.opener.categoryColors[newCategory]);
+                            }
                         }
+
+                        // UI 갱신
                         renderEvents(selectedDate, events);
                         titleInput.value = '';
                         addBtn.textContent = '+';
                         delete addBtn.dataset.editIndex;
                         addBtn.removeEventListener('click', editHandler);
                         addBtn.addEventListener('click', addEventHandler);
+
+                        console.log(`✅ 일정 수정 완료: ${selectedDate}, ${newTitle} (${newCategory})`);
                     }
                 };
 
