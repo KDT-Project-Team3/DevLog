@@ -1401,9 +1401,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     window.saveAndClose = function() {
         const selectedDate = window.getQueryParam('date');
         const events = JSON.parse(localStorage.getItem(`events_${currentUser.user_id}`) || '{}');
-        if (window.opener && window.opener.calendar) {
-            window.opener.calendar.refetchEvents();
-        }
+        // if (window.opener && window.opener.calendar) {
+        //     window.opener.calendar.refetchEvents();
+        // }
         window.close();
     };
 

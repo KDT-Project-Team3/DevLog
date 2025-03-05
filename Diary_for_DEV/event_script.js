@@ -134,9 +134,9 @@ function renderEvents(selectedDate, events) {
 
 function saveAndClose() {
     // 부모 창의 캘린더를 새로고침
-    if (window.opener && window.opener.calendar) {
-        window.opener.calendar.refetchEvents();
-    }
+    // if (window.opener && window.opener.calendar) {
+    //     window.opener.calendar.refetchEvents();
+    // }
     window.close();
 }
 
@@ -269,18 +269,52 @@ document.addEventListener('DOMContentLoaded', function() {
                     const newCategory = categorySelect.value;
 
                     if (newTitle) {
+                        // 수정 전 이벤트 정보 저장
+                        const oldTitle = events[selectedDate][index].title;
+                        const oldCategory = events[selectedDate][index].category;
+
                         events[selectedDate][index].title = newTitle;
                         events[selectedDate][index].category = newCategory;
                         localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(events));
+
+                //         if (window.opener && window.opener.calendar) {
+                //             window.opener.calendar.refetchEvents();
+                //         }
+                //         renderEvents(selectedDate, events);
+                //         titleInput.value = '';
+                //         addBtn.textContent = '+';
+                //         delete addBtn.dataset.editIndex;
+                //         addBtn.removeEventListener('click', editHandler);
+                //         addBtn.addEventListener('click', addEventHandler);
+                //     }
+                // };
+                        // 부모 창의 캘린더에서 이벤트 직접 수정
                         if (window.opener && window.opener.calendar) {
-                            window.opener.calendar.refetchEvents();
+                            const calendarEvents = window.opener.calendar.getEvents();
+                            const eventToUpdate = calendarEvents.find(event =>
+                                event.startStr === selectedDate &&
+                                // event.title === `${events[selectedDate][index].title} (${events[selectedDate][index].category})`
+                                event.title === `${oldTitle} (${oldCategory})` // 수정 전 제목과 카테고리로 검색
+                            );
+                            if (eventToUpdate) {
+                                // 이벤트 속성 업데이트
+                                eventToUpdate.setProp('title', `${newTitle} (${newCategory})`);
+                                eventToUpdate.setProp('backgroundColor', window.opener.categoryColors[newCategory]);
+                                eventToUpdate.setProp('borderColor', window.opener.categoryColors[newCategory]);
+                            } else {
+                                console.warn(`⚠️ 수정할 이벤트를 찾지 못했습니다: ${oldTitle} (${oldCategory})`);
+                            }
                         }
+
+                        // UI 갱신
                         renderEvents(selectedDate, events);
                         titleInput.value = '';
                         addBtn.textContent = '+';
                         delete addBtn.dataset.editIndex;
                         addBtn.removeEventListener('click', editHandler);
                         addBtn.addEventListener('click', addEventHandler);
+
+                        console.log(`✅ 일정 수정 완료: ${selectedDate}, ${newTitle} (${newCategory})`);
                     }
                 };
 
