@@ -690,7 +690,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
             },
             initialView: 'dayGridMonth',
-            initialDate: '2025-02-26',
+            initialDate: '2025-03-06',
             selectable: true,
             dateClick: function(info) {
                 window.open('check_event.html?date=' + info.dateStr, 'eventPopup', 'width=500,height=500');
