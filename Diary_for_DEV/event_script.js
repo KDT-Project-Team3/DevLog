@@ -269,6 +269,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     const newCategory = categorySelect.value;
 
                     if (newTitle) {
+                        // 수정 전 이벤트 정보 저장
+                        const oldTitle = events[selectedDate][index].title;
+                        const oldCategory = events[selectedDate][index].category;
+
                         events[selectedDate][index].title = newTitle;
                         events[selectedDate][index].category = newCategory;
                         localStorage.setItem(`events_${currentUser.user_id}`, JSON.stringify(events));
@@ -289,13 +293,16 @@ document.addEventListener('DOMContentLoaded', function() {
                             const calendarEvents = window.opener.calendar.getEvents();
                             const eventToUpdate = calendarEvents.find(event =>
                                 event.startStr === selectedDate &&
-                                event.title === `${events[selectedDate][index].title} (${events[selectedDate][index].category})`
+                                // event.title === `${events[selectedDate][index].title} (${events[selectedDate][index].category})`
+                                event.title === `${oldTitle} (${oldCategory})` // 수정 전 제목과 카테고리로 검색
                             );
                             if (eventToUpdate) {
                                 // 이벤트 속성 업데이트
                                 eventToUpdate.setProp('title', `${newTitle} (${newCategory})`);
                                 eventToUpdate.setProp('backgroundColor', window.opener.categoryColors[newCategory]);
                                 eventToUpdate.setProp('borderColor', window.opener.categoryColors[newCategory]);
+                            } else {
+                                console.warn(`⚠️ 수정할 이벤트를 찾지 못했습니다: ${oldTitle} (${oldCategory})`);
                             }
                         }
 
